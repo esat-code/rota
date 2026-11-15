@@ -24,11 +24,11 @@ func render(_ size: Int, to url: URL) throws {
     context.scaleBy(x: 1, y: -1)
     let shell = CGPath(roundedRect: CGRect(x: 64, y: 64, width: 896, height: 896), cornerWidth: 202, cornerHeight: 202, transform: nil)
     context.saveGState()
-    context.setShadow(offset: CGSize(width: 0, height: 12), blur: 25, color: color(0x081420, 0.24))
-    context.addPath(shell); context.setFillColor(color(0x20384e)); context.fillPath()
+    context.setShadow(offset: CGSize(width: 0, height: 12), blur: 25, color: color(0x000000, 0.24))
+    context.addPath(shell); context.setFillColor(color(0x111214)); context.fillPath()
     context.restoreGState()
     context.saveGState(); context.addPath(shell); context.clip()
-    let navy = CGGradient(colorsSpace: space, colors: [color(0x344b60), color(0x20384e), color(0x142b40)] as CFArray, locations: [0, 0.48, 1])!
+    let navy = CGGradient(colorsSpace: space, colors: [color(0x202226), color(0x111214), color(0x08090b)] as CFArray, locations: [0, 0.48, 1])!
     context.drawLinearGradient(navy, start: CGPoint(x: 144, y: 64), end: CGPoint(x: 882, y: 960), options: [])
     context.restoreGState()
     context.addPath(CGPath(roundedRect: CGRect(x: 67, y: 67, width: 890, height: 890), cornerWidth: 199, cornerHeight: 199, transform: nil))
@@ -36,21 +36,21 @@ func render(_ size: Int, to url: URL) throws {
     context.setLineCap(.round); context.setLineJoin(.round)
     let ring = CGMutablePath()
     ring.addArc(center: CGPoint(x: 512, y: 512), radius: 248, startAngle: 2.796, endAngle: 8.033, clockwise: false)
-    context.addPath(ring); context.setStrokeColor(color(0xc8d1d1, 0.17)); context.setLineWidth(20); context.strokePath()
+    context.addPath(ring); context.setStrokeColor(color(0xc2c7d1, 0.17)); context.setLineWidth(20); context.strokePath()
     let route = CGMutablePath()
     route.move(to: CGPoint(x: 316, y: 722))
     route.addCurve(to: CGPoint(x: 440, y: 608), control1: CGPoint(x: 316, y: 634), control2: CGPoint(x: 440, y: 693))
     route.addCurve(to: CGPoint(x: 495, y: 544), control1: CGPoint(x: 440, y: 567), control2: CGPoint(x: 473, y: 560))
-    context.addPath(route); context.setStrokeColor(color(0xe7d8b9)); context.setLineWidth(36); context.strokePath()
+    context.addPath(route); context.setStrokeColor(color(0xc2c7d1)); context.setLineWidth(36); context.strokePath()
     let needle = CGMutablePath()
     needle.move(to: CGPoint(x: 704, y: 298)); needle.addLine(to: CGPoint(x: 588, y: 650))
     needle.addLine(to: CGPoint(x: 519, y: 521)); needle.addLine(to: CGPoint(x: 388, y: 454)); needle.closeSubpath()
     context.saveGState(); context.addPath(needle); context.clip()
-    let cream = CGGradient(colorsSpace: space, colors: [color(0xf2e8d2), color(0xd9c9a9)] as CFArray, locations: [0, 1])!
+    let cream = CGGradient(colorsSpace: space, colors: [color(0xf0f1f3), color(0xc2c7d1)] as CFArray, locations: [0, 1])!
     context.drawLinearGradient(cream, start: CGPoint(x: 388, y: 298), end: CGPoint(x: 588, y: 650), options: [])
     context.restoreGState()
     context.move(to: CGPoint(x: 704, y: 298)); context.addLine(to: CGPoint(x: 519, y: 521)); context.addLine(to: CGPoint(x: 588, y: 650)); context.closePath()
-    context.setFillColor(color(0xc6b994, 0.48)); context.fillPath()
+    context.setFillColor(color(0x9198a3, 0.48)); context.fillPath()
     guard let image = context.makeImage(), let destination = CGImageDestinationCreateWithURL(url as CFURL, "public.png" as CFString, 1, nil) else { fatalError("PNG creation failed") }
     CGImageDestinationAddImage(destination, image, nil)
     if !CGImageDestinationFinalize(destination) { fatalError("PNG export failed") }

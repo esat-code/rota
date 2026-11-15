@@ -1,15 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" fill="none">
   <title>Rota app icon</title>
   <defs>
-    <linearGradient id="navy" x1="144" y1="64" x2="882" y2="960" gradientUnits="userSpaceOnUse"><stop stop-color="#344b60"/><stop offset=".48" stop-color="#20384e"/><stop offset="1" stop-color="#142b40"/></linearGradient>
-    <linearGradient id="cream" x1="388" y1="298" x2="588" y2="650" gradientUnits="userSpaceOnUse"><stop stop-color="#f2e8d2"/><stop offset="1" stop-color="#d9c9a9"/></linearGradient>
+    <linearGradient id="navy" x1="144" y1="64" x2="882" y2="960" gradientUnits="userSpaceOnUse"><stop stop-color="#202226"/><stop offset=".48" stop-color="#111214"/><stop offset="1" stop-color="#08090b"/></linearGradient>
+    <linearGradient id="cream" x1="388" y1="298" x2="588" y2="650" gradientUnits="userSpaceOnUse"><stop stop-color="#f0f1f3"/><stop offset="1" stop-color="#c2c7d1"/></linearGradient>
     <linearGradient id="edge" x1="180" y1="64" x2="820" y2="960" gradientUnits="userSpaceOnUse"><stop stop-color="#fff" stop-opacity=".24"/><stop offset="1" stop-color="#fff" stop-opacity=".035"/></linearGradient>
-    <filter id="shadow" x="24" y="40" width="976" height="1000" color-interpolation-filters="sRGB"><feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#081420" flood-opacity=".24"/></filter>
+    <filter id="shadow" x="24" y="40" width="976" height="1000" color-interpolation-filters="sRGB"><feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000000" flood-opacity=".24"/></filter>
   </defs>
   <rect x="64" y="64" width="896" height="896" rx="202" fill="url(#navy)" filter="url(#shadow)"/>
   <rect x="67" y="67" width="890" height="890" rx="199" stroke="url(#edge)" stroke-width="6"/>
-  <path d="M304 596a248 248 0 1 1 164 159" stroke="#c8d1d1" stroke-opacity=".17" stroke-width="20" stroke-linecap="round"/>
-  <path d="M316 722c0-88 124-29 124-114 0-41 33-48 55-64" stroke="#e7d8b9" stroke-width="36" stroke-linecap="round"/>
+  <path d="M304 596a248 248 0 1 1 164 159" stroke="#c2c7d1" stroke-opacity=".17" stroke-width="20" stroke-linecap="round"/>
+  <path d="M316 722c0-88 124-29 124-114 0-41 33-48 55-64" stroke="#c2c7d1" stroke-width="36" stroke-linecap="round"/>
   <path d="m704 298-116 352-69-129-131-67 316-156Z" fill="url(#cream)"/>
-  <path d="M704 298 519 521l69 129 116-352Z" fill="#c6b994" fill-opacity=".48"/>
+  <path d="M704 298 519 521l69 129 116-352Z" fill="#9198a3" fill-opacity=".48"/>
 </svg>
