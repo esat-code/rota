@@ -1,0 +1,109 @@
+#hafizlik-tik-denemesi { --toolbar-bg:#faf9f6; --panel-bg:#fff; --line:#d9d9d5; --muted:#66717c; background:var(--paper); }
+#hafizlik-tik-denemesi.night-mode { --toolbar-bg:#1c1f22; --panel-bg:#202428; --line:#3a3e43; --muted:#aaa99f; }
+html, body { height:100%; overflow:hidden; }
+#hafizlik-tik-denemesi { height:100dvh; overflow:hidden; }
+#hafizlik-tik-denemesi .workspace-viewport { height:calc(100dvh - var(--toolbar-height,55px)); overflow:auto; overscroll-behavior:contain; scrollbar-gutter:stable; position:relative; background:var(--paper); }
+#hafizlik-tik-denemesi .workspace-viewport:focus-visible { outline:2px solid var(--active); outline-offset:-2px; }
+#hafizlik-tik-denemesi .sheet { width:1720px; min-width:1720px; min-height:max(1800px,210vh); padding:30px; overflow:visible; }
+#hafizlik-tik-denemesi .top-grid, #hafizlik-tik-denemesi .lower-grid { grid-template-columns:minmax(0,1.45fr) minmax(0,1.3fr) minmax(0,.68fr); gap:24px; }
+#hafizlik-tik-denemesi .top-grid { margin-top:0; }
+#hafizlik-tik-denemesi .lower-grid { margin-top:38px; }
+#hafizlik-tik-denemesi .solution-box { position:absolute; top:30px; right:30px; width:19%; min-width:160px; max-width:230px; min-height:390px; }
+#hafizlik-tik-denemesi .sheet.free-layout .top-grid, #hafizlik-tik-denemesi .sheet.free-layout .lower-grid, #hafizlik-tik-denemesi .sheet.free-layout .notes { display:contents; }
+#hafizlik-tik-denemesi .sheet.free-layout [data-board-item] { position:absolute; right:auto; bottom:auto; margin:0; max-width:none; transform:none; }
+#hafizlik-tik-denemesi .sheet.free-layout [data-board-item]:hover { cursor:grab; }
+#hafizlik-tik-denemesi .sheet.free-layout [data-board-item] input, #hafizlik-tik-denemesi .sheet.free-layout [data-board-item] label { cursor:pointer; }
+#hafizlik-tik-denemesi .sheet.free-layout [data-board-item] [contenteditable=true] { cursor:text; }
+#hafizlik-tik-denemesi .sheet.free-layout [data-board-item].is-moving { cursor:grabbing; z-index:5; }
+#hafizlik-tik-denemesi .board-drag-handle { position:absolute; top:-11px; left:10px; width:30px; height:18px; padding:0; border:1px solid var(--line); border-radius:5px; color:var(--muted); background:var(--panel-bg); font-size:14px; line-height:14px; cursor:grab; opacity:0; touch-action:none; }
+#hafizlik-tik-denemesi [data-board-item]:hover .board-drag-handle, #hafizlik-tik-denemesi [data-board-item]:focus-within .board-drag-handle { opacity:1; }
+#hafizlik-tik-denemesi .board-resize-handle { position:absolute; right:2px; bottom:2px; width:14px; height:14px; padding:0; border:0; border-right:2px solid var(--muted); border-bottom:2px solid var(--muted); border-radius:0 0 3px 0; background:transparent; opacity:.45; cursor:nwse-resize; touch-action:none; }
+#hafizlik-tik-denemesi .daily-text, #hafizlik-tik-denemesi .routine-text, #hafizlik-tik-denemesi .note-copy, #hafizlik-tik-denemesi .solution-box ul { min-width:0; overflow-wrap:anywhere; }
+#hafizlik-tik-denemesi .app-toolbar { position:sticky; top:0; z-index:100; min-height:54px; background:var(--toolbar-bg); color:var(--ink); border-bottom:1px solid var(--line); box-shadow:0 2px 8px #00000009; font:12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+#hafizlik-tik-denemesi .toolbar-main { min-height:54px; display:flex; align-items:center; gap:16px; padding:8px 22px; }
+#hafizlik-tik-denemesi .toolbar-clock { display:flex; align-items:baseline; flex-wrap:wrap; gap:12px; }
+#hafizlik-tik-denemesi #live-clock { font-size:19px; font-weight:600; font-variant-numeric:tabular-nums; letter-spacing:.02em; }
+#hafizlik-tik-denemesi #live-date { color:var(--muted); }
+#hafizlik-tik-denemesi .toolbar-spacer { flex:1; }
+#hafizlik-tik-denemesi .save-indicator { color:var(--muted); font-size:11px; white-space:nowrap; }
+#hafizlik-tik-denemesi button { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+#hafizlik-tik-denemesi .toolbar-button, #hafizlik-tik-denemesi .icon-button, #hafizlik-tik-denemesi .presets button, #hafizlik-tik-denemesi .timer-actions button { appearance:none; background:var(--panel-bg); color:var(--ink); border:1px solid var(--line); border-radius:7px; padding:8px 12px; font-size:12px; cursor:pointer; }
+#hafizlik-tik-denemesi button:hover { filter:brightness(.94); }
+#hafizlik-tik-denemesi button:focus-visible { outline:2px solid var(--active); outline-offset:3px; }
+#hafizlik-tik-denemesi .toolbar-main { gap:10px; }
+#hafizlik-tik-denemesi .toolbar-main .toolbar-button { display:inline-flex; align-items:center; justify-content:center; gap:8px; height:34px; flex-shrink:0; padding:4px 12px 4px 5px; border-radius:999px; border:1px solid #dcdad4; background:linear-gradient(180deg,#ffffff,#f4f3ef); color:#24394c; font-size:12px; font-weight:500; white-space:nowrap; box-shadow:inset 0 1px 0 #fff,0 1px 2px #142b460c; transition:background 160ms,border-color 160ms,box-shadow 160ms,transform 160ms; }
+#hafizlik-tik-denemesi .toolbar-main .toolbar-button:hover { filter:none; transform:translateY(-1px); border-color:#b9b6ac; box-shadow:inset 0 1px 0 #fff,0 3px 8px #142b4612; }
+#hafizlik-tik-denemesi .toolbar-main .toolbar-button:active { transform:translateY(0); box-shadow:inset 0 1px 3px #142b4612; }
+#hafizlik-tik-denemesi .toolbar-icon { width:24px; height:24px; display:inline-flex; align-items:center; justify-content:center; flex:0 0 24px; border-radius:50%; background:#e9edf0; color:#40586b; }
+#hafizlik-tik-denemesi .toolbar-icon svg { display:block; width:16px; height:16px; transition:transform 160ms; }
+#hafizlik-tik-denemesi .toolbar-main .edit-toggle { gap:7px; }
+#hafizlik-tik-denemesi .toolbar-main .edit-toggle[aria-checked=true] { background:linear-gradient(180deg,#f5efe3,#e9dfca); border-color:#c8ba9d; color:#2b3842; box-shadow:inset 0 1px 0 #ffffffb3,0 1px 2px #142b460a; }
+#hafizlik-tik-denemesi .edit-toggle[aria-checked=true] .toolbar-icon { background:#ded1b6; color:#3d463f; }
+#hafizlik-tik-denemesi .edit-switch { display:inline-flex; align-items:center; width:27px; height:16px; padding:2px; margin-left:3px; border-radius:999px; background:#d2d4d5; box-shadow:inset 0 1px 2px #142b4626; }
+#hafizlik-tik-denemesi .edit-switch>span { width:12px; height:12px; border-radius:50%; background:#fff; box-shadow:0 1px 3px #142b4633; transition:transform 180ms; }
+#hafizlik-tik-denemesi .edit-toggle[aria-checked=true] .edit-switch { background:#2b4358; }
+#hafizlik-tik-denemesi .edit-toggle[aria-checked=true] .edit-switch>span { transform:translateX(11px); background:#f2e8d4; }
+#hafizlik-tik-denemesi .toolbar-divider { width:1px; height:20px; background:var(--line); margin:0 3px; flex:0 0 1px; }
+#hafizlik-tik-denemesi .toolbar-main .exit-button { background:linear-gradient(180deg,#2d4257,#203247); color:#f5f0e6; border-color:#1e3043; box-shadow:inset 0 1px 0 #ffffff1f,0 1px 3px #142b4621; padding-right:13px; }
+#hafizlik-tik-denemesi .exit-button .toolbar-icon { background:#ffffff15; color:#eee7d9; }
+#hafizlik-tik-denemesi .toolbar-main .exit-button:hover { border-color:#566b7e; box-shadow:inset 0 1px 0 #ffffff26,0 3px 8px #142b4626; }
+#hafizlik-tik-denemesi .exit-button:hover .toolbar-icon svg { transform:translateX(2px); }
+#hafizlik-tik-denemesi.night-mode .toolbar-main .toolbar-button { background:linear-gradient(180deg,#2c3034,#24282c); border-color:#41464b; color:#e3dfd5; box-shadow:inset 0 1px 0 #ffffff0a,0 1px 3px #0002; }
+#hafizlik-tik-denemesi.night-mode .toolbar-main .toolbar-button:hover { border-color:#727571; box-shadow:inset 0 1px 0 #ffffff0a,0 3px 10px #0003; }
+#hafizlik-tik-denemesi.night-mode .toolbar-icon { background:#353d44; color:#c1ccd5; }
+#hafizlik-tik-denemesi.night-mode .toolbar-main .edit-toggle[aria-checked=true] { background:linear-gradient(180deg,#403e36,#33332e); border-color:#756c59; color:#eee3cb; }
+#hafizlik-tik-denemesi.night-mode .edit-toggle[aria-checked=true] .toolbar-icon { background:#514a3b; color:#e4d3af; }
+#hafizlik-tik-denemesi.night-mode .edit-switch { background:#54595d; }
+#hafizlik-tik-denemesi.night-mode .edit-toggle[aria-checked=true] .edit-switch { background:#c7b58e; }
+#hafizlik-tik-denemesi.night-mode .edit-toggle[aria-checked=true] .edit-switch>span { background:#263747; }
+#hafizlik-tik-denemesi.night-mode .toolbar-main .exit-button { background:linear-gradient(180deg,#35495d,#293c50); color:#ece5d7; border-color:#536273; }
+#hafizlik-tik-denemesi.night-mode .exit-button .toolbar-icon { background:#ffffff0d; color:#e8ddc9; }
+#hafizlik-tik-denemesi:not(.editing-mode) .sheet.free-layout [data-board-item]:hover { cursor:default; }
+#hafizlik-tik-denemesi:not(.editing-mode) [contenteditable=false] { cursor:default; }
+#hafizlik-tik-denemesi .board-drag-handle[hidden], #hafizlik-tik-denemesi .board-resize-handle[hidden] { display:none; }
+@media(prefers-reduced-motion:reduce) { #hafizlik-tik-denemesi .toolbar-main .toolbar-button, #hafizlik-tik-denemesi .toolbar-icon svg, #hafizlik-tik-denemesi .edit-switch>span { transition:none; } }
+#hafizlik-tik-denemesi #theme-toggle-mount { display:flex; flex-shrink:0; }
+#hafizlik-tik-denemesi #theme-toggle-mount button { box-sizing:border-box; align-items:center; min-width:64px; padding:3px; outline-offset:4px; }
+#hafizlik-tik-denemesi.night-mode .week-name, #hafizlik-tik-denemesi.night-mode .time-banner strong { color:#f2eee6; }
+#hafizlik-tik-denemesi.night-mode .sheet::before { border-color:#343b42; }
+#hafizlik-tik-denemesi.night-mode .sheet { border-color:#34414f; }
+#hafizlik-tik-denemesi.night-mode [contenteditable="true"]:focus { background:#33373a; }
+#hafizlik-tik-denemesi.night-mode input[type=checkbox] { -webkit-appearance:none; appearance:none; display:inline-block; flex-shrink:0; width:18px; height:18px; vertical-align:middle; border:1.5px solid #7e8b96; border-radius:4px; background-color:#18232d; background-image:none; background-repeat:no-repeat; background-position:center; background-size:100% 100%; }
+#hafizlik-tik-denemesi.night-mode input[type=checkbox]:checked { border-color:#e4d3af; background-color:#e4d3af; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.6 8.1l2.9 3L12.4 5' fill='none' stroke='%23182b3c' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); box-shadow:0 0 0 2px rgb(228 211 175 / 14%); }
+#hafizlik-tik-denemesi.night-mode input[type=checkbox]:not(:disabled):hover { border-color:#f3e6cc; }
+#hafizlik-tik-denemesi.night-mode input[type=checkbox]:focus-visible { outline:2px solid #e4d3af; outline-offset:3px; }
+#hafizlik-tik-denemesi.night-mode input[type=checkbox]:disabled { border-color:#58626c; background-color:#20282f; box-shadow:none; opacity:.55; }
+#hafizlik-tik-denemesi .timer-dialog { width:min(640px,calc(100vw - 36px)); max-height:calc(100vh - 90px); padding:26px; border:1px solid var(--line); border-radius:16px; background:var(--panel-bg); color:var(--ink); box-shadow:0 24px 100px #0005; font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; overflow-y:auto; }
+#hafizlik-tik-denemesi .timer-dialog::backdrop { background:#080c1466; backdrop-filter:blur(3px); }
+#hafizlik-tik-denemesi .dialog-heading { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+#hafizlik-tik-denemesi .eyebrow { color:var(--muted); font-size:10px; letter-spacing:.14em; }
+#hafizlik-tik-denemesi .dialog-heading h2 { margin:5px 0 0; font-size:23px; }
+#hafizlik-tik-denemesi .icon-button { font-size:22px; line-height:1; padding:5px 9px; }
+#hafizlik-tik-denemesi .timer-form { padding-top:18px; border-top:1px solid var(--line); }
+#hafizlik-tik-denemesi .timer-form h3 { margin:0 0 16px; font-size:15px; }
+#hafizlik-tik-denemesi .form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
+#hafizlik-tik-denemesi .timer-form label { display:flex; flex-direction:column; gap:6px; font-size:12px; color:var(--muted); }
+#hafizlik-tik-denemesi .timer-form input:not([type=checkbox]), #hafizlik-tik-denemesi .timer-form select { width:100%; height:38px; padding:7px 10px; border:1px solid var(--line); border-radius:7px; background:var(--paper); color:var(--ink); font:14px -apple-system,BlinkMacSystemFont,sans-serif; }
+#hafizlik-tik-denemesi .duration-inputs { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:10px; }
+#hafizlik-tik-denemesi .presets { display:flex; gap:8px; margin-bottom:18px; }
+#hafizlik-tik-denemesi .timer-form .check-option { flex-direction:row; align-items:center; gap:8px; margin:12px 0; }
+#hafizlik-tik-denemesi .form-error { color:#b0443e; min-height:16px; margin:8px 0; font-size:12px; }
+#hafizlik-tik-denemesi .form-actions { display:flex; gap:10px; justify-content:flex-end; }
+#hafizlik-tik-denemesi .primary-button { background:var(--blue); color:#fff; border:0; border-radius:7px; padding:10px 16px; cursor:pointer; }
+#hafizlik-tik-denemesi .timer-card { border:1px solid var(--line); padding:14px; border-radius:10px; margin-bottom:12px; background:var(--toolbar-bg); }
+#hafizlik-tik-denemesi .timer-card-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+#hafizlik-tik-denemesi .timer-card h3 { margin:0; font-size:14px; overflow-wrap:anywhere; }
+#hafizlik-tik-denemesi .timer-description { margin-top:4px; color:var(--muted); font-size:11px; }
+#hafizlik-tik-denemesi .timer-value { margin:10px 0; font-size:30px; font-weight:500; letter-spacing:.04em; font-variant-numeric:tabular-nums; }
+#hafizlik-tik-denemesi .timer-actions { display:flex; flex-wrap:wrap; gap:6px; }
+#hafizlik-tik-denemesi .timer-dock { display:flex; gap:8px; padding:0 22px 8px; overflow-x:auto; overscroll-behavior-x:contain; scrollbar-width:thin; font:12px -apple-system,BlinkMacSystemFont,sans-serif; }
+#hafizlik-tik-denemesi .timer-dock[hidden] { display:none; }
+#hafizlik-tik-denemesi .dock-timer { flex:0 0 auto; display:flex; align-items:center; gap:10px; padding:5px 10px; max-width:320px; background:var(--panel-bg); color:var(--ink); border:1px solid var(--line); border-radius:8px; }
+#hafizlik-tik-denemesi .dock-timer[data-status=running] { border-color:var(--active); }
+#hafizlik-tik-denemesi .dock-timer .dock-title { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:120px; }
+#hafizlik-tik-denemesi .dock-timer time { font-size:18px; font-variant-numeric:tabular-nums; white-space:nowrap; }
+#hafizlik-tik-denemesi .dock-timer button { cursor:pointer; border:0; padding:4px 6px; border-radius:4px; background:var(--gray); color:var(--ink); }
+#hafizlik-tik-denemesi .app-toast { position:fixed; bottom:20px; left:22px; z-index:200; max-width:360px; padding:14px 18px; border:1px solid var(--line); border-radius:9px; background:var(--panel-bg); color:var(--ink); box-shadow:0 4px 24px #0003; font:13px -apple-system,BlinkMacSystemFont,sans-serif; }
+#hafizlik-tik-denemesi .timer-empty { padding:0 0 18px; color:var(--muted); font-size:13px; }
+@media(max-width:950px) { #hafizlik-tik-denemesi .toolbar-main { gap:10px; padding:8px 14px; } #hafizlik-tik-denemesi .timer-dock { padding-right:14px; padding-left:14px; } #hafizlik-tik-denemesi .toolbar-clock { gap:6px; max-width:245px; } #hafizlik-tik-denemesi .save-indicator { display:none; } }
+@media(max-width:560px) { #hafizlik-tik-denemesi #live-date { font-size:10px; } #hafizlik-tik-denemesi .toolbar-clock { max-width:160px; } #hafizlik-tik-denemesi .toolbar-button { padding:7px; font-size:11px; } #hafizlik-tik-denemesi .form-row { grid-template-columns:1fr; } }

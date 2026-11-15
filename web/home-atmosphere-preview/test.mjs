@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const html=fs.readFileSync(new URL('./dist/index.html',import.meta.url),'utf8');
+assert(html.includes('lang="tr"'));
+assert(!/<audio[^>]+autoplay/i.test(html),'No autoplay');
+assert(!/<(?:img|video|iframe|a)(?:\s|>)/i.test(html),'No reference logo, embeds or social links');
+assert(!/coming soon|youtube|instagram|tiktok/i.test(html),'No reference branding');
+assert(html.includes('id="entry-form"'),'Entry preview');
+assert(html.includes('aria-pressed="false"'),'Initially muted');
+assert.equal((html.match(/id="sound-toggle"/g)||[]).length,1);
+const css=fs.readFileSync(new URL('./dist/styles.css',import.meta.url),'utf8');
+assert(css.includes('prefers-reduced-motion'));
+assert(css.includes('env(safe-area-inset-bottom'));
+await import('./tests/audio-test.mjs');
+await import('./tests/atmosphere-test.mjs');
+console.log('Page checks passed: entry preview, motion safety and audio tests.');

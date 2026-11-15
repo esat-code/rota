@@ -1,0 +1,1346 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; form-action 'none'; base-uri 'none'">
+<title>Alışveriş planı · Rota</title>
+</head>
+<body>
+<div id="rota-purchase-preview">
+  <div class="purchase-heading">
+    <h2>Alışveriş planı</h2>
+    <p>25 sepet ürünü · 9 Kasım 2026 fiyatları</p>
+    <p id="purchase-save-status" aria-live="polite"></p>
+  </div>
+  <nav id="purchase-phases" aria-label="Dönem seç"></nav>
+  <details id="purchase-filters" class="purchase-section">
+    <summary id="purchase-filters-title">Filtrele</summary>
+    <div class="purchase-fields">
+      <label>Kimin için?<select id="purchase-view"><option value="all">Tümü</option><option value="self">Kendime</option><option value="gift">Hediyeler</option></select></label>
+      <label>Hediye alıcısı<select id="purchase-filter-recipient"><option value="">Tüm alıcılar</option></select></label>
+      <label>Alım durumu<select id="purchase-filter-status"><option value="">Tümü</option><option value="planned">Planlandı</option><option value="purchased">Alındı</option></select></label>
+      <label>Ödeme şekli<select id="purchase-filter-method"><option value="">Tümü</option><option value="cash">Peşin</option><option value="card">Kart taksiti</option><option value="hepsi">Hepsitaksit</option></select></label>
+    </div>
+    <div class="purchase-actions">
+      <button type="button" id="purchase-filter-clear" hidden>Filtreleri temizle</button>
+      <small id="purchase-view-note" hidden>Toplam ödeme ve kalan para tüm ödemeleri kapsar.</small>
+    </div>
+  </details>
+  <section class="purchase-summary" aria-labelledby="purchase-summary-heading">
+    <div class="purchase-toolbar">
+      <h3 id="purchase-summary-heading">Ayın özeti</h3>
+      <label>Dönemin ayı <select id="purchase-summary-month" aria-label="Özet için dönem ayı"></select></label>
+    </div>
+    <p id="purchase-summary-context" class="purchase-muted"></p>
+    <div class="purchase-table-scroll">
+      <table aria-label="Seçilen ayın özeti">
+        <thead><tr><th>Net gelir</th><th>Kendime</th><th>Hediye</th><th>Toplam ödeme</th><th>Kalan</th></tr></thead>
+        <tbody id="purchase-summary-values" aria-live="polite"></tbody>
+      </table>
+    </div>
+    <p id="purchase-summary-changes" class="purchase-muted"></p>
+    <div id="purchase-summary-payments" class="purchase-payments"></div>
+  </section>
+  <details class="purchase-section">
+    <summary>Dönem ve gelir ayarları</summary>
+    <div class="purchase-fields">
+      <label><span id="purchase-start-label">Başlangıç ayı</span><input id="purchase-start" type="month" required></label>
+      <label>Süre (ay)<input id="purchase-duration" type="number" min="1" max="1200" step="1" required></label>
+      <label>Aylık net gelir (TL)<input id="purchase-income" inputmode="decimal" placeholder="Belirlenmedi"></label>
+    </div>
+    <p id="purchase-settings-note" class="purchase-muted"></p>
+    <details class="purchase-adjustments">
+      <summary>Maaş değişikliği ekle</summary>
+      <div class="purchase-adjustment-fields">
+        <label>Geçerli olduğu ay<input id="purchase-salary-month" type="month"></label>
+        <label>Yeni net maaş (TL)<input id="purchase-salary-amount" inputmode="decimal"></label>
+        <button type="button" id="purchase-salary-add">Ekle</button>
+      </div>
+      <div id="purchase-salary-list" class="purchase-change-list"></div>
+    </details>
+    <p id="purchase-settings-error" role="alert"></p>
+  </details>
+  <details class="purchase-section" id="purchase-monthly">
+    <summary>Aylık tablo</summary>
+    <div class="purchase-toolbar purchase-month-toolbar">
+      <label>Ay aralığı <select id="purchase-year" aria-label="Tabloda gösterilen dönem ayları"></select></label>
+    </div>
+    <div class="purchase-table-scroll">
+      <table aria-label="Aylık gelir ve alışveriş ödemeleri">
+        <thead><tr><th>Ay</th><th>Gelir</th><th>Kendime</th><th>Hediye</th><th>Toplam ödeme</th><th>Kalan</th></tr></thead>
+        <tbody id="purchase-months"></tbody>
+      </table>
+    </div>
+    <p id="purchase-month-note" class="purchase-muted" aria-live="polite"></p>
+  </details>
+  <section class="purchase-section" id="purchase-period-section" aria-labelledby="purchase-period-title">
+    <h3 id="purchase-period-title">Dönemin alımları</h3>
+    <form id="purchase-schedule" hidden>
+      <h4 id="purchase-schedule-title"></h4>
+      <div class="purchase-fields">
+        <label>Dönem<select name="phase"></select></label>
+        <label>İlk ödeme · kaçıncı ay?<select name="month" required></select></label>
+        <label>Durum<select name="status"><option value="planned">Planlandı</option><option value="purchased">Alındı</option></select></label>
+        <label>Kimin için?<select name="kind"><option value="self">Kendime</option><option value="gift">Hediye</option></select></label>
+        <label data-gift hidden>Hediye kime?<input name="recipient" maxlength="80" placeholder="Örn. Annem"></label>
+        <label data-gift hidden>Hediye günü (isteğe bağlı)<input name="giftDate" type="date"></label>
+        <label>Ödeme şekli<select name="method"><option value="cash">Peşin</option><option value="card">Kart taksiti</option><option value="hepsi">Hepsitaksit</option></select></label>
+        <label data-installment hidden>Taksit sayısı<input name="count" type="number" min="2" max="60" step="1"></label>
+        <label>Bu alımın toplamı (TL)<input name="total" inputmode="decimal" placeholder="O ayın ürün fiyatı kullanılır"></label>
+      </div>
+      <p id="purchase-schedule-range" class="purchase-muted"></p>
+      <p id="purchase-schedule-error" role="alert"></p>
+      <div class="purchase-actions">
+        <button class="purchase-primary" type="button" id="purchase-schedule-save">Alımı kaydet</button>
+        <button type="button" id="purchase-schedule-cancel">Vazgeç</button>
+        <button type="button" id="purchase-schedule-remove" hidden>Bu alımı kaldır</button>
+      </div>
+    </form>
+    <div id="purchase-period-list"></div>
+  </section>
+  <div class="purchase-section">
+    <div class="purchase-toolbar">
+      <h3 id="purchase-products-heading">Tüm ürünler</h3>
+      <button type="button" id="purchase-add">Ürün ekle</button>
+    </div>
+    <form id="purchase-editor" hidden>
+      <div class="purchase-link-row">
+        <label>Ürün bağlantısı<input name="link" type="url" inputmode="url" autocomplete="off" autocapitalize="off" placeholder="https://www.apple.com/tr/shop/…"></label>
+        <button type="button" id="purchase-import-link">Linkten doldur</button>
+      </div>
+      <p id="purchase-link-result" aria-live="polite" class="purchase-muted"></p>
+      <div class="purchase-fields">
+        <label>Ürün<input name="name" required maxlength="160"></label>
+        <label>Başlangıç fiyatı (TL)<input name="price" required inputmode="decimal"></label>
+        <div class="purchase-photo-inputs">
+          <label class="purchase-file-label">Fotoğraf seç<input name="photo" type="file" accept="image/*" aria-label="Fotoğraf seç"></label>
+          <label class="purchase-file-label" id="purchase-camera-label" hidden>Fotoğraf çek<input name="camera" type="file" accept="image/*" capture="environment" aria-label="Fotoğraf çek"></label>
+        </div>
+      </div>
+      <img id="purchase-editor-photo" class="purchase-photo" alt="" hidden>
+      <details class="purchase-adjustments" id="purchase-price-panel">
+        <summary>Ayına göre fiyat değişikliği ekle</summary>
+        <div class="purchase-adjustment-fields">
+          <label>Geçerli olduğu ay<input id="purchase-price-month" type="month"></label>
+          <label>Yeni fiyat (TL)<input id="purchase-price-amount" inputmode="decimal"></label>
+          <button type="button" id="purchase-price-add">Ekle</button>
+        </div>
+        <div id="purchase-price-list" class="purchase-change-list"></div>
+      </details>
+      <p id="purchase-offer" class="purchase-muted"></p>
+      <p id="purchase-editor-error" role="alert"></p>
+      <div class="purchase-actions">
+        <button class="purchase-primary" type="button" id="purchase-save">Ürünü kaydet</button>
+        <button type="button" id="purchase-save-and-plan">Kaydet ve alım ekle</button>
+        <button type="button" id="purchase-cancel">Vazgeç</button>
+      </div>
+    </form>
+    <div id="purchase-products"></div>
+  </div>
+</div>
+
+<style>
+html { color-scheme: light dark; background: light-dark(#f9f9f7,#14171a); }
+body { margin: 0; }
+#rota-purchase-preview { max-width: 1150px; margin-inline:auto; }
+#rota-purchase-preview .purchase-link-row { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: end; gap: 8px; }
+#rota-purchase-preview .purchase-link-row label { display:grid; gap:4px; min-width:0; }
+#rota-purchase-preview .purchase-photo-inputs { display:flex; flex-wrap:wrap; gap:8px; align-content:start; align-items:start; min-width:0; }
+#rota-purchase-preview .purchase-file-label {
+  position:relative; display:inline-grid; place-items:center; padding:8px 10px; min-height:44px;
+  border:1px solid var(--purchase-line); border-radius:7px; background:var(--purchase-field);
+}
+#rota-purchase-preview .purchase-file-label input { position:absolute; inset:0; opacity:0; width:100%; height:100%; cursor:pointer; }
+#rota-purchase-preview .purchase-file-label:focus-within { outline:2px solid var(--purchase-active); outline-offset:2px; }
+#rota-purchase-preview .purchase-item-action button { min-height:44px; }
+#rota-purchase-preview .purchase-payments { display:grid; gap:6px; margin-block-start:10px; }
+#rota-purchase-preview .purchase-payment { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:10px; align-items:center; padding-block:8px; border-top:1px solid var(--purchase-line); }
+#rota-purchase-preview .purchase-payment.has-photo { grid-template-columns:56px minmax(0,1fr) auto; }
+#rota-purchase-preview .purchase-payment .purchase-photo { width:56px; }
+#rota-purchase-preview .purchase-payment p { overflow-wrap:anywhere; }
+#rota-purchase-preview .purchase-payment strong { white-space:nowrap; }
+#rota-purchase-preview .purchase-period-group { margin-block-start:14px; }
+#rota-purchase-preview .purchase-period-row { display:grid; grid-template-columns:54px minmax(0,1fr) auto; align-items:center; gap:12px; padding-block:12px; border-bottom:1px solid var(--purchase-line); }
+#rota-purchase-preview .purchase-period-row .purchase-photo { width:54px; }
+#rota-purchase-preview .purchase-period-row p { overflow-wrap:anywhere; }
+#rota-purchase-preview .purchase-period-row small { display:block; margin-block-start:4px; }
+#rota-purchase-preview .purchase-period-actions { display:flex; flex-wrap:wrap; gap:7px; justify-content:end; }
+#rota-purchase-preview .purchase-month-detail { display:block; white-space:normal; max-width:230px; }
+#rota-purchase-preview .purchase-month-event { display:flex; align-items:center; gap:8px; margin-block-start:5px; max-width:230px; }
+#rota-purchase-preview .purchase-month-event .purchase-photo { width:36px; flex:none; }
+#rota-purchase-preview #purchase-schedule-title { margin:0; }
+@media (max-width:540px) {
+  #rota-purchase-preview .purchase-period-row { grid-template-columns:48px minmax(0,1fr); }
+  #rota-purchase-preview .purchase-period-row .purchase-photo { width:48px; }
+  #rota-purchase-preview .purchase-period-actions { grid-column:2; justify-content:start; }
+}
+#rota-purchase-preview #purchase-save-status:empty { display:none; }
+@media (max-width: 540px) {
+  #rota-purchase-preview .purchase-link-row { grid-template-columns:minmax(0,1fr); }
+  #rota-purchase-preview .purchase-link-row button { justify-self:start; }
+  #rota-purchase-preview .purchase-summary table,
+  #rota-purchase-preview .purchase-summary tbody { display:block; }
+  #rota-purchase-preview .purchase-summary thead {
+    position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%);
+  }
+  #rota-purchase-preview .purchase-summary tbody tr { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+  #rota-purchase-preview .purchase-summary tbody td { padding:6px 2px; text-align:left; min-width:0; white-space:normal; }
+  #rota-purchase-preview .purchase-summary tbody td::before { content:attr(data-label); display:block; font-size:12px; font-weight:400; color:var(--purchase-subtle); }
+  #rota-purchase-preview .purchase-summary tbody td:last-child { grid-column:1/-1; }
+}
+
+#rota-purchase-preview {
+  color-scheme: light dark;
+  --purchase-bg: light-dark(#f9f9f7,#14171a);
+  --purchase-ink: light-dark(#20251f,#f4f5f3);
+  --purchase-subtle: light-dark(#565f55,#b7c0b6);
+  --purchase-line: light-dark(#d7dcd3,#3a423e);
+  --purchase-field: light-dark(#ffffff,#222829);
+  --purchase-active: light-dark(#294739,#bedec8);
+  --purchase-on-active: light-dark(#ffffff,#15261e);
+  --purchase-red: light-dark(#9f2b2b,#ffaaaa);
+  background: var(--purchase-bg);
+  color: var(--purchase-ink);
+  font: 14px/1.45 system-ui, sans-serif;
+  border: 1px solid var(--purchase-line);
+  border-radius: 16px;
+  padding: clamp(12px, 3vw, 26px);
+  display: grid;
+  gap: 24px;
+}
+#rota-purchase-preview * { box-sizing: border-box; }
+#rota-purchase-preview [hidden] { display: none !important; }
+#rota-purchase-preview h2, #rota-purchase-preview h3, #rota-purchase-preview p { margin: 0; }
+#rota-purchase-preview h2 { font-size: 25px; letter-spacing: -.03em; }
+#rota-purchase-preview h3 { font-size: 16px; }
+#rota-purchase-preview .purchase-heading { padding-inline-end: 82px; }
+#rota-purchase-preview .purchase-heading p, #rota-purchase-preview .purchase-muted, #rota-purchase-preview small { color: var(--purchase-subtle); }
+#rota-purchase-preview .purchase-muted { margin-block-start: 8px; }
+#rota-purchase-preview nav { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; }
+#rota-purchase-preview button, #rota-purchase-preview input, #rota-purchase-preview select {
+  font: inherit;
+  color: inherit;
+  background: var(--purchase-field);
+  border: 1px solid var(--purchase-line);
+  border-radius: 7px;
+  padding: 8px 10px;
+  max-width: 100%;
+  min-width: 0;
+}
+#rota-purchase-preview button { cursor: pointer; }
+#rota-purchase-preview button[aria-pressed="true"], #rota-purchase-preview .purchase-primary {
+  color: var(--purchase-on-active);
+  background: var(--purchase-active);
+  border-color: var(--purchase-active);
+}
+#rota-purchase-preview nav button { text-align: start; }
+#rota-purchase-preview nav small { display: block; color: inherit; margin-block-start: 3px; }
+#rota-purchase-preview summary { font-weight: 600; cursor: pointer; padding-block: 3px; }
+#rota-purchase-preview .purchase-section { min-width: 0; border-top: 1px solid var(--purchase-line); padding-block-start: 14px; }
+#rota-purchase-preview .purchase-fields { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; margin-block-start: 10px; }
+#rota-purchase-preview .purchase-fields label { display: grid; gap: 4px; align-content: start; }
+#rota-purchase-preview .purchase-fields label:first-child { min-width: 0; }
+#rota-purchase-preview .purchase-toolbar, #rota-purchase-preview .purchase-actions { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+#rota-purchase-preview .purchase-actions { justify-content: start; margin-block-start: 10px; }
+#rota-purchase-preview form { background: var(--purchase-field); border: 1px solid var(--purchase-line); border-radius: 9px; padding: 12px; margin-block: 10px; }
+#rota-purchase-preview .purchase-table-scroll { overflow-x: auto; }
+#rota-purchase-preview table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+#rota-purchase-preview th, #rota-purchase-preview td { padding: 7px 8px; border-bottom: 1px solid var(--purchase-line); text-align: end; white-space: nowrap; }
+#rota-purchase-preview th:first-child, #rota-purchase-preview td:first-child { text-align: start; padding-inline-start: 0; }
+#rota-purchase-preview th { font-weight: 500; color: var(--purchase-subtle); }
+#rota-purchase-preview td:last-child { font-weight: 600; }
+#rota-purchase-preview .purchase-shortage, #rota-purchase-preview [role="alert"] { color: var(--purchase-red); }
+#rota-purchase-preview .purchase-summary {
+  padding: 16px;
+  border: 1px solid var(--purchase-line);
+  border-radius: 12px;
+  background: var(--purchase-field);
+  min-width: 0;
+}
+#rota-purchase-preview .purchase-summary table { margin-block: 10px 0; }
+#rota-purchase-preview .purchase-summary td { font-weight: 600; font-size: 16px; }
+#rota-purchase-preview .purchase-month-toolbar { justify-content: end; margin-block: 4px; }
+#rota-purchase-preview .purchase-adjustments { margin-block-start: 12px; }
+#rota-purchase-preview .purchase-adjustment-fields {
+  display: grid; grid-template-columns: repeat(2,minmax(0,1fr)) auto;
+  align-items: end; gap: 9px; margin-block-start: 8px;
+}
+#rota-purchase-preview .purchase-adjustment-fields label { display: grid; gap: 4px; }
+#rota-purchase-preview .purchase-change-list > div {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 8px; padding-block: 8px; border-bottom: 1px solid var(--purchase-line);
+}
+#rota-purchase-preview .purchase-item {
+  display: grid; grid-template-columns: 118px minmax(0,1fr) auto;
+  align-items: center; gap: 18px; padding: 17px 0;
+  border-bottom: 1px solid var(--purchase-line);
+}
+#rota-purchase-preview .purchase-photo {
+  display: block; width: 118px; aspect-ratio: 1; object-fit: contain;
+  background: #fff; border: 1px solid var(--purchase-line); border-radius: 10px;
+}
+#rota-purchase-preview #purchase-editor-photo { margin-block-start: 12px; }
+#rota-purchase-preview .purchase-no-photo {
+  display: grid; place-items: center; text-align: center; padding: 8px;
+  background: var(--purchase-field); color: var(--purchase-subtle);
+}
+#rota-purchase-preview .purchase-item h4 { font-size: 15px; margin: 0 0 4px; overflow-wrap: anywhere; }
+#rota-purchase-preview .purchase-item p, #rota-purchase-preview .purchase-item small { display: block; margin-block-start: 5px; }
+#rota-purchase-preview .purchase-item-price { white-space: nowrap; font-weight: 650; font-variant-numeric: tabular-nums; }
+#rota-purchase-preview .purchase-item-action { display: grid; justify-items: end; gap: 7px; }
+#rota-purchase-preview .purchase-month-delta { display: block; }
+@media (max-width: 540px) {
+  #rota-purchase-preview .purchase-fields { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  #rota-purchase-preview nav button { padding-inline: 6px; }
+  #rota-purchase-preview .purchase-adjustment-fields { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  #rota-purchase-preview .purchase-adjustment-fields button { justify-self: start; }
+  #rota-purchase-preview .purchase-item { grid-template-columns: 82px minmax(0,1fr); gap: 11px; }
+  #rota-purchase-preview .purchase-photo { width: 82px; }
+  #rota-purchase-preview .purchase-item-action {
+    grid-column: 2; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
+  }
+  #rota-purchase-preview .purchase-summary { padding: 12px; }
+}
+@media (pointer: coarse) {
+  #rota-purchase-preview :is(button, input, select, summary) { min-height: 44px; }
+  #rota-purchase-preview :is(input, select) { font-size: 16px; }
+}
+#rota-purchase-preview .purchase-remove-dialog { color:#eef1ef; background:#181d1c; border:1px solid #414b46; border-radius:18px; padding:24px; width:min(440px,calc(100vw - 48px)); box-sizing:border-box; }
+#rota-purchase-preview .purchase-remove-dialog::backdrop { background:#0009; }
+#rota-purchase-preview .purchase-remove-dialog p { overflow-wrap:anywhere; }
+#rota-purchase-preview .purchase-remove-dialog button:last-child { color:#ffb6b6; }
+</style>
+
+<script>
+(() => {
+  const root = document.getElementById('rota-purchase-preview');
+  const get = id => root.querySelector('#purchase-' + id);
+  const phaseNames = ['İmam Olmadan', 'İmam Oluşun', 'Doktor Oluşun'];
+  const periodMonthNames = ['İmamlık öncesi', 'İmamlığın', 'Doktorluğun'];
+  const startLabels = ['Planın başlangıcı', 'İmamlığa başlangıç', 'Doktorluğa başlangıç'];
+  const methodNames = {cash:'Peşin', card:'Kart taksiti', hepsi:'Hepsitaksit'};
+  const cart = [];
+  const cartPhotos = [];
+  const addedPhotos = new Map();
+  const native = window.webkit?.messageHandlers?.rotaShopping;
+  const pendingImports = new Map();
+  let draftPhoto = null;
+  let editorVersion = 0;
+  get('camera-label').hidden = !/iPhone|iPad|iPod/.test(navigator.userAgent);
+  window.rotaShoppingSaved = ok => {
+    get('save-status').textContent = ok ? 'Cihaza kaydedildi.' : 'Plan kaydedilemedi. Cihazda yer açıp tekrar kaydet.';
+  };
+  const initialItems = cart.map(([name, price], id) => ({id, name, price:Math.round(price * 100), phase:null}));
+  
+  const initialState = {
+    start:2026 * 12 + 10, lengths:[36,60,60], income:[0,0,0],
+    incomeChanges:[[],[],[]], items:initialItems
+  };
+  const numbers = new Intl.NumberFormat('tr-TR', {maximumFractionDigits:2});
+  const currency = new Intl.NumberFormat('tr-TR', {style:'currency', currency:'TRY', minimumFractionDigits:0, maximumFractionDigits:2});
+  const monthName = new Intl.DateTimeFormat('tr-TR', {month:'long',year:'numeric', timeZone:'UTC'});
+  const format = cents => currency.format(cents / 100);
+  const dateLabel = month => monthName.format(new Date(Date.UTC(Math.floor(month / 12),month % 12,1)));
+  const monthInput = month => Math.floor(month / 12) + '-' + String(month % 12 + 1).padStart(2,'0');
+  const sum = values => values.reduce((total, value) => total + value,0);
+  const phaseStart = phase => state.start + sum(state.lengths.slice(0,phase));
+  const planEnd = () => phaseStart(3);
+  const form = get('editor');
+  const field = name => form.elements.namedItem(name);
+  const scheduleForm = get('schedule');
+  const scheduleField = name => scheduleForm.elements.namedItem(name);
+  let scheduleItem = null;
+  let editingPurchase = null;
+  let state = structuredClone(initialState);
+  let phase = 0;
+  const view = get('view');
+  const recipientFilter = get('filter-recipient');
+  const statusFilter = get('filter-status');
+  const methodFilter = get('filter-method');
+  let summaryMonth = initialState.start + 1;
+  let draftPriceChanges = [];
+  let year = 0;
+  let edited = null;
+  let draftNew = false;
+  let exampleDates = true;
+
+  function parseAmount(value) {
+    const raw = value.trim().replace(/\s/g,'');
+    if (!raw) return null;
+    const normalized = raw.includes(',') ? raw.replaceAll('.','').replace(',','.') :
+      (/^\d{1,3}(\.\d{3})+$/.test(raw) ? raw.replaceAll('.','') : raw);
+    if (!/^\d+(\.\d{1,2})?$/.test(normalized)) return NaN;
+    const cents = Math.round(Number(normalized) * 100);
+    return Number.isSafeInteger(cents) && cents <= 100000000000 ? cents : NaN;
+  }
+
+  function readState(snapshot) {
+    const restored = snapshot?.modelContent;
+    if ([1,2].includes(restored?.version) && Array.isArray(restored.plan?.items) && restored.plan.lengths?.length === 3) {
+      state = structuredClone(restored.plan);
+      exampleDates = restored.exampleDates;
+    }
+    state.incomeChanges ??= [[],[],[]];
+    if (!Array.isArray(state.purchases)) {
+      state.purchases = state.items.filter(item => item.phase != null).map((item,index) => ({
+        id:index, itemId:item.id, phase:item.phase, month:item.month, kind:item.kind ?? 'self',
+        recipient:item.recipient ?? '', giftDate:item.giftDate ?? '', method:item.method ?? 'cash',
+        count:item.count ?? 1, total:item.total ?? null, status:'planned'
+      }));
+    }
+  }
+
+  function saveState() {
+    const modelContent = {version:2, plan:state, exampleDates};
+    if (!native) return;
+    get('save-status').textContent = 'Kaydediliyor…';
+    try {
+      native.postMessage({action:'save',snapshot:{modelContent,photos:Object.fromEntries(addedPhotos)}});
+    } catch {
+      window.rotaShoppingSaved(false);
+    }
+  }
+
+  function option(value, label) {
+    return new Option(label, String(value));
+  }
+
+  function textNode(tag, value, className) {
+    const element = document.createElement(tag);
+    element.textContent = value;
+    if (className) element.className = className;
+    return element;
+  }
+
+  function offerText(item) {
+    const [, , count, amount, method, noCard] = cart[item.id] ?? [];
+    if (!count) return item.id < cart.length ? 'Sepette taksit bilgisi görünmedi' : '';
+    return methodNames[method] + ' · ' + count + ' × ' + format(amount * 100) +
+      (noCard ? ' · Karta taksit yok' : '') + (item.id === 24 ? ' · Fiyat sepet toplamından hesaplandı' : '');
+  }
+
+  function isPlanned(item) {
+    return Number.isInteger(item.phase) && Number.isInteger(item.month) && item.month >= 0 && item.month < state.lengths[item.phase];
+  }
+
+  function parseMonth(value) {
+    const [y,m] = value.split('-').map(Number);
+    return Number.isInteger(y) && y >= 1900 && y <= 2600 && m >= 1 && m <= 12 ? y * 12 + m - 1 : null;
+  }
+
+  function setChange(changes, month, amount) {
+    return [...changes.filter(change => change.month !== month), {month, amount}]
+      .sort((left,right) => left.month - right.month);
+  }
+
+  function amountAt(base, changes, month) {
+    return (changes ?? []).findLast(change => change.month <= month)?.amount ?? base;
+  }
+
+  function priceAt(item, month) {
+    return amountAt(item.price, item.priceChanges, month);
+  }
+
+  function incomeAt(phaseIndex, month) {
+    return amountAt(state.income[phaseIndex], state.incomeChanges[phaseIndex], month);
+  }
+
+  function phaseAt(month) {
+    return phaseNames.findIndex((_,index) => month >= phaseStart(index) && month < phaseStart(index + 1));
+  }
+
+  function startsAt(item) {
+    return phaseStart(item.phase) + item.month;
+  }
+
+  function renderChanges(container, changes, onRemove) {
+    container.replaceChildren(...changes.map(change => {
+      const row = document.createElement('div');
+      row.append(textNode('span',dateLabel(change.month) + ' · ' + format(change.amount)));
+      const remove = textNode('button','Kaldır');
+      remove.type = 'button';
+      remove.setAttribute('aria-label', dateLabel(change.month) + ' değişikliğini kaldır');
+      remove.addEventListener('click', () => onRemove(change.month));
+      row.append(remove);
+      return row;
+    }));
+  }
+
+  function purchaseProduct(purchase) {
+    return state.items.find(item => item.id === purchase.itemId);
+  }
+
+  function purchaseTotal(purchase) {
+    return purchase.lockedTotal ?? purchase.total ?? priceAt(purchaseProduct(purchase),startsAt(purchase));
+  }
+
+  function relativeMonth(month) {
+    const index = phaseAt(month);
+    if (index < 0) return 'Plan sonrası ' + (month - planEnd() + 1) + '. ay';
+    return periodMonthNames[index] + ' ' + (month - phaseStart(index) + 1) + (index ? '. ayı' : '. ay');
+  }
+
+  function displayEnd() {
+    if (phase < 2) return phaseStart(phase + 1);
+    return state.purchases.filter(isPlanned).reduce((latest,purchase) =>
+      Math.max(latest, startsAt(purchase) + purchase.count),planEnd());
+  }
+
+  function paymentsAt(month) {
+    const payments = {self:0,gift:0,entries:[]};
+    for (const purchase of state.purchases) {
+      if (!isPlanned(purchase) || !purchaseProduct(purchase)) continue;
+      const start = startsAt(purchase);
+      const offset = month - start;
+      if (offset < 0 || offset >= purchase.count) continue;
+      const total = purchaseTotal(purchase);
+      const amount = Math.floor(total / purchase.count) + (offset < total % purchase.count ? 1 : 0);
+      payments[purchase.kind] += amount;
+      payments.entries.push({purchase,offset,amount});
+    }
+    payments.entries.sort((left,right) => left.purchase.count - right.purchase.count);
+    return payments;
+  }
+
+  function paymentLabel(purchase,offset) {
+    if (purchase.count === 1) return 'Tek ödeme';
+    const number = (offset + 1) + '/' + purchase.count;
+    if (offset === 0) return 'İlk taksit · ' + number;
+    if (offset === purchase.count - 1) return 'Son taksit · ' + number;
+    return 'Taksit · ' + number;
+  }
+
+  function personLabel(purchase) {
+    return purchase.kind === 'gift' ? 'Hediye · ' + (purchase.recipient || 'Alıcı seçilmedi') : 'Kendime';
+  }
+
+  function hasFilters() {
+    return view.value !== 'all' || Boolean(recipientFilter.value || statusFilter.value || methodFilter.value);
+  }
+
+  function visiblePurchase(purchase) {
+    return (view.value === 'all' || view.value === purchase.kind) &&
+      (!recipientFilter.value || (purchase.kind === 'gift' && recipientFilter.value === JSON.stringify(purchase.recipient ?? ''))) &&
+      (!statusFilter.value || statusFilter.value === purchase.status) &&
+      (!methodFilter.value || methodFilter.value === purchase.method);
+  }
+
+  function updateFilterControls() {
+    const active = [view.value !== 'all',recipientFilter.value,statusFilter.value,methodFilter.value].filter(Boolean).length;
+    get('filters-title').textContent = active ? 'Filtrele · ' + active : 'Filtrele';
+    get('filter-clear').hidden = !active;
+    get('view-note').hidden = !active;
+    recipientFilter.disabled = view.value === 'self';
+  }
+
+  function populateRecipients() {
+    const selected = recipientFilter.value;
+    const names = [...new Set(state.purchases.filter(purchase => purchase.kind === 'gift')
+      .map(purchase => purchase.recipient ?? ''))].sort((a,b) => a.localeCompare(b,'tr'));
+    recipientFilter.replaceChildren(option('','Tüm alıcılar'),
+      ...names.map(name => option(JSON.stringify(name),name || 'Alıcı seçilmedi')));
+    if (names.some(name => JSON.stringify(name) === selected)) recipientFilter.value = selected;
+    updateFilterControls();
+  }
+
+  function applyFilters() {
+    updateFilterControls();
+    renderSummary();
+    renderMonths();
+    renderPeriodPurchases();
+  }
+
+  view.addEventListener('change', () => {
+    if (view.value === 'self') recipientFilter.value = '';
+    applyFilters();
+  });
+  recipientFilter.addEventListener('change', () => {
+    if (recipientFilter.value) view.value = 'gift';
+    applyFilters();
+  });
+  statusFilter.addEventListener('change',applyFilters);
+  methodFilter.addEventListener('change',applyFilters);
+  get('filter-clear').addEventListener('click', () => {
+    view.value = 'all';
+    recipientFilter.value = statusFilter.value = methodFilter.value = '';
+    applyFilters();
+    view.focus();
+  });
+
+  function renderSummary() {
+    const index = phaseAt(summaryMonth);
+    const payments = paymentsAt(summaryMonth);
+    const total = payments.self + payments.gift;
+    const income = index < 0 ? null : incomeAt(index,summaryMonth);
+    const remaining = income == null ? null : income - total;
+    const row = document.createElement('tr');
+    const labels = ['Net gelir','Kendime','Hediye','Toplam ödeme','Kalan'];
+    for (const [column,value] of [income,payments.self,payments.gift,total,remaining].entries()) {
+      const cell = textNode('td',value == null ? '—' : format(value),value < 0 ? 'purchase-shortage' : '');
+      cell.dataset.label = labels[column];
+      row.append(cell);
+    }
+    get('summary-values').replaceChildren(row);
+    const visiblePayments = payments.entries.filter(({purchase}) => visiblePurchase(purchase));
+    const newCount = visiblePayments.filter(entry => entry.offset === 0).length;
+    const endingCount = visiblePayments.filter(({purchase,offset}) => purchase.count > 1 && offset === purchase.count - 1).length;
+    get('summary-context').textContent = relativeMonth(summaryMonth) + ' · ' + dateLabel(summaryMonth) +
+      ' · ' + newCount + (view.value === 'gift' ? ' yeni hediye alımı · ' : ' yeni alım · ') + endingCount + ' biten taksit planı';
+    const salaryChange = index < 0 ? null : state.incomeChanges[index].find(change => change.month === summaryMonth);
+    const notes = [];
+    if (salaryChange) {
+      const previous = incomeAt(index,summaryMonth - 1);
+      notes.push('Maaş ' + (previous == null ? '' : format(previous) + ' → ') + format(income));
+    }
+    for (const item of state.items.filter(item => item.priceChanges?.some(change => change.month === summaryMonth))) {
+      notes.push(item.name + ' · ' + format(priceAt(item,summaryMonth - 1)) + ' → ' + format(priceAt(item,summaryMonth)));
+    }
+    get('summary-changes').textContent = notes.join(' / ');
+    const rows = visiblePayments.map(({purchase,offset,amount}) => {
+      const row = document.createElement('div');
+      row.className = 'purchase-payment';
+      const item = purchaseProduct(purchase);
+      const photo = productPhoto(item,false);
+      if (photo) {
+        row.classList.add('has-photo');
+        row.append(photo);
+      }
+      const detail = document.createElement('div');
+      detail.append(textNode('p',item.name),textNode('small',
+        personLabel(purchase) + ' · ' + paymentLabel(purchase,offset) +
+        (purchase.status === 'purchased' ? ' · Alındı' : '') +
+        (purchase.phase !== index ? ' · Önceki dönemden' : '')));
+      row.append(detail,textNode('strong',format(amount)));
+      return row;
+    });
+    get('summary-payments').replaceChildren(...(rows.length ? rows :
+      [textNode('p',hasFilters() ? 'Bu ay filtreye uyan ödeme yok.' : 'Bu ay alışveriş ödemesi yok.','purchase-muted')]));
+  }
+
+  function setSummaryMonth(month) {
+    summaryMonth = month;
+    year = Math.floor((month - phaseStart(phase)) / 12);
+    get('summary-month').value = String(month);
+    renderSummary();
+    renderMonths();
+  }
+
+  function renderSummaryPicker() {
+    const start = phaseStart(phase);
+    const end = displayEnd();
+    summaryMonth = Math.max(start,Math.min(summaryMonth,end - 1));
+    const select = get('summary-month');
+    select.replaceChildren(...Array.from({length:end - start},(_,offset) => {
+      const month = start + offset;
+      return option(month,relativeMonth(month) + ' · ' + dateLabel(month));
+    }));
+    select.value = summaryMonth;
+  }
+
+  function renderMonths() {
+    const end = phaseStart(phase + 1);
+    const last = displayEnd();
+    const duration = last - phaseStart(phase);
+    const years = Math.ceil(duration / 12);
+    year = Math.min(year, years - 1);
+    const yearPicker = get('year');
+    yearPicker.replaceChildren(...Array.from({length:years}, (_,index) =>
+      option(index,(index * 12 + 1) + '–' + Math.min(duration,(index + 1) * 12) + '. aylar')));
+    yearPicker.value = year;
+    const body = get('months');
+    const rows = [];
+    const first = phaseStart(phase) + year * 12;
+    for (let month = first; month < Math.min(first + 12,last); month++) {
+      const row = document.createElement('tr');
+      const payments = paymentsAt(month);
+      const total = payments.self + payments.gift;
+      const income = month < end ? incomeAt(phase,month) : null;
+      const remaining = income == null ? null : income - total;
+      const label = document.createElement('td');
+      const jump = textNode('button',relativeMonth(month));
+      jump.type = 'button';
+      jump.addEventListener('click', () => {
+        setSummaryMonth(month);
+        get('summary-heading').scrollIntoView({block:'start'});
+      });
+      label.append(jump,textNode('small',dateLabel(month),'purchase-month-detail'));
+      const changes = payments.entries.filter(({purchase,offset}) =>
+        visiblePurchase(purchase) && (offset === 0 || offset === purchase.count - 1));
+      for (const {purchase,offset} of changes) {
+        const item = purchaseProduct(purchase);
+        const event = document.createElement('div');
+        event.className = 'purchase-month-event';
+        const photo = productPhoto(item,false);
+        if (photo) event.append(photo);
+        event.append(textNode('small',paymentLabel(purchase,offset) + ' · ' + item.name,'purchase-month-detail'));
+        label.append(event);
+      }
+      row.append(label);
+      for (const [column,value] of [income,payments.self,payments.gift,total,remaining].entries()) {
+        const cell = textNode('td', value == null ? '—' : format(value), value < 0 ? 'purchase-shortage' : '');
+        if (column === 0 && month < end && state.incomeChanges[phase].some(change => change.month === month)) {
+          const previous = incomeAt(phase,month - 1);
+          const difference = previous == null ? null : income - previous;
+          cell.append(textNode('small',difference == null ? 'Yeni maaş' :
+            (difference >= 0 ? '+' : '−') + format(Math.abs(difference)), 'purchase-month-delta'));
+        }
+        row.append(cell);
+      }
+      rows.push(row);
+    }
+    body.replaceChildren(...rows);
+    const invalid = state.purchases.filter(item => item.phase === phase && !isPlanned(item)).length;
+    get('month-note').textContent = invalid
+      ? invalid + ' alım dönem süresini aşıyor. Alımı düzenleyerek ayını değiştirebilirsin.'
+      : 'Kalan = net gelir − o aya düşen alışveriş ödemeleri. İlk ödeme alım ayında başlar.';
+  }
+
+  function productPhoto(item, showPlaceholder = true) {
+    const source = addedPhotos.get(item.id) ?? cartPhotos[item.id];
+    if (!source) return showPlaceholder ? textNode('div','Fotoğraf yok','purchase-photo purchase-no-photo') : null;
+    const image = document.createElement('img');
+    image.className = 'purchase-photo';
+    image.src = source;
+    image.alt = '';
+    image.loading = 'lazy';
+    return image;
+  }
+
+  function removeProduct(item) {
+    const count = state.purchases.filter(purchase => purchase.itemId === item.id).length;
+    const dialog = document.createElement('dialog');
+    dialog.className = 'purchase-remove-dialog';
+    const title = textNode('h3','Ürünü kaldır');
+    title.id = 'purchase-remove-title';
+    dialog.setAttribute('aria-labelledby',title.id);
+    const actions = document.createElement('div');
+    actions.className = 'purchase-toolbar';
+    const cancel = textNode('button','Vazgeç');
+    const remove = textNode('button','Ürünü kaldır');
+    cancel.type = remove.type = 'button';
+    cancel.addEventListener('click', () => dialog.close());
+    remove.addEventListener('click', () => {
+      state.items = state.items.filter(product => product.id !== item.id);
+      state.purchases = state.purchases.filter(purchase => purchase.itemId !== item.id);
+      addedPhotos.delete(item.id);
+      if (edited?.id === item.id) {
+        editorVersion++;
+        form.hidden = true;
+        edited = null;
+      }
+      if (scheduleItem?.id === item.id) {
+        scheduleForm.hidden = true;
+        scheduleItem = editingPurchase = null;
+      }
+      dialog.close();
+      render();
+      saveState();
+    });
+    actions.append(cancel,remove);
+    dialog.append(title,textNode('p',item.name),textNode('p',count ?
+      'Bu ürün ve ona bağlı ' + count + ' alım kaydı kaldırılacak.' : 'Bu ürün katalogdan kaldırılacak.'),actions);
+    dialog.addEventListener('close', () => dialog.remove(), {once:true});
+    root.append(dialog);
+    dialog.showModal();
+    cancel.focus();
+  }
+
+  function productRow(item) {
+    const row = document.createElement('article');
+    row.className = 'purchase-item';
+    const description = document.createElement('div');
+    description.append(textNode('h4',item.name));
+    const purchases = state.purchases.filter(purchase => purchase.itemId === item.id);
+    if (purchases.length) {
+      for (const purchase of purchases) description.append(textNode('small',
+        personLabel(purchase) + ' · ' + periodMonthNames[purchase.phase] + ' ' + (purchase.month + 1) + '. ay · ' +
+        (purchase.status === 'purchased' ? 'Alındı' : 'Planlandı')));
+    } else description.append(textNode('p','Alım planı yok'));
+    const detail = offerText(item);
+    if (detail) description.append(textNode('small',detail));
+    if (item.priceChanges?.length) description.append(textNode('small',
+      'Fiyat değişiklikleri · ' + item.priceChanges.map(change =>
+        dateLabel(change.month) + ' ' + format(change.amount)).join(' · ')));
+    const action = document.createElement('div');
+    action.className = 'purchase-item-action';
+    const plan = textNode('button','Alım ekle');
+    plan.type = 'button';
+    plan.setAttribute('aria-label','Alım ekle · ' + item.name);
+    plan.addEventListener('click', () => openSchedule(item));
+    const edit = textNode('button','Ürünü düzenle');
+    edit.type = 'button';
+    edit.setAttribute('aria-label','Ürünü düzenle · ' + item.name);
+    edit.addEventListener('click', () => openEditor(item));
+    action.append(textNode('span',format(priceAt(item,summaryMonth)),'purchase-item-price'),plan,edit);
+    if (productURL(item.link)) {
+      const open = textNode('button','Ürünü aç');
+      open.type = 'button';
+      open.addEventListener('click', () => native?.postMessage({action:'openProduct',url:item.link}));
+      action.append(open);
+    }
+    const remove = textNode('button','Ürünü kaldır');
+    remove.type = 'button';
+    remove.setAttribute('aria-label','Ürünü kaldır · ' + item.name);
+    remove.addEventListener('click', () => removeProduct(item));
+    action.append(remove);
+    row.append(productPhoto(item),description,action);
+    return row;
+  }
+
+  function renderItems() {
+    get('products-heading').textContent = 'Tüm ürünler · ' + state.items.length;
+    get('products').replaceChildren(...state.items.map(productRow));
+  }
+
+  function renderPeriodPurchases() {
+    get('period-title').textContent = phaseNames[phase] + (view.value === 'gift' ? ' · Hediyeler' : ' · Alımlar');
+    const purchases = state.purchases.filter(item => item.phase === phase && visiblePurchase(item) && purchaseProduct(item))
+      .sort((a,b) => a.month - b.month || a.id - b.id);
+    if (!purchases.length) {
+      get('period-list').replaceChildren(textNode('p',hasFilters() ? 'Bu dönemde filtreye uyan alım yok.' : 'Bu dönem için henüz alım yok. Katalogdan bir ürün seçip alım ekleyebilirsin.','purchase-muted'));
+      return;
+    }
+    const groups = [];
+    for (const [kind,title] of [['self','Kendime'],['gift','Hediye']]) {
+      const list = purchases.filter(item => item.kind === kind);
+      if (!list.length) continue;
+      const section = document.createElement('section');
+      section.className = 'purchase-period-group';
+      const completed = list.filter(item => item.status === 'purchased').length;
+      section.append(textNode('h3',title + ' · ' + completed + ' alındı · ' + (list.length - completed) + ' planlandı'));
+      for (const purchase of list) {
+        const item = purchaseProduct(purchase);
+        const row = document.createElement('article');
+        row.className = 'purchase-period-row';
+        const description = document.createElement('div');
+        description.append(textNode('p',item.name));
+        description.append(textNode('small',(purchase.status === 'purchased' ? 'Alındı' : 'Planlandı') + ' · ' +
+          personLabel(purchase) + (purchase.giftDate ? ' · Hediye günü ' + purchase.giftDate.split('-').reverse().join('.') : '')));
+        const valid = isPlanned(purchase);
+        if (valid) {
+          const first = startsAt(purchase);
+          const last = first + purchase.count - 1;
+          description.append(textNode('small',
+            (purchase.count === 1 ? 'Tek ödeme · ' : 'İlk ödeme · ') + relativeMonth(first) + ' (' + dateLabel(first) + ')' +
+            (purchase.count > 1 ? ' · Son ödeme ' + relativeMonth(last) + ' (' + dateLabel(last) + ')' : '') +
+            ' · ' + format(purchaseTotal(purchase))));
+        } else description.append(textNode('small',(purchase.month + 1) + '. ay dönem süresini aşıyor.'));
+        const actions = document.createElement('div');
+        actions.className = 'purchase-period-actions';
+        if (valid) {
+          const jump = textNode('button','Ayı gör');
+          jump.type = 'button';
+          jump.addEventListener('click', () => {
+            setSummaryMonth(startsAt(purchase));
+            get('summary-heading').scrollIntoView({block:'start'});
+          });
+          actions.append(jump);
+        }
+        const edit = textNode('button','Alımı düzenle');
+        edit.type = 'button';
+        edit.setAttribute('aria-label','Alımı düzenle · ' + item.name + ' · ' + personLabel(purchase));
+        edit.addEventListener('click', () => openSchedule(item,purchase));
+        actions.append(edit);
+        row.append(productPhoto(item),description,actions);
+        section.append(row);
+      }
+      groups.push(section);
+    }
+    get('period-list').replaceChildren(...groups);
+  }
+
+  function renderSalaryChanges() {
+    renderChanges(get('salary-list'),state.incomeChanges[phase],month => {
+      state.incomeChanges[phase] = state.incomeChanges[phase].filter(change => change.month !== month);
+      renderSalaryChanges();
+      renderMonths();
+      renderSummary();
+      saveState();
+    });
+  }
+
+  get('salary-add').addEventListener('click', () => {
+    const month = parseMonth(get('salary-month').value);
+    const amount = parseAmount(get('salary-amount').value);
+    if (month == null || phaseAt(month) !== phase || amount == null || Number.isNaN(amount)) {
+      get('settings-error').textContent = 'Bu dönemden bir ay ve geçerli bir maaş gir.';
+      return;
+    }
+    state.incomeChanges[phase] = setChange(state.incomeChanges[phase],month,amount);
+    get('settings-error').textContent = '';
+    get('salary-amount').value = '';
+    setSummaryMonth(month);
+    renderSalaryChanges();
+    renderItems();
+    saveState();
+  });
+
+  get('summary-month').addEventListener('change', event => {
+    setSummaryMonth(Number(event.target.value));
+    renderItems();
+  });
+
+  const phaseButtons = phaseNames.map((name,index) => {
+    const button = textNode('button',name);
+    button.type = 'button';
+    button.append(document.createElement('small'));
+    button.addEventListener('click', () => {
+      phase = index;
+      year = 0;
+      summaryMonth = state.purchases.filter(item => item.phase === phase && isPlanned(item))
+        .map(startsAt).sort((left,right) => left - right)[0] ?? phaseStart(phase);
+      year = Math.floor((summaryMonth - phaseStart(phase)) / 12);
+      form.hidden = true;
+      scheduleForm.hidden = true;
+      render();
+    });
+    return button;
+  });
+  get('phases').append(...phaseButtons);
+
+  function render() {
+    phaseButtons.forEach((button,index) => {
+      button.setAttribute('aria-pressed',String(index === phase));
+      button.lastElementChild.textContent = dateLabel(phaseStart(index)) + ' · ' + state.lengths[index] + ' ay';
+    });
+    get('start-label').textContent = startLabels[phase];
+    get('start').value = monthInput(phaseStart(phase));
+    get('duration').value = state.lengths[phase];
+    get('income').value = state.income[phase] == null ? '' : numbers.format(state.income[phase] / 100);
+    get('settings-note').textContent = exampleDates
+      ? 'Başlangıçlar ve süreler örnek. Dönemler sırayla ilerler.'
+      : 'Başlangıç veya süre değişirse sonraki dönemlerin tarihleri de kayar.';
+    get('settings-error').textContent = '';
+    get('salary-month').value = monthInput(phaseStart(phase));
+    get('salary-amount').value = '';
+    renderSummaryPicker();
+    populateRecipients();
+    renderSalaryChanges();
+    renderSummary();
+    renderMonths();
+    renderPeriodPurchases();
+    renderItems();
+  }
+
+  get('start').addEventListener('change', event => {
+    const [yearValue, monthValue] = event.target.value.split('-').map(Number);
+    const selected = yearValue * 12 + monthValue - 1;
+    const previousDuration = phase > 0 ? selected - phaseStart(phase - 1) : 1;
+    if (!Number.isFinite(selected) || yearValue < 1900 || yearValue > 2200 || previousDuration < 1 || previousDuration > 1200) {
+      get('settings-error').textContent = 'Önceki dönemden sonra geçerli bir başlangıç ayı seç.';
+      event.target.value = monthInput(phaseStart(phase));
+      return;
+    }
+    const monthOffset = summaryMonth - phaseStart(phase);
+    if (phase === 0) state.start = selected;
+    else state.lengths[phase - 1] = previousDuration;
+    exampleDates = false;
+    summaryMonth = phaseStart(phase) + monthOffset;
+    form.hidden = true;
+    scheduleForm.hidden = true;
+    render();
+    saveState();
+  });
+
+  get('duration').addEventListener('change', event => {
+    const duration = Number(event.target.value);
+    if (!Number.isInteger(duration) || duration < 1 || duration > 1200) {
+      get('settings-error').textContent = '1 ile 1.200 arasında tam ay gir.';
+      event.target.value = state.lengths[phase];
+      return;
+    }
+    state.lengths[phase] = duration;
+    exampleDates = false;
+    form.hidden = true;
+    scheduleForm.hidden = true;
+    render();
+    saveState();
+  });
+
+  get('income').addEventListener('change', event => {
+    const income = parseAmount(event.target.value);
+    if (Number.isNaN(income)) {
+      get('settings-error').textContent = 'Geçerli bir aylık gelir gir.';
+      return;
+    }
+    state.income[phase] = income;
+    event.target.value = income == null ? '' : numbers.format(income / 100);
+    get('settings-error').textContent = '';
+    renderMonths();
+    renderSummary();
+    saveState();
+  });
+
+  get('year').addEventListener('change', event => {
+    year = Number(event.target.value);
+    renderMonths();
+  });
+
+  function fillScheduleMonths(preferred) {
+    const target = Number(scheduleField('phase').value);
+    const picker = scheduleField('month');
+    picker.replaceChildren(...Array.from({length:state.lengths[target]},(_,index) => {
+      const month = phaseStart(target) + index;
+      return option(index,relativeMonth(month) + ' · ' + dateLabel(month));
+    }));
+    if (preferred >= state.lengths[target]) {
+      picker.prepend(option('','Önceki ay dönem dışında · Yeni ay seç'));
+      picker.value = '';
+    } else picker.value = preferred ?? 0;
+  }
+
+  function updateScheduleFields() {
+    const gift = scheduleField('kind').value === 'gift';
+    const installment = scheduleField('method').value !== 'cash';
+    scheduleForm.querySelectorAll('[data-gift]').forEach(label => label.hidden = !gift);
+    scheduleForm.querySelectorAll('[data-installment]').forEach(label => label.hidden = !installment);
+    scheduleField('count').disabled = !installment;
+    scheduleField('count').required = installment;
+    scheduleField('recipient').disabled = !gift;
+    scheduleField('giftDate').disabled = !gift;
+    if (scheduleField('month').value === '') {
+      get('schedule-range').textContent = '';
+      return;
+    }
+    const first = phaseStart(Number(scheduleField('phase').value)) + Number(scheduleField('month').value);
+    const count = installment ? Math.max(1,Number(scheduleField('count').value)) : 1;
+    const last = first + count - 1;
+    get('schedule-range').textContent = (count === 1 ? 'Tek ödeme · ' : 'İlk ödeme · ') + relativeMonth(first) +
+      ' (' + dateLabel(first) + ')' + (count > 1 ? ' · Son ödeme · ' + relativeMonth(last) + ' (' + dateLabel(last) + ')' : '');
+  }
+
+  function openSchedule(item,purchase = null) {
+    form.hidden = true;
+    scheduleItem = item;
+    editingPurchase = purchase;
+    get('schedule-title').textContent = item.name;
+    get('schedule-error').textContent = '';
+    const target = purchase?.phase ?? phase;
+    scheduleField('phase').replaceChildren(...phaseNames.map((name,index) => option(index,name)));
+    scheduleField('phase').value = target;
+    const defaults = purchase ?? (item.phase == null ? item : {});
+    fillScheduleMonths(purchase?.month ?? Math.min(summaryMonth - phaseStart(phase),state.lengths[target] - 1));
+    scheduleField('status').value = purchase?.status ?? 'planned';
+    scheduleField('kind').value = defaults.kind ?? 'self';
+    scheduleField('recipient').value = defaults.recipient ?? '';
+    scheduleField('giftDate').value = defaults.giftDate ?? '';
+    scheduleField('method').value = defaults.method ?? cart[item.id]?.[4] ?? 'cash';
+    scheduleField('count').value = defaults.count > 1 ? defaults.count : cart[item.id]?.[2] ?? 2;
+    const total = defaults.total ?? purchase?.lockedTotal;
+    scheduleField('total').value = total == null ? '' : numbers.format(total / 100);
+    get('schedule-remove').hidden = !purchase;
+    scheduleForm.hidden = false;
+    updateScheduleFields();
+    scheduleForm.scrollIntoView({block:'nearest'});
+    scheduleField('month').focus({preventScroll:true});
+  }
+
+  scheduleField('phase').addEventListener('change', () => {
+    fillScheduleMonths(0);
+    updateScheduleFields();
+  });
+  for (const name of ['month','kind','method']) scheduleField(name).addEventListener('change',updateScheduleFields);
+  scheduleField('count').addEventListener('input',updateScheduleFields);
+  get('schedule-cancel').addEventListener('click', () => { scheduleForm.hidden = true; });
+  get('schedule-remove').addEventListener('click', () => {
+    if (!editingPurchase) return;
+    state.purchases = state.purchases.filter(item => item.id !== editingPurchase.id);
+    scheduleForm.hidden = true;
+    render();
+    saveState();
+  });
+
+  function savePurchase() {
+    if (!scheduleForm.reportValidity()) return;
+    const total = parseAmount(scheduleField('total').value);
+    if (Number.isNaN(total)) {
+      get('schedule-error').textContent = 'Geçerli bir TL tutarı gir.';
+      return;
+    }
+    const kind = scheduleField('kind').value;
+    const method = scheduleField('method').value;
+    const status = scheduleField('status').value;
+    const data = {
+      itemId:scheduleItem.id, phase:Number(scheduleField('phase').value),
+      month:Number(scheduleField('month').value), kind, method, status, total,
+      recipient:kind === 'gift' ? scheduleField('recipient').value.trim() : '',
+      giftDate:kind === 'gift' ? scheduleField('giftDate').value : '',
+      count:method === 'cash' ? 1 : Number(scheduleField('count').value)
+    };
+    data.lockedTotal = status === 'purchased' ? total ?? editingPurchase?.lockedTotal ??
+      priceAt(scheduleItem,startsAt(data)) : null;
+    if (editingPurchase) Object.assign(editingPurchase,data);
+    else state.purchases.push({id:state.purchases.reduce((id,item) => Math.max(id,item.id + 1),0),...data});
+    phase = data.phase;
+    year = Math.floor(data.month / 12);
+    summaryMonth = startsAt(data);
+    scheduleForm.hidden = true;
+    render();
+    saveState();
+  }
+  get('schedule-save').addEventListener('click',savePurchase);
+  scheduleForm.addEventListener('submit', event => { event.preventDefault(); savePurchase(); });
+
+  function openEditor(item) {
+    scheduleForm.hidden = true;
+    draftNew = item == null;
+    edited = item;
+    field('name').value = item?.name ?? '';
+    editorVersion++;
+    get('save').disabled = false;
+    draftPhoto = null;
+    field('photo').value = '';
+    field('camera').value = '';
+    field('link').value = item?.link ?? '';
+    get('import-link').disabled = false;
+    get('link-result').textContent = '';
+    const image = get('editor-photo');
+    const photo = addedPhotos.get(item?.id) ?? cartPhotos[item?.id];
+    image.hidden = !photo;
+    if (photo) image.src = photo;
+    else image.removeAttribute('src');
+    draftPriceChanges = (item?.priceChanges ?? []).slice();
+    get('price-month').value = monthInput(summaryMonth);
+    get('price-amount').value = '';
+    get('price-panel').open = draftPriceChanges.length > 0;
+    renderPriceChanges();
+    field('price').value = item ? numbers.format(item.price / 100) : '';
+    get('offer').textContent = item ? offerText(item) : '';
+    get('editor-error').textContent = '';
+    form.hidden = false;
+    form.scrollIntoView({block:'nearest'});
+    field('name').focus({preventScroll:true});
+  }
+
+  get('add').addEventListener('click', () => openEditor(null));
+  get('cancel').addEventListener('click', () => { form.hidden = true; });
+  function renderPriceChanges() {
+    renderChanges(get('price-list'),draftPriceChanges,month => {
+      draftPriceChanges = draftPriceChanges.filter(change => change.month !== month);
+      renderPriceChanges();
+    });
+  }
+
+  function addPriceChange() {
+    const month = parseMonth(get('price-month').value);
+    const amount = parseAmount(get('price-amount').value);
+    if (month == null || amount == null || Number.isNaN(amount)) {
+      get('editor-error').textContent = 'Fiyat değişikliği için ayı ve yeni fiyatı gir.';
+      return false;
+    }
+    draftPriceChanges = setChange(draftPriceChanges,month,amount);
+    get('price-amount').value = '';
+    get('editor-error').textContent = '';
+    renderPriceChanges();
+    return true;
+  }
+  get('price-add').addEventListener('click',addPriceChange);
+
+  async function photoFromFile(file) {
+    if (file.size > 30_000_000) throw Error('Büyük fotoğraf');
+    const url = URL.createObjectURL(file);
+    try {
+      const image = new Image();
+      image.src = url;
+      await image.decode();
+      const canvas = document.createElement('canvas');
+      const scale = Math.min(1,320 / Math.max(image.naturalWidth,image.naturalHeight));
+      canvas.width = Math.max(1,Math.round(image.naturalWidth * scale));
+      canvas.height = Math.max(1,Math.round(image.naturalHeight * scale));
+      const context = canvas.getContext('2d');
+      context.fillStyle = '#fff';
+      context.fillRect(0,0,canvas.width,canvas.height);
+      context.drawImage(image,0,0,canvas.width,canvas.height);
+      return canvas.toDataURL('image/jpeg',.86);
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  }
+
+  function showDraftPhoto(source) {
+    draftPhoto = source;
+    get('editor-photo').src = source;
+    get('editor-photo').hidden = false;
+  }
+
+  for (const name of ['photo','camera']) field(name).addEventListener('change', async event => {
+    const file = event.target.files[0];
+    if (!file) return;
+    const version = editorVersion;
+    const other = name === 'photo' ? 'camera' : 'photo';
+    field(other).value = '';
+    get('save').disabled = true;
+    try {
+      const source = await photoFromFile(file);
+      if (!form.hidden && editorVersion === version && field(name).files[0] === file) {
+        showDraftPhoto(source);
+        get('editor-error').textContent = '';
+      }
+    } catch {
+      if (editorVersion === version) get('editor-error').textContent = 'Fotoğraf açılamadı. Başka bir fotoğraf seç.';
+    } finally {
+      if (editorVersion === version && field(name).files[0] === file) get('save').disabled = false;
+    }
+  });
+
+  function publicStoreHost(host) {
+    const labels = host.toLowerCase().split('.');
+    return labels.length >= 2 && labels.every(label => /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(label)) &&
+      /[a-z]/.test(labels.at(-1)) && !['localhost','local','internal','lan','home','test','invalid'].includes(labels.at(-1));
+  }
+
+  function productURL(raw) {
+    if (!raw) return null;
+    try {
+      const url = new URL(raw.trim());
+      if (url.protocol === 'https:' && !url.username && !url.password && !url.port &&
+          publicStoreHost(url.hostname)) return url;
+    } catch {}
+    return null;
+  }
+
+  function nameFromLink(url) {
+    try {
+      const slug = decodeURIComponent(url.pathname).split('/').filter(Boolean).at(-1);
+      if (!slug || !/-p[m]?-[a-z0-9]+$/i.test(slug)) return '';
+      const label = slug.replace(/-p[m]?-[a-z0-9]+$/i,'').replaceAll('-',' ').trim();
+      return label.charAt(0).toLocaleUpperCase('tr-TR') + label.slice(1);
+    } catch { return ''; }
+  }
+
+  window.rotaShoppingResult = result => {
+    const pending = pendingImports.get(result.id);
+    if (!pending) return;
+    pendingImports.delete(result.id);
+    clearTimeout(pending.timer);
+    pending.resolve(result);
+  };
+
+  function requestImport(action,url) {
+    if (!native) return Promise.resolve({error:'Ürün bağlantısını Rota içinde aç.'});
+    const id = crypto.randomUUID();
+    return new Promise(resolve => {
+      const timer = setTimeout(() => {
+        pendingImports.delete(id);
+        resolve({error:'Mağaza zamanında yanıt vermedi.'});
+      },25000);
+      pendingImports.set(id,{resolve,timer});
+      native.postMessage({action,id,url});
+    });
+  }
+
+  function readProduct(html) {
+    const document = new DOMParser().parseFromString(html,'text/html');
+    const meta = key => document.querySelector('meta[property="'+key+'"],meta[name="'+key+'"]')?.content;
+    function findProduct(value) {
+      if (Array.isArray(value)) return value.map(findProduct).find(Boolean);
+      if (!value || typeof value !== 'object') return null;
+      if ([value['@type']].flat().includes('Product')) return value;
+      return findProduct(value['@graph']) || findProduct(value.hasVariant) || findProduct(value.mainEntity);
+    }
+    let product;
+    for (const script of document.querySelectorAll('script[type="application/ld+json"]')) {
+      try { product = findProduct(JSON.parse(script.textContent)); } catch {}
+      if (product) break;
+    }
+    const offer = [product?.offers].flat().find(Boolean);
+    const nestedOffer = [offer?.offers].flat().find(Boolean);
+    const price = offer?.price ?? nestedOffer?.price ?? offer?.lowPrice ?? meta('product:price:amount') ?? meta('og:price:amount');
+    const currency = offer?.priceCurrency ?? nestedOffer?.priceCurrency ?? meta('product:price:currency') ?? meta('og:price:currency');
+    const numericPrice = currency === 'TRY' ? Number(price) : NaN;
+    const image = [product?.image].flat().find(Boolean);
+    return {
+      name:product?.name ?? meta('og:title') ?? meta('twitter:title') ?? document.title,
+      price:Number.isFinite(numericPrice) && numericPrice > 0 ? numericPrice : null,
+      photo:(typeof image === 'string' ? image : image?.url) ?? meta('og:image') ?? meta('twitter:image')
+    };
+  }
+
+  get('import-link').addEventListener('click', async () => {
+    const url = productURL(field('link').value);
+    const status = get('link-result');
+    if (!url) {
+      status.textContent = 'https:// ile başlayan geçerli bir mağaza ürün bağlantısı yapıştır.';
+      return;
+    }
+    const version = editorVersion;
+    get('import-link').disabled = true;
+    status.textContent = 'Ürün bilgileri okunuyor…';
+    try {
+      const result = await requestImport('product',url.href);
+      if (form.hidden || editorVersion !== version) return;
+      const product = result.html ? readProduct(result.html) : {};
+      const canonical = productURL(result.url) ?? url;
+      const name = typeof product.name === 'string' ? product.name.trim() : nameFromLink(canonical);
+      if (name && (!field('name').value || !result.error)) field('name').value = name.slice(0,160);
+      if (product.price != null) field('price').value = numbers.format(product.price);
+      if (product.photo) {
+        const photoURL = new URL(product.photo,canonical.href);
+        const image = await requestImport('photo',photoURL.href);
+        if (form.hidden || editorVersion !== version) return;
+        if (image.photo) showDraftPhoto(image.photo);
+      }
+      const missing = [];
+      if (!product.name) missing.push('ürün bilgileri');
+      if (product.price == null) missing.push('fiyat');
+      if (!draftPhoto) missing.push('fotoğraf');
+      status.textContent = missing.length ? 'Mağazadan alınamadı: ' + missing.join(', ') + '. Elle tamamlayabilirsin.' :
+        'Ürün adı, fiyatı ve fotoğrafı alındı.';
+    } catch {
+      if (editorVersion === version) status.textContent = 'Bağlantı okunamadı. Ürün bilgilerini elle ekleyebilirsin.';
+    } finally {
+      if (editorVersion === version) get('import-link').disabled = false;
+    }
+  });
+
+  function saveProduct(andPlan = false) {
+    if (!form.reportValidity()) return;
+    if (get('price-amount').value.trim() && !addPriceChange()) return;
+    const price = parseAmount(field('price').value);
+    if (price == null || Number.isNaN(price) || !field('name').value.trim()) {
+      get('editor-error').textContent = 'Ürün adını ve geçerli bir TL tutarını gir.';
+      return;
+    }
+    if (get('save').disabled || get('import-link').disabled) return;
+    const rawLink = field('link').value.trim();
+    const link = productURL(rawLink);
+    if (rawLink && !link) {
+      get('editor-error').textContent = 'Ürün bağlantısını kontrol et. https:// ile başlayan bir mağaza bağlantısı kullan.';
+      return;
+    }
+    const item = draftNew ? {id:Math.max(cart.length - 1, ...state.items.map(item => item.id)) + 1} : edited;
+    if (draftPhoto) addedPhotos.set(item.id,draftPhoto);
+    Object.assign(item,{
+      name:field('name').value.trim(), price,
+      priceChanges:draftPriceChanges, link:link?.href ?? ''
+    });
+    if (draftNew) state.items.push(item);
+    form.hidden = true;
+    render();
+    saveState();
+    if (andPlan) openSchedule(item);
+  }
+  get('save').addEventListener('click', () => saveProduct());
+  get('save-and-plan').addEventListener('click', () => saveProduct(true));
+  form.addEventListener('keydown', event => {
+    if (event.key === 'Enter' && event.target.tagName === 'INPUT') {
+      event.preventDefault();
+      saveProduct();
+    }
+  });
+
+  const saved = window.rotaShoppingInitial;
+  readState(saved);
+  for (const [id,photo] of Object.entries(saved?.photos ?? {})) {
+    if (typeof photo === 'string' && /^data:image\/(jpeg|png|webp);base64,/.test(photo)) addedPhotos.set(Number(id),photo);
+  }
+  summaryMonth = state.purchases.filter(isPlanned).map(startsAt).sort((left,right) => left - right)[0] ?? phaseStart(phase);
+  phase = Math.max(0,phaseAt(summaryMonth));
+  year = Math.floor((summaryMonth - phaseStart(phase)) / 12);
+  render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,338 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXCopyFilesBuildPhase section */
+B00000000000000000000021 = {isa = PBXCopyFilesBuildPhase; buildActionMask = 2147483647; dstPath = ""; dstSubfolderSpec = 13; files = (B0000000000000000000001D, ); name = "Embed App Extensions"; runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXCopyFilesBuildPhase section */
+/* Begin PBXContainerItemProxy section */
+B00000000000000000000022 = {isa = PBXContainerItemProxy; containerPortal = A00000000000000000000001; proxyType = 1; remoteGlobalIDString = B00000000000000000000028; remoteInfo = PofiWidget; };
+/* End PBXContainerItemProxy section */
+/* Begin PBXTargetDependency section */
+B00000000000000000000023 = {isa = PBXTargetDependency; target = B00000000000000000000028; targetProxy = B00000000000000000000022; };
+/* End PBXTargetDependency section */
+
+/* Begin PBXBuildFile section */
+F30000000000000000000011 = {isa = PBXBuildFile; fileRef = F30000000000000000000001; };
+		A00000000000000000000015 /* Sources/RotaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000006 /* Sources/RotaApp.swift */; };
+		A00000000000000000000016 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000014 /* Assets.xcassets */; };
+		A00000000000000000000017 = {isa = PBXBuildFile; fileRef = A00000000000000000000018; };
+		A00000000000000000000019 = {isa = PBXBuildFile; fileRef = A00000000000000000000020; };
+B00000000000000000000015 = {isa = PBXBuildFile; fileRef = B00000000000000000000001; };
+B00000000000000000000016 = {isa = PBXBuildFile; fileRef = B00000000000000000000002; };
+B00000000000000000000017 = {isa = PBXBuildFile; fileRef = B00000000000000000000003; };
+B00000000000000000000018 = {isa = PBXBuildFile; fileRef = B00000000000000000000004; };
+B00000000000000000000019 = {isa = PBXBuildFile; fileRef = B00000000000000000000005; };
+B0000000000000000000001A = {isa = PBXBuildFile; fileRef = B00000000000000000000006; };
+B0000000000000000000001C = {isa = PBXBuildFile; fileRef = B00000000000000000000002; };
+B0000000000000000000001D = {isa = PBXBuildFile; fileRef = B00000000000000000000007; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+B00000000000000000000046 = {isa = PBXBuildFile; fileRef = B0000000000000000000003C; };
+B00000000000000000000050 = {isa = PBXBuildFile; fileRef = B0000000000000000000003C; };
+B00000000000000000000047 = {isa = PBXBuildFile; fileRef = B0000000000000000000003D; };
+B00000000000000000000051 = {isa = PBXBuildFile; fileRef = B0000000000000000000003D; };
+B0000000000000000000005B = {isa = PBXBuildFile; fileRef = B0000000000000000000005A; };
+B0000000000000000000006E = {isa = PBXBuildFile; fileRef = B00000000000000000000064; };
+B00000000000000000000078 = {isa = PBXBuildFile; fileRef = B00000000000000000000064; };
+B0000000000000000000006F = {isa = PBXBuildFile; fileRef = B00000000000000000000065; };
+B00000000000000000000079 = {isa = PBXBuildFile; fileRef = B00000000000000000000065; };
+B00000000000000000000070 = {isa = PBXBuildFile; fileRef = B00000000000000000000066; };
+B00000000000000000000071 = {isa = PBXBuildFile; fileRef = B00000000000000000000067; };
+B00000000000000000000083 = {isa = PBXBuildFile; fileRef = B00000000000000000000082; };
+B00000000000000000000096 = {isa = PBXBuildFile; fileRef = B0000000000000000000008C; };
+B00000000000000000000098 = {isa = PBXBuildFile; fileRef = B0000000000000000000008C; };
+B00000000000000000000097 = {isa = PBXBuildFile; fileRef = B0000000000000000000008D; };
+F10000000000000000000011 = {isa = PBXBuildFile; fileRef = F10000000000000000000001; };
+F10000000000000000000012 = {isa = PBXBuildFile; fileRef = F10000000000000000000002; };
+F10000000000000000000013 = {isa = PBXBuildFile; fileRef = F10000000000000000000003; };
+F20000000000000000000011 = {isa = PBXBuildFile; fileRef = F20000000000000000000001; };
+F20000000000000000000012 = {isa = PBXBuildFile; fileRef = F20000000000000000000002; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+F30000000000000000000001 = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "../shared/rota-weekly-table.js"; sourceTree = SOURCE_ROOT; };
+		A00000000000000000000005 /* Rota.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Rota.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A00000000000000000000006 /* Sources/RotaApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/RotaApp.swift; sourceTree = "<group>"; };
+		A00000000000000000000014 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A00000000000000000000018 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/RotaTextRecognition.swift; sourceTree = "<group>"; };
+		A00000000000000000000020 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/RotaPasswordEntry.swift; sourceTree = "<group>"; };
+B00000000000000000000001 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/RotaPofi.swift"; sourceTree = "<group>"; };
+B00000000000000000000002 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/PofiAttributes.swift"; sourceTree = "<group>"; };
+B00000000000000000000003 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PofiWidget/PofiWidget.swift"; sourceTree = "<group>"; };
+B00000000000000000000004 = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "Resources/rota-pofi-settings.js"; sourceTree = "<group>"; };
+B00000000000000000000005 = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "Resources/pofi-native.js"; sourceTree = "<group>"; };
+B00000000000000000000006 = {isa = PBXFileReference; lastKnownFileType = text.json; path = "Resources/pofi-room.json"; sourceTree = "<group>"; };
+B00000000000000000000007 = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = PofiWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+B0000000000000000000003C = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/PofiReducer.swift; sourceTree = "<group>"; };
+B0000000000000000000003D = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/PofiIntents.swift; sourceTree = "<group>"; };
+B0000000000000000000005A = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = PofiWidget/Assets.xcassets; sourceTree = "<group>"; };
+B00000000000000000000064 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/PofiReminderPlan.swift"; sourceTree = "<group>"; };
+B00000000000000000000065 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/PofiReminders.swift"; sourceTree = "<group>"; };
+B00000000000000000000066 = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "Resources/pofi-silent.wav"; sourceTree = "<group>"; };
+B00000000000000000000067 = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Resources/pofi-notice.png"; sourceTree = "<group>"; };
+B00000000000000000000082 = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Resources/pofi-alert.wav; sourceTree = "<group>"; };
+B0000000000000000000008C = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/PofiAutomatic.swift"; sourceTree = "<group>"; };
+B0000000000000000000008D = {isa = PBXFileReference; lastKnownFileType = folder; path = "Resources/pofi-web"; sourceTree = "<group>"; };
+F10000000000000000000001 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "../shopping/RotaShopping.swift"; sourceTree = SOURCE_ROOT; };
+F10000000000000000000002 = {isa = PBXFileReference; lastKnownFileType = text.html; path = "../shopping/rota-shopping.html"; sourceTree = SOURCE_ROOT; };
+F10000000000000000000003 = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "../shopping/rota-shopping-settings.js"; sourceTree = SOURCE_ROOT; };
+F20000000000000000000001 = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "../shared/rota-russian.js"; sourceTree = SOURCE_ROOT; };
+F20000000000000000000002 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "../shared/RotaRussianSpeech.swift"; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A00000000000000000000008 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+B0000000000000000000001F = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A00000000000000000000003 = {
+			isa = PBXGroup;
+			children = (
+F10000000000000000000001,
+F10000000000000000000002,
+F10000000000000000000003,
+F20000000000000000000001,
+F20000000000000000000002,
+B0000000000000000000008D,
+B0000000000000000000008C,
+B00000000000000000000082,
+B00000000000000000000067,
+B00000000000000000000066,
+B00000000000000000000065,
+B00000000000000000000064,
+B0000000000000000000005A,
+B0000000000000000000003D,
+B0000000000000000000003C,
+B00000000000000000000006,
+B00000000000000000000005,
+B00000000000000000000004,
+B00000000000000000000003,
+B00000000000000000000002,
+B00000000000000000000001,
+				A00000000000000000000006 /* Sources/RotaApp.swift */,
+				A00000000000000000000018,
+				A00000000000000000000020,
+				A00000000000000000000014 /* Assets.xcassets */,
+				A00000000000000000000004 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A00000000000000000000004 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000005 /* Rota.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A00000000000000000000002 /* Rota */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A0000000000000000000000B /* Build configuration list for PBXNativeTarget "Rota" */;
+			buildPhases = (
+				A00000000000000000000007 /* Sources */,
+				A00000000000000000000008 /* Frameworks */,
+				A00000000000000000000009 /* Resources */,
+B00000000000000000000021,
+			);
+			buildRules = (
+			);
+			dependencies = (
+B00000000000000000000023,
+			);
+			name = Rota;
+			productName = Rota;
+			productReference = A00000000000000000000005 /* Rota.app */;
+			productType = "com.apple.product-type.application";
+		};
+B00000000000000000000028 = {isa = PBXNativeTarget; buildConfigurationList = B00000000000000000000029; buildPhases = (B0000000000000000000001E, B0000000000000000000001F, B00000000000000000000020, ); buildRules = (); dependencies = (); name = PofiWidget; productName = PofiWidget; productReference = B00000000000000000000007; productType = "com.apple.product-type.app-extension"; };
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A00000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1600;
+			};
+			buildConfigurationList = A0000000000000000000000A /* Build configuration list for PBXProject "Rota" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = tr;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				tr,
+				en,
+				Base,
+			);
+			mainGroup = A00000000000000000000003;
+			productRefGroup = A00000000000000000000004 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+B00000000000000000000028,
+				A00000000000000000000002 /* Rota */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A00000000000000000000009 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+F30000000000000000000011,
+F10000000000000000000012,
+F10000000000000000000013,
+F20000000000000000000011,
+B00000000000000000000097,
+B00000000000000000000083,
+B00000000000000000000071,
+B00000000000000000000070,
+B00000000000000000000018,B00000000000000000000019,B0000000000000000000001A,
+				A00000000000000000000016 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+B00000000000000000000020 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (B0000000000000000000005B, ); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A00000000000000000000007 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+F10000000000000000000011,
+F20000000000000000000012,
+B00000000000000000000096,
+B0000000000000000000006F,
+B0000000000000000000006E,
+B00000000000000000000047,
+B00000000000000000000046,
+B00000000000000000000015,B00000000000000000000016,
+				A00000000000000000000015 /* Sources/RotaApp.swift in Sources */,
+				A00000000000000000000017,
+				A00000000000000000000019,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+B0000000000000000000001E = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B00000000000000000000098, B00000000000000000000079, B00000000000000000000078, B00000000000000000000051, B00000000000000000000050, B00000000000000000000017, B0000000000000000000001C, ); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A0000000000000000000000C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		A0000000000000000000000D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		A0000000000000000000000E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 8;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+ INFOPLIST_FILE = AppInfo.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Rota;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Kayıtlarına fotoğraf eklemek için kamera kullanılır.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Kayıtlarına eklemek istediğin fotoğrafları seçebilirsin.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = app.rota.personal;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		A0000000000000000000000F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 8;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+ INFOPLIST_FILE = AppInfo.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Rota;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Kayıtlarına fotoğraf eklemek için kamera kullanılır.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Kayıtlarına eklemek istediğin fotoğrafları seçebilirsin.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = app.rota.personal;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+B0000000000000000000002A = {isa = XCBuildConfiguration; buildSettings = {APPLICATION_EXTENSION_API_ONLY = YES; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 8; DEVELOPMENT_TEAM = ""; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = PofiWidget/Info.plist; IPHONEOS_DEPLOYMENT_TARGET = 16.2; MARKETING_VERSION = 1.1; PRODUCT_BUNDLE_IDENTIFIER = app.rota.personal.pofi; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SKIP_INSTALL = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks", "@executable_path/../../Frameworks", ); }; name = Debug; };
+B0000000000000000000002B = {isa = XCBuildConfiguration; buildSettings = {APPLICATION_EXTENSION_API_ONLY = YES; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 8; DEVELOPMENT_TEAM = ""; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = PofiWidget/Info.plist; IPHONEOS_DEPLOYMENT_TARGET = 16.2; MARKETING_VERSION = 1.1; PRODUCT_BUNDLE_IDENTIFIER = app.rota.personal.pofi; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SKIP_INSTALL = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks", "@executable_path/../../Frameworks", ); }; name = Release; };
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A0000000000000000000000A /* Build configuration list for PBXProject "Rota" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A0000000000000000000000C /* Debug */,
+				A0000000000000000000000D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A0000000000000000000000B /* Build configuration list for PBXNativeTarget "Rota" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A0000000000000000000000E /* Debug */,
+				A0000000000000000000000F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+B00000000000000000000029 = {isa = XCConfigurationList; buildConfigurations = (B0000000000000000000002A, B0000000000000000000002B, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+/* End XCConfigurationList section */
+	};
+	rootObject = A00000000000000000000001 /* Project object */;
+}

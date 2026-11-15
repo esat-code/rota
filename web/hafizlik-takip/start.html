@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#08090b">
+  <title>Rota</title>
+  <style>
+    :root { color-scheme: dark; background: #08090b; }
+    body { margin: 0; min-height: 100svh; display: grid; place-items: center; padding: 24px; box-sizing: border-box; color: #f0f4ef; font: 16px/1.5 system-ui; background: radial-gradient(ellipse at 50% 30%, #272e3b, #08090b 70%); }
+    main { width: min(100%, 460px); text-align: center; }
+    h1 { font-size: clamp(32px, 9vw, 60px); line-height: 1; font-weight: 500; letter-spacing: -.05em; margin: 0; }
+    h1 span { color: #adb5c5; }
+    .globe { height: clamp(110px, 36vw, 200px); overflow: hidden; mask-image: linear-gradient(black 55%, transparent); margin: 14px auto; pointer-events: none; }
+    .entry-globe-canvas { width: 100%; aspect-ratio: 1; position: relative; }
+    .entry-globe-canvas svg { width: 100%; height: 100%; display: block; }
+    #boot-status { color: #aeb7c6; font-size: 13px; }
+    button { border: 1px solid #495469; background: #20293a; color: #fff; border-radius: 12px; padding: 12px 20px; font: inherit; }
+  </style>
+  <script defer src="home/entry-globe.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Her gün,<br><span>kaldığın yerden.</span></h1>
+    <div class="globe" aria-hidden="true"><div id="entry-globe"></div></div>
+    <p id="boot-status" role="status">Kayıtlar yükleniyor…</p>
+    <button id="retry" hidden>Yeniden dene</button>
+  </main>
+  <script src="rota-sync.js" data-start></script>
+</body>
+</html>

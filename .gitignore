@@ -1,0 +1,13 @@
+node_modules/
+.DS_Store
+.env*
+records/
+*.p12
+*.mobileprovision
+web/hafizlik-takip/dist/
+web/hafizlik-takip/home/
+web/hafizlik-takip/calendar/
+web/hafizlik-takip/sport/
+web/hafizlik-takip/yks/app.js
+web/rota-spor-preview/dist/
+web/hafizlik-takip/sport/

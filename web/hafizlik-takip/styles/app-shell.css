@@ -1,0 +1,12 @@
+#rota-home { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 2147483000; border: 0; background: #08090b; visibility: hidden; pointer-events: none; }
+body.rota-show-home { overflow: hidden; background: #000; }
+body.rota-show-home #rota-home { visibility: visible; pointer-events: auto; }
+body.rota-show-home #hafizlik-tik-denemesi { visibility: hidden; }
+#hafizlik-tik-denemesi .toolbar-main .home-button { border-radius: 24px; padding: 6px 15px 6px 7px; background: linear-gradient(145deg, #24394d, #162839); color: #ece7dc; border: 1px solid #61718065; box-shadow: inset 0 1px #ffffff12; }
+#hafizlik-tik-denemesi .home-button .toolbar-icon { border-radius: 50%; background: #ffffff0a; }
+#hafizlik-tik-denemesi .toolbar-main .home-button:hover { background: #30475c; box-shadow: inset 0 1px #ffffff20, 0 3px 10px #0001; }
+#hafizlik-tik-denemesi.night-mode .toolbar-main .home-button { background: #283a49; color: #e5dfd3; border-color: #66727b70; }
+
+#rota-calendar{position:fixed;inset:0;width:100%;height:100%;border:0;z-index:2147482999;background:#121315}body.rota-show-calendar{overflow:hidden}body.rota-show-calendar #hafizlik-tik-denemesi{visibility:hidden}
+#rota-yks{position:fixed;inset:0;width:100%;height:100%;border:0;z-index:2147482999;background:#111820}body.rota-show-yks{overflow:hidden}body.rota-show-yks #hafizlik-tik-denemesi{visibility:hidden}
+#rota-sport{position:fixed;inset:0;width:100%;height:100%;border:0;z-index:2147482999;background:#11151b}body.rota-show-sport{overflow:hidden}body.rota-show-sport #hafizlik-tik-denemesi{visibility:hidden}

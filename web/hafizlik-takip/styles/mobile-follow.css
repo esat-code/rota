@@ -1,0 +1,21 @@
+#hafizlik-tik-denemesi[data-mobile-follow]{padding:0 14px 70px!important;min-width:0!important;width:100%!important;max-width:100%!important;box-sizing:border-box;overflow-x:hidden}
+[data-mobile-follow] .toolbar,[data-mobile-follow] .toolbar-main,[data-mobile-follow] .workspace-navigator,[data-mobile-follow] .canvas-controls,[data-mobile-follow] .design-panel,[data-mobile-follow] .design-toolbar,[data-mobile-follow] .workspace-navigation,[data-mobile-follow] .board-minimap,[data-mobile-follow] .board-zoom,[data-mobile-follow] .board-resize-handle,[data-mobile-follow] .board-item-handle,[data-mobile-follow] .designer-controls{display:none!important}
+.mobile-follow-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 0;position:sticky;top:0;z-index:100;background:#111820;color:#eef1f4;font:14px system-ui}
+.mobile-follow-header button{border:1px solid #61718060;border-radius:12px;background:#233445;color:#eef1f4;padding:11px;font:inherit}
+[data-mobile-follow] .board-viewport,[data-mobile-follow] .board-stage,[data-mobile-follow] .board-canvas,[data-mobile-follow] .workspace,[data-mobile-follow] .planner,[data-mobile-follow] .top-grid,[data-mobile-follow] .lower-grid,[data-mobile-follow] .notes{display:block!important;position:static!important;transform:none!important;width:100%!important;height:auto!important;min-width:0!important;min-height:0!important;padding:0!important;margin:0!important;overflow:visible!important}
+[data-mobile-follow] [data-board-item]{position:relative!important;left:auto!important;top:auto!important;transform:none!important;translate:none!important;width:100%!important;min-width:0!important;height:auto!important;min-height:0!important;box-sizing:border-box;margin:0 0 15px!important;padding:16px!important;border-radius:17px!important;overflow:hidden!important}
+[data-mobile-follow] .week-row{display:grid!important;grid-template-columns:repeat(7,minmax(0,1fr))!important;gap:5px!important;margin-bottom:18px!important}
+[data-mobile-follow] .week-name{grid-column:1/-1!important;margin-bottom:8px!important}
+[data-mobile-follow] .juz{font-size:10px!important;line-height:1.4!important;text-align:center!important}
+[data-mobile-follow] .week-box{min-width:0!important;min-height:44px!important;display:grid!important;place-items:center!important}
+[data-mobile-follow] input[type=checkbox]{width:25px!important;height:25px!important;min-width:25px!important;cursor:pointer!important}
+[data-mobile-follow] .daily-line{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:12px!important;padding:12px 0!important}
+[data-mobile-follow] .daily-text,[data-mobile-follow] .routine-text,[data-mobile-follow] .note-copy{font-size:14px!important;line-height:1.6!important}
+[data-mobile-follow] .routine{display:grid!important;grid-template-columns:minmax(0,1fr) 44px!important;gap:12px!important;align-items:center!important}
+[data-mobile-follow] [contenteditable]{pointer-events:auto;outline:none!important}
+[data-mobile-follow] .checkbox-link-layer{display:none!important}
+[data-mobile-follow] .workspace-viewport,[data-mobile-follow] .sheet,[data-mobile-follow] .board-zoom-surface{display:block!important;position:static!important;transform:none!important;translate:none!important;width:100%!important;height:auto!important;min-width:0!important;min-height:0!important;margin:0!important;padding:0!important;overflow:visible!important}
+[data-mobile-follow] .app-toolbar,[data-mobile-follow] .workspace-hint,[data-mobile-follow] .workspace-measure,[data-mobile-follow] .board-drag-handle,[data-mobile-follow] .design-selection-box{display:none!important}
+
+#hafizlik-tik-denemesi[data-mobile-follow]{height:100dvh!important;overflow-y:auto!important;touch-action:pan-y!important;overscroll-behavior-y:contain}
+[data-mobile-follow] .workspace-viewport{touch-action:pan-y!important}

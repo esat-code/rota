@@ -1,0 +1,18 @@
+import assert from 'node:assert/strict';
+import {dateKey,localInput,dayStart,addDays,weekStart,monthDays,intersects,validEvent,filtered,moveEvent,dayLayout,isColorless} from './engine.mjs';
+const event={id:'1',title:'İş toplantısı',description:'Örnek',start:'2026-10-16T09:00',end:'2026-10-16T10:00',color:'blue',category:'Toplantı',tags:['İş']};
+assert(validEvent(event));assert(!validEvent({...event,end:event.start}));assert(!validEvent({...event,title:' '}));
+const d=new Date(2026,9,16);assert.equal(dateKey(d),'2026-10-16');assert.equal(dateKey(weekStart(d)),'2026-10-12');assert.equal(monthDays(d).length,42);
+assert(intersects(event,d));assert(!intersects(event,addDays(d,1)));
+const cross={...event,start:'2026-10-16T23:00',end:'2026-10-17T01:00'};assert(intersects(cross,addDays(d,1)));assert(!intersects({...cross,end:'2026-10-17T00:00'},addDays(d,1)));
+const filters={colors:[],tags:[],categories:[]};assert.equal(filtered([event],'iş',filters).length,1);assert.equal(filtered([event],'', {...filters,colors:['red']}).length,0);
+const neutral={...event,id:'neutral',color:'none',category:'Eski kategori',tags:[]};
+assert(validEvent(neutral));assert(isColorless('none'));assert(isColorless(''));assert(!isColorless('blue'));
+assert.equal(filtered([event,neutral,{...neutral,id:'legacy-neutral',color:''}],'',{colors:['none']}).length,2);
+assert.equal(filtered([neutral],'Eski kategori',filters).length,0,'Hidden legacy categories are not searchable');
+assert.equal(filtered([event],'',{categories:['not-visible']}).length,1,'Legacy category filters no longer hide events');
+const moved=moveEvent(cross,addDays(d,2));assert.equal(moved.start,'2026-10-18T23:00');assert.equal(moved.end,'2026-10-19T01:00');
+const hourly=moveEvent(event,addDays(d,1),14);assert.equal(hourly.start,'2026-10-17T14:00');assert.equal(hourly.end,'2026-10-17T15:00');
+const layout=dayLayout([event,{...event,id:'2',start:'2026-10-16T09:30',end:'2026-10-16T10:30'}],d);assert.equal(layout[0].lanes,2);assert.notEqual(layout[0].lane,layout[1].lane);
+assert.equal(dayLayout([cross],addDays(d,1))[0].end,60);
+console.log('Geçti: tarih, hafta, ay, arama/filtre, doğrulama, sürükleme, gece yarısı, çakışan etkinlikler.');

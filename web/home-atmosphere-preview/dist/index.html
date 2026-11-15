@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <meta name="color-scheme" content="dark">
+  <title>Rota · Ana sayfa denemesi</title>
+  <meta name="description" content="Siyah, dumanlı atmosfer ve imleci izleyen ışık: bağımsız ana sayfa denemesi.">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./main.js"></script>
+  <script defer src="./entry-globe.js"></script>
+</head>
+<body data-view="entry">
+  <div class="entry-background" aria-hidden="true"></div>
+  <div id="pointer-light" class="pointer-light" aria-hidden="true"></div>
+  <div id="ambient-halo" class="ambient-halo" aria-hidden="true"></div>
+  <canvas id="atmosphere" class="atmosphere" aria-hidden="true"></canvas>
+  <canvas id="film-grain" class="film-grain" aria-hidden="true"></canvas>
+  <div class="edge-shade" aria-hidden="true"></div>
+  <main aria-label="Rota önizlemesi">
+    <section id="entry-screen" class="entry-screen" aria-labelledby="entry-title">
+      <div class="entry-intro">
+        <p class="entry-kicker">ROTA / KENDİ YOLUN</p>
+        <h2>Her gün,<br> <span>kaldığın yerden.</span></h2>
+        <div class="entry-globe-window"><div id="entry-globe"></div></div>
+      </div>
+      <div class="entry-card-wrap">
+      <div class="entry-card">
+        <svg class="entry-edge" aria-hidden="true" width="100%" height="100%"><rect x="1" y="1" width="100%" height="100%" rx="23" pathLength="100"/></svg>
+        <h2 id="entry-title" class="sr-only" tabindex="-1">Rota girişi</h2>
+        <form id="entry-form" autocomplete="off">
+          <label id="entry-password-row" class="entry-field">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+            <span class="sr-only">Şifre</span>
+            <input id="entry-password" type="password" placeholder="Giriş şifren" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" inputmode="text" enterkeyhint="go">
+            <button id="password-toggle" class="password-toggle" data-ui-sound="none" type="button" aria-label="Şifreyi göster" aria-controls="entry-password" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/><path class="eye-slash" d="m3 3 18 18"/></svg></button>
+          </label>
+          <button id="entry-submit" class="entry-submit" type="submit" disabled>Giriş yap <span aria-hidden="true">↗</span></button>
+          <p id="entry-note" class="entry-note">Şifreni ana sayfadaki Ayarlar’dan oluşturabilirsin.<br>Şimdilik boş bırakarak devam edebilirsin.</p>
+          <p id="entry-error" class="form-message" role="status"></p>
+        </form>
+      </div>
+      </div>
+    </section>
+    <button id="settings-open" class="settings-open" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 3-1 3-3 1-2 5 2 5 3 1 1 3h6l1-3 3-1 2-5-2-5-3-1-1-3Z"/><circle cx="12" cy="12" r="3"/></svg>Ayarlar</button>
+    <button id="rota-town" class="rota-town" type="button" disabled aria-label="Rota Kasabası, henüz kullanıma açık değil"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21V10l5-4 5 4v11M13 21V6l4-3 4 3v15M6 21v-6h4v6M16 8h2m-2 4h2m-2 4h2M2 21h20"/></svg><span>Rota Kasabası</span></button>
+    <button id="app-exit" class="app-exit" type="button" aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v9M7 5.5a8 8 0 1 0 10 0"/></svg><span>Çıkış</span></button>
+    <h1 class="sr-only">Ana sayfa atmosferi</h1>
+    <div class="portal-row" role="group" aria-label="Ana sayfa kutuları" hidden>
+      <div id="open-calendar" class="portal portal-link" tabindex="0" role="button" aria-label="Takvim bölümünü aç">
+        <div class="portal-surface"><span class="portal-caption"><span class="portal-caption-icon" aria-hidden="true">▦</span><strong>Takvim</strong></span><svg class="portal-edge" aria-hidden="true" width="100%" height="100%"><rect class="edge-glow" x="1" y="1" width="100%" height="100%" rx="15" pathLength="100"/><rect class="edge-runner" x="1" y="1" width="100%" height="100%" rx="15" pathLength="100"/></svg></div>
+      </div>
+      <div id="open-yks" class="portal portal-link" tabindex="0" role="button" aria-label="YKS Ders Takibi bölümünü aç">
+        <div class="portal-surface"><span class="portal-caption"><span class="portal-caption-icon" aria-hidden="true">↗</span><strong>YKS Ders Takibi</strong></span><svg class="portal-edge" aria-hidden="true" width="100%" height="100%"><rect class="edge-glow" x="1" y="1" width="100%" height="100%" rx="15" pathLength="100"/><rect class="edge-runner" x="1" y="1" width="100%" height="100%" rx="15" pathLength="100"/></svg></div>
+      </div>
+      <div id="russian-placeholder" class="portal" role="group" aria-label="Rusça — içerik daha sonra eklenecek">
+        <div class="portal-surface"><span class="portal-caption"><span class="portal-caption-icon" aria-hidden="true">Я</span><strong>Rusça</strong></span><svg class="portal-edge" aria-hidden="true" width="100%" height="100%"><rect class="edge-glow" x="1" y="1" width="100%" height="100%" rx="15" pathLength="100"/><rect class="edge-runner" x="1" y="1" width="100%" height="100%" rx="15" pathLength="100"/></svg></div>
+      </div>
+      <div id="open-hafizlik" class="portal portal-link" tabindex="0" role="button" aria-label="Çalışma Alanı bölümünü aç">
+        <div class="portal-surface"><span class="portal-caption"><span class="portal-caption-icon" aria-hidden="true">↗</span><strong>Çalışma Alanı</strong></span><svg class="portal-edge" aria-hidden="true" width="100%" height="100%"><rect class="edge-glow" x="1" y="1" width="100%" height="100%" rx="15" pathLength="100"/><rect class="edge-runner" x="1" y="1" width="100%" height="100%" rx="15" pathLength="100"/></svg></div>
+      </div>
+      <div id="open-sport" class="portal portal-link" tabindex="0" role="button" aria-label="Spor bölümünü aç">
+        <div class="portal-surface"><span class="portal-caption"><span class="portal-caption-icon" aria-hidden="true">↗</span><strong>Spor</strong></span><svg class="portal-edge" aria-hidden="true" width="100%" height="100%"><rect class="edge-glow" x="1" y="1" width="100%" height="100%" rx="15" pathLength="100"/><rect class="edge-runner" x="1" y="1" width="100%" height="100%" rx="15" pathLength="100"/></svg></div>
+      </div>
+      <div id="future-placeholder" class="portal" role="group" aria-label="Kayıtlar">
+        <div class="portal-surface"><span class="portal-caption"><span class="portal-caption-icon" aria-hidden="true">▤</span><strong>Kayıtlar</strong></span><svg class="portal-edge" aria-hidden="true" width="100%" height="100%"><rect class="edge-glow" x="1" y="1" width="100%" height="100%" rx="15" pathLength="100"/><rect class="edge-runner" x="1" y="1" width="100%" height="100%" rx="15" pathLength="100"/></svg></div>
+      </div>
+    </div>
+  </main>
+  <dialog id="settings-dialog" class="settings-dialog" aria-labelledby="settings-title">
+    <div class="settings-heading"><h2 id="settings-title">Ayarlar</h2><button id="settings-close" type="button" aria-label="Ayarları kapat">×</button></div>
+    <section id="phone-panel" hidden>
+ <button class="settings-menu-back" type="button">‹ Tüm ayarlar</button>
+ <h3>Telefon bağla</h3>
+ <p class="settings-description" id="phone-install-status">iPhone kurulumu hazırlanıyor.</p>
+ <img id="phone-install-qr" width="224" height="224" alt="Rota iPhone uygulamasını kurmak için QR kod" hidden>
+ <p class="settings-description" id="phone-install-note">İmzalı iPhone sürümü henüz hazır değil. Kurulum hazır olduğunda QR kodun burada görünecek.</p>
+ <button id="phone-sync-details" type="button">Kayıt eşitleme bilgileri</button>
+ </section>
+ <div id="settings-menu" class="settings-menu">
+      <button id="settings-security" type="button"><span>Giriş ve güvenlik<small>İsteğe bağlı giriş şifresi</small></span><span aria-hidden="true">›</span></button>
+      <button id="settings-sound" type="button"><span>Ses ve müzik<small>Çalma ve ses seviyesi</small></span><span aria-hidden="true">›</span></button>
+      <button id="settings-sync" type="button"><span>Telefon bağla<small>iPhone uygulaması ve kayıtlar</small></span><span aria-hidden="true">›</span></button>
+      <button id="settings-application" type="button"><span>Uygulama<small>Rota hakkında</small></span><span aria-hidden="true">›</span></button>
+    </div>
+    <section id="security-panel" hidden>
+    <button class="settings-menu-back" type="button">‹ Tüm ayarlar</button>
+    <h3>Giriş ve güvenlik</h3>
+    <p class="settings-description">Bu cihazın giriş şifresini düzenle.</p>
+    <form id="settings-form">
+      <label id="current-password-row" class="settings-label" hidden>Mevcut şifre<input id="current-password" type="password" autocomplete="current-password"></label>
+      <label class="settings-label">Yeni şifre<input id="new-password" type="password" autocomplete="new-password" minlength="4" placeholder="En az 4 karakter"></label>
+      <label class="settings-label">Yeni şifreyi tekrar yaz<input id="confirm-password" type="password" autocomplete="new-password"></label>
+      <button id="settings-save" class="entry-submit" type="submit">Şifreyi kaydet</button>
+      <button id="password-remove" class="password-remove" type="button" hidden>Giriş şifresini kaldır</button>
+      <p id="settings-message" class="form-message" role="status"></p>
+    </form>
+    </section>
+    <section id="application-panel" hidden>
+      <button class="settings-menu-back" type="button">‹ Tüm ayarlar</button>
+      <h3>Rota</h3>
+      <p class="settings-description">Çalışmaların otomatik kaydedilir.</p>
+    </section>
+    <section id="sound-panel" hidden>
+      <button class="settings-menu-back" type="button">‹ Tüm ayarlar</button>
+      <h3>Ses ve müzik</h3>
+      <div class="music-setting"><div><strong>Arka plan müziği</strong><small id="music-state">Kapalı</small></div><button id="music-toggle" class="music-switch" type="button" role="switch" aria-label="Arka plan müziği" aria-checked="false"><span></span></button></div>
+      <label class="volume-label" for="music-volume">Ses seviyesi <output id="music-volume-value" for="music-volume">50%</output></label>
+      <input id="music-volume" class="music-volume" type="range" min="0" max="100" step="1" value="50">
+      <label class="volume-label" for="button-volume">Buton sesleri <output id="button-volume-value" for="button-volume">35%</output></label>
+      <input id="button-volume" class="music-volume" type="range" min="0" max="100" step="1" value="35">
+      <p class="sound-help">Buton seslerini kapatmak için seviyeyi 0’a indir.</p>
+      <p id="music-error" class="form-message" role="status"></p>
+    </section>
+  </dialog>
+  <footer class="sound-corner">
+    <p id="sound-status" class="sound-status" role="status" aria-live="polite"></p>
+    <button id="sound-toggle" class="sound-toggle" type="button" aria-pressed="false" aria-label="Sesi aç" data-state="muted">
+      <span id="sound-bars" class="sound-bars" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+      <span id="sound-label">Sesi aç</span>
+    </button>
+  </footer>
+  <noscript><p class="script-notice">Işık ve ses için JavaScript’i açmalısın.</p></noscript>
+</body>
+</html>

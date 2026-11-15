@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#08090b"><title>Rota</title><script>window.ROTA_MOBILE_FOLLOW=false;</script><link rel="stylesheet" href="styles/mobile-follow.css"><style>html{background:#08090b}body.rota-show-home{overflow:hidden;background:#08090b!important}body.rota-show-home #hafizlik-tik-denemesi{visibility:hidden}#rota-home{background:#08090b;border:0}</style><link rel="icon" type="image/svg+xml" href="branding/rota-mark.svg"><link rel="stylesheet" href="dist/theme-toggle.css"></head><body class="rota-show-home">
+<link rel="stylesheet" href="styles/app-shell.css">
+<iframe id="rota-calendar" title="Rota takvim" hidden=""></iframe>
+<iframe id="rota-yks" title="Rota YKS çalışma alanı" hidden=""></iframe>
+<iframe id="rota-sport" title="Rota spor çalışma alanı" hidden=""></iframe>
+<iframe id="rota-home" title="Rota ana sayfa" allow="autoplay"></iframe>
+<section id="hafizlik-tik-denemesi" aria-labelledby="plan-title">
+  <style>
+    html, body { width: 100%; min-height: 100%; margin: 0; background: #ffffff; }
+    #hafizlik-tik-denemesi { color-scheme: light; --paper: #ffffff; --white: #ffffff; --ink: #142b46; --grid: #d6d8d5; --teal: #727b84; --blue: #132f4c; --yellow: #e6d6b8; --gray: #d3d7d6; --active: #234e74; --check: #183d63; color: var(--ink); font-family: Georgia, 'Times New Roman', serif; }
+    #hafizlik-tik-denemesi * { box-sizing: border-box; }
+    #hafizlik-tik-denemesi { display: block; min-height: 100vh; background: #ffffff; }
+    #hafizlik-tik-denemesi .sheet { position: relative; min-height: 100vh; background-color: var(--paper); background-image: linear-gradient(color-mix(in srgb, var(--grid) 70%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--grid) 70%, transparent) 1px, transparent 1px); background-size: 52px 34px; padding: 30px; min-width: 0; border: 2px solid var(--blue); border-radius: 0; box-shadow: none; }
+    #hafizlik-tik-denemesi .sheet::before { content: ''; position: absolute; inset: 8px; border: 1px solid color-mix(in srgb, var(--blue) 36%, transparent); border-radius: 8px; pointer-events: none; }
+    #hafizlik-tik-denemesi .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    #hafizlik-tik-denemesi .top-grid { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1.3fr) minmax(0, .68fr); gap: 24px; align-items: start; }
+    #hafizlik-tik-denemesi .weeks { background: color-mix(in srgb, var(--gray) 88%, var(--paper)); padding: 14px 0 0; border: 1px solid color-mix(in srgb, var(--blue) 52%, transparent); border-radius: 8px; }
+    #hafizlik-tik-denemesi .week-row { display: grid; grid-template-columns: 86px repeat(7, minmax(34px, 1fr)); min-height: 61px; background: var(--yellow); }
+    #hafizlik-tik-denemesi .week-row + .week-row { margin-top: 16px; }
+    #hafizlik-tik-denemesi .week-name { grid-row: span 2; display: grid; place-items: center; background: var(--blue); color: var(--paper); font-family: Arial, sans-serif; font-size: 11px; font-weight: 600; text-align: center; }
+    #hafizlik-tik-denemesi .juz { display: grid; place-items: center; padding: 5px 2px; border-left: 1px solid color-mix(in srgb, var(--grid) 70%, transparent); font-family: Arial, sans-serif; font-size: 10px; font-weight: 600; text-align: center; }
+    #hafizlik-tik-denemesi .week-box { display: grid; place-items: center; min-height: 26px; background: var(--gray); border-left: 1px solid color-mix(in srgb, var(--grid) 75%, transparent); }
+    #hafizlik-tik-denemesi input { accent-color: var(--check); width: 17px; height: 17px; margin: 0; cursor: pointer; }
+    #hafizlik-tik-denemesi .top-tasks { background: var(--yellow); padding: 18px 16px; min-height: 138px; border: 1px solid color-mix(in srgb, var(--blue) 52%, transparent); border-radius: 8px; }
+    #hafizlik-tik-denemesi .daily-line { display: grid; grid-template-columns: 1fr 82px; gap: 10px; align-items: center; min-height: 48px; }
+    #hafizlik-tik-denemesi .daily-line + .daily-line { border-top: 1px solid color-mix(in srgb, var(--ink) 20%, transparent); }
+    #hafizlik-tik-denemesi .daily-text { font-size: 15px; font-weight: 600; line-height: 1.3; }
+    #hafizlik-tik-denemesi .day-switch { display: flex; justify-content: flex-end; gap: 7px; align-items: center; font-family: Arial, sans-serif; font-size: 11px; }
+    #hafizlik-tik-denemesi .day-switch label { display: grid; grid-template-columns: auto 17px; gap: 4px; align-items: center; cursor: pointer; }
+    #hafizlik-tik-denemesi .day-switch label.active { color: var(--active); font-weight: 700; }
+    #hafizlik-tik-denemesi .solution-box { position: absolute; z-index: 2; top: 30px; right: 30px; width: 19%; min-width: 160px; max-width: 230px; margin: 0; background: color-mix(in srgb, var(--yellow) 78%, var(--gray)); min-height: 390px; padding: 15px 12px; border: 1px solid color-mix(in srgb, var(--blue) 52%, transparent); border-radius: 8px; font-family: Arial, sans-serif; font-size: 12px; line-height: 1.5; }
+    #hafizlik-tik-denemesi .solution-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 15px; }
+    #hafizlik-tik-denemesi .solution-box h3 { margin: 0; font: 600 12px Arial, sans-serif; }
+    #hafizlik-tik-denemesi .solution-head-check { display: grid; place-items: center; }
+    #hafizlik-tik-denemesi .solution-box ul { margin: 0; padding-left: 10px; list-style: none; }
+    #hafizlik-tik-denemesi .solution-space { min-height: 132px; margin-top: 10px; border-top: 1px solid color-mix(in srgb, var(--blue) 30%, transparent); padding-top: 8px; }
+    #hafizlik-tik-denemesi .solution-box .solution-check { display: flex; justify-content: flex-end; margin-top: 8px; }
+    #hafizlik-tik-denemesi .lower-grid { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1.3fr) minmax(0, .68fr); gap: 24px; align-items: start; margin-top: 38px; }
+    #hafizlik-tik-denemesi .notes { min-height: 180px; padding: 0; background: transparent; border: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; overflow: visible; resize: none; }
+    #hafizlik-tik-denemesi .note { align-self: stretch; min-height: 0; padding: 16px; background: var(--gray); border: 1px solid color-mix(in srgb, var(--blue) 52%, transparent); border-radius: 8px; font-family: Arial, sans-serif; font-size: 11px; line-height: 1.45; }
+    #hafizlik-tik-denemesi .time-banner { align-self: start; display: flex; align-items: center; justify-content: center; min-height: 54px; background: var(--blue); border-radius: 7px; padding: 12px; text-align: center; }
+    #hafizlik-tik-denemesi .time-banner strong { display: block; margin: 0; color: var(--white); font-size: 14px; letter-spacing: .08em; }
+    #hafizlik-tik-denemesi .note .note-check { display: flex; justify-content: center; margin-top: 16px; }
+    #hafizlik-tik-denemesi .routine { display: grid; grid-template-columns: 1fr 42px; }
+    #hafizlik-tik-denemesi .routine-text { min-height: 48px; padding: 10px 8px; background: color-mix(in srgb, var(--yellow) 84%, var(--gray)); border-bottom: 1px solid var(--grid); font-size: 14px; font-weight: 600; line-height: 1.25; }
+    #hafizlik-tik-denemesi .routine-check { display: grid; place-items: center; background: var(--gray); border-bottom: 1px solid var(--grid); }
+    #hafizlik-tik-denemesi .routine-check input:disabled { cursor: not-allowed; opacity: .4; }
+    #hafizlik-tik-denemesi .status { grid-column: 1 / 3; margin: 10px 0 0; min-height: 20px; font-family: Arial, sans-serif; font-size: 12px; color: color-mix(in srgb, var(--ink) 66%, transparent); }
+    #hafizlik-tik-denemesi .weeks, #hafizlik-tik-denemesi .top-tasks, #hafizlik-tik-denemesi .solution-box, #hafizlik-tik-denemesi .routine, #hafizlik-tik-denemesi .time-banner, #hafizlik-tik-denemesi .note { resize: none; overflow: visible; }
+    #hafizlik-tik-denemesi [contenteditable="true"] { cursor: text; }
+    #hafizlik-tik-denemesi [contenteditable="true"]:focus { outline: 1px dashed var(--active); outline-offset: 3px; background: var(--white); }
+    @media (max-width: 760px) { #hafizlik-tik-denemesi .sheet { padding: 14px; } #hafizlik-tik-denemesi .top-grid, #hafizlik-tik-denemesi .lower-grid { grid-template-columns: 1fr; min-width: 0; gap: 18px; margin-top: 26px; } #hafizlik-tik-denemesi .solution-box { position: static; width: 100%; min-width: 0; max-width: none; min-height: 280px; } #hafizlik-tik-denemesi .solution-space { min-height: 72px; } #hafizlik-tik-denemesi .status { grid-column: 1; } }
+    #hafizlik-tik-denemesi.night-mode { color-scheme: dark; --paper: #151719; --white: #f2eee6; --ink: #ddd8cd; --grid: #282c30; --blue: #263747; --yellow: #30302d; --gray: #24292e; --active: #d4c6ab; --check: #b9c6d2; }
+    #hafizlik-tik-denemesi.night-mode .sheet { background-color: var(--paper); }
+    #hafizlik-tik-denemesi.night-mode [contenteditable="true"]:focus { background: #202c35; }
+  </style>
+  <link rel="stylesheet" href="styles/planner.css">
+  <link rel="stylesheet" href="styles/design-studio.css">
+  <link rel="stylesheet" href="styles/design-panel.css">
+  <link rel="stylesheet" href="styles/checkbox-links.css">
+  <link rel="stylesheet" href="styles/timer-menu.css">
+  <link rel="stylesheet" href="styles/rota-brand.css">
+  <link rel="stylesheet" href="styles/editor-workspace.css">
+  <link rel="stylesheet" href="styles/board-export.css">
+
+  <header class="app-toolbar" aria-label="Saat, sayaçlar ve uygulama ayarları">
+    <div class="toolbar-main">
+    <div class="rota-brand" aria-label="Rota"><img src="branding/rota-mark.svg" class="rota-brand-icon" alt="" width="32" height="32"><span>Rota</span></div>
+    <div class="toolbar-clock"><time id="live-clock">--:--:--</time><time id="live-date"></time></div>
+    <div class="toolbar-spacer"></div>
+    <span id="save-indicator" class="save-indicator" role="status" hidden=""></span>
+    <button id="open-timers" class="toolbar-button timer-add-button" type="button" aria-haspopup="dialog"><span class="toolbar-icon" data-toolbar-icon="timer" aria-hidden="true"></span><span>Sayaç ekle</span><span id="timer-count" hidden=""></span></button>
+    <button id="edit-mode-toggle" class="toolbar-button edit-toggle" type="button" role="switch" aria-checked="true" aria-label="Düzenleme modu" title="Düzenlemeyi aç veya kapat"><span class="toolbar-icon" data-toolbar-icon="edit" aria-hidden="true"></span><span>Düzenle</span><span class="edit-switch" aria-hidden="true"><span></span></span></button>
+    <span class="toolbar-divider" aria-hidden="true"></span>
+    <div id="theme-toggle-mount"></div>
+    <button id="open-calendar-from-planner" class="toolbar-button section-link" type="button" title="Takvime geç"><span class="toolbar-icon" data-toolbar-icon="calendar" aria-hidden="true"></span><span>Takvim</span></button>
+    <button id="open-yks-from-planner" class="toolbar-button section-link" type="button" title="YKS çalışma alanına geç"><span class="toolbar-icon" data-toolbar-icon="graduation" aria-hidden="true"></span><span>YKS</span></button>
+    <button id="save-and-exit" class="toolbar-button home-button" type="button" title="Ana sayfaya dön"><span class="toolbar-icon" data-toolbar-icon="home" aria-hidden="true"></span><span>Ana sayfaya dön</span></button>
+    </div>
+    <aside id="timer-dock" class="timer-dock" aria-label="Sayaçlar" hidden=""></aside>
+  </header>
+  <div class="workspace-viewport" aria-label="Kaydırılabilir çalışma alanı" tabindex="0">
+  <div class="sheet">
+    <h2 id="plan-title" class="sr-only">Görev 1</h2>
+    <div class="top-grid">
+      <div class="weeks" aria-label="Görev">
+        <div class="week-row">
+          <div class="week-name">Görev 2</div>
+          <span class="juz">Görev 3</span><span class="juz">Görev 4</span><span class="juz">Görev 5</span><span class="juz">Görev 6</span><span class="juz">Görev 7</span><span class="juz">Görev 8</span><span class="juz">Görev 9</span>
+          <label class="week-box"><input class="week-check" type="checkbox" aria-label="Görev"></label><label class="week-box"><input class="week-check" type="checkbox" aria-label="Görev"></label><label class="week-box"><input class="week-check" type="checkbox" aria-label="Görev"></label><label class="week-box"><input class="week-check" type="checkbox" aria-label="Görev"></label><label class="week-box"><input class="week-check" type="checkbox" aria-label="Görev"></label><label class="week-box"><input class="week-check" type="checkbox" aria-label="Görev"></label><label class="week-box"><input class="week-check" type="checkbox" aria-label="Görev"></label>
+        </div>
+        <div class="week-row">
+          <div class="week-name">Görev 10</div>
+          <span class="juz">Görev 11</span><span class="juz">Görev 12</span><span class="juz">Görev 13</span><span class="juz">Görev 14</span><span class="juz">Görev 15</span><span class="juz">Görev 16</span><span class="juz">Görev 17</span>
+          <label class="week-box"><input class="week-check" type="checkbox" aria-label="Görev"></label><label class="week-box"><input class="week-check" type="checkbox" aria-label="Görev"></label><label class="week-box"><input class="week-check" type="checkbox" aria-label="Görev"></label><label class="week-box"><input class="week-check" type="checkbox" aria-label="Görev"></label><label class="week-box"><input class="week-check" type="checkbox" aria-label="Görev"></label><label class="week-box"><input class="week-check" type="checkbox" aria-label="Görev"></label><label class="week-box"><input class="week-check" type="checkbox" aria-label="Görev"></label>
+        </div>
+      </div>
+
+      <div class="top-tasks" aria-label="Görev">
+        <div class="daily-line"><div class="daily-text">Görev 18</div><div class="day-switch"><label id="label-bir" class="active"><span>Görev 19</span><input id="bir-gun" type="checkbox" checked=""></label></div></div>
+        <div class="daily-line"><div class="daily-text">Görev 20</div><div class="day-switch"><label id="label-diger"><span>Görev 21</span><input id="diger-gun" type="checkbox"></label></div></div>
+      </div>
+
+      <aside class="solution-box" aria-label="Görev"><div class="solution-header"><h3>Görev 22</h3><label class="solution-head-check"><span class="sr-only">Görev 23</span><input class="daily-check" type="checkbox" checked=""></label></div><ul><li>Görev 24</li><li>Görev 25</li><li>Görev 26</li><li>Görev 27</li><li>Görev 28</li><li>Görev 29</li><li>Görev 30</li></ul><div class="solution-space" contenteditable="true" aria-label="Görev"></div></aside>
+    </div>
+
+    <div class="lower-grid">
+      <div class="notes" aria-label="Görev"><div class="time-banner"><strong>Görev 31</strong></div><div class="note"><span class="note-copy">Görev 32<br>Görev 33<br>Görev 34<br>Görev 35</span><label class="note-check"><span class="sr-only">Görev 36</span><input class="daily-check" type="checkbox"></label></div></div>
+      <div class="routine" aria-label="Görev">
+        <div class="routine-text">Görev 37</div><label class="routine-check"><span class="sr-only">Görev 38</span><input class="daily-check routine-prerequisite" type="checkbox" checked=""></label>
+        <div class="routine-text">Görev 39</div><label class="routine-check"><span class="sr-only">Görev 40</span><input class="daily-check routine-prerequisite" type="checkbox" checked=""></label>
+        <div class="routine-text">Görev 41</div><label class="routine-check"><span class="sr-only">Görev 42</span><input class="daily-check routine-prerequisite" type="checkbox" checked=""></label>
+        <div class="routine-text">Görev 43</div><label class="routine-check"><span class="sr-only">Görev 44</span><input class="daily-check routine-prerequisite" type="checkbox" checked=""></label>
+        <div class="routine-text">Görev 45</div><label class="routine-check"><span class="sr-only">Görev 46</span><input class="daily-check routine-prerequisite" type="checkbox" checked=""></label>
+        <div class="routine-text">Görev 47</div><label class="routine-check"><span class="sr-only">Görev 48</span><input class="daily-check routine-prerequisite" type="checkbox"></label>
+        <div class="routine-text">Görev 49</div><label class="routine-check"><span class="sr-only">Görev 50</span><input class="daily-check routine-prerequisite" type="checkbox"></label>
+        <div class="routine-text">Görev 51</div><label class="routine-check"><span class="sr-only">Görev 52</span><input id="final-routine" class="daily-check" type="checkbox"></label>
+      </div>
+      <p class="status sr-only" id="status" aria-live="polite">Görev 53</p>
+    </div>
+  </div>
+
+  </div>
+  <dialog id="timer-dialog" class="timer-dialog" aria-labelledby="timer-dialog-title">
+    <div class="dialog-heading"><div><span class="eyebrow">ÇALIŞMA ZAMANI</span><h2 id="timer-dialog-title">Sayaçların</h2></div><button id="close-timers" type="button" class="icon-button" aria-label="Sayaç penceresini kapat">×</button></div>
+    <div id="timer-list" class="timer-list"></div>
+    <form id="timer-form" class="timer-form">
+      <h3>Yeni sayaç ekle</h3>
+      <div class="form-row"><label>Sayaç etiketi<input id="timer-label" maxlength="60" placeholder="Örn. Sabah"></label><label>Tür<select id="timer-kind"><option value="countdown">Geri sayım</option><option value="stopwatch">Kronometre</option></select></label></div>
+      <div id="countdown-options">
+        <div class="duration-inputs"><label>Saat<input id="timer-hours" type="number" min="0" max="99" value="0" required=""></label><label>Dakika<input id="timer-minutes" type="number" min="0" max="59" value="25" required=""></label><label>Saniye<input id="timer-seconds" type="number" min="0" max="59" value="0" required=""></label></div>
+        <div class="presets" aria-label="Hazır süreler"><button type="button" data-minutes="25">25 dk</button><button type="button" data-minutes="45">45 dk</button><button type="button" data-minutes="60">60 dk</button><button type="button" data-minutes="100">100 dk</button></div>
+      </div>
+      <label class="check-option"><input id="timer-sound" type="checkbox" checked=""> Süre bitince ses çal</label>
+      <p id="timer-form-error" class="form-error" role="alert"></p>
+      <div class="form-actions"><button type="submit" class="primary-button" name="action" value="ready">Ekle</button><button type="submit" class="primary-button" name="action" value="start">Ekle ve başlat</button></div>
+    </form>
+  </dialog>
+  <div id="app-toast" class="app-toast" role="status" hidden=""></div>
+
+  <script src="workspace-navigation.js"></script>
+  <script src="layout.js"></script>
+  <script src="checkbox-links.js"></script>
+  <script src="workflow-rules.js"></script>
+  <script src="workflow-panel.js"></script>
+  <script src="designer-controls.js"></script>
+  <script src="design-panel.js"></script>
+  <script src="design-studio.js"></script>
+  <script>
+    (() => {
+      const root = document.getElementById('hafizlik-tik-denemesi');
+      const bir = root.querySelector('#bir-gun');
+      const diger = root.querySelector('#diger-gun');
+      const birLabel = root.querySelector('#label-bir');
+      const digerLabel = root.querySelector('#label-diger');
+      const dailyChecks = [...root.querySelectorAll('.daily-check')];
+      const weekChecks = [...root.querySelectorAll('.week-check')];
+      const firstWeekCheck = weekChecks[0];
+      const finalRoutine = root.querySelector('#final-routine');
+      const routinePrerequisites = [...root.querySelectorAll('.routine-prerequisite')];
+      const editableItems = root.querySelectorAll('.week-name, .juz, .daily-text, .day-switch span, .solution-box h3, .solution-box ul, .time-banner strong, .note-copy, .routine-text');
+      const movableTables = root.querySelectorAll('.weeks, .top-tasks, .solution-box, .time-banner, .note, .routine');
+      const allChecks = [...root.querySelectorAll('.week-check, .daily-check, #bir-gun, #diger-gun')];
+      const storageKey = 'hafizlik-takip-v1';
+      const themeStorageKey = 'hafizlik-takip-theme';
+      const status = root.querySelector('#status');
+      let active = 'bir';
+      let completionAvailable = true;
+      let board = null;
+      let savedBoard = null;
+      let designer = null;
+      let savedDesign = null;
+      let workflow = null;let savedRuntime = null;
+      editableItems.forEach((item) => { item.contentEditable = 'true'; item.spellcheck = true; });
+      const savedTextAreas = [...root.querySelectorAll('[contenteditable="true"]')];
+      function saveState() {
+        if(window.hafizlikImportPending)return;
+        if(window.ROTA_MOBILE_FOLLOW&&!(window.rotaMobileCanSaveUntil>Date.now()))return;
+        let state = {
+          active:workflow?(workflow.runtime.activeGroups['default-days']==='diger-gun'?'diger':'bir'):active,
+          completionAvailable:workflow?!workflow.runtime.completed['default-week-progress']:completionAvailable,
+          workflowRuntime:workflow?.runtime||savedRuntime,
+          board: board?.serialize() || savedBoard,
+          design: designer?.serialize() || savedDesign,
+          checks: allChecks.map((item) => item.checked),
+          texts: savedTextAreas.map((item) => item.innerHTML),
+          tables: [...movableTables].map((item) => ({ transform: item.style.transform, width: item.style.width, height: item.style.height, offset: item.dataset.offset || '' }))
+        };
+        if(window.ROTA_MOBILE_FOLLOW){
+          const previous=JSON.parse(localStorage.getItem(storageKey)||'{}');
+          const design=previous.design?JSON.parse(JSON.stringify(previous.design)):null;
+          if(design)for(const node of design.nodes||[]){const current=state.design?.nodes?.find(n=>n.id===node.id);for(const row of node.rows||[]){const checked=current?.rows?.find(r=>r.id===row.id)?.checked;if(typeof checked==='boolean')row.checked=checked;}}
+          state={...previous,active:state.active,completionAvailable:state.completionAvailable,workflowRuntime:state.workflowRuntime,checks:state.checks,...(design?{design}: {})};
+        }
+        try {
+          localStorage.setItem(storageKey, JSON.stringify(state));
+          document.dispatchEvent(new CustomEvent('hafizlik:saved', { detail: true }));
+        } catch (_) { document.dispatchEvent(new CustomEvent('hafizlik:saved', { detail: false })); }
+        window.hafizlikNativeSave?.();
+      }
+      function drawTheme() {
+        const isNight = root.classList.contains('night-mode');
+        document.documentElement.style.background = isNight ? '#151719' : '#ffffff';
+        document.body.style.background = isNight ? '#151719' : '#ffffff';
+        document.dispatchEvent(new Event('hafizlik:theme'));
+      }
+      function restoreTheme() {
+        try { root.classList.toggle('night-mode', localStorage.getItem(themeStorageKey) === 'night'); } catch (_) {}
+        drawTheme();
+      }
+      function restoreState() {
+        try {
+          const state = JSON.parse(localStorage.getItem(storageKey) || 'null');
+          if (!state) return;
+          active = state.active || active;
+          completionAvailable = state.completionAvailable !== false;
+          savedBoard = state.board || null;
+          savedDesign = state.design || null;
+          savedRuntime=state.workflowRuntime||{activeGroups:{'default-days':state.active==='diger'?'diger-gun':'bir-gun'},completed:{'default-week-progress':state.completionAvailable===false}};
+          allChecks.forEach((item, index) => { if (typeof state.checks?.[index] === 'boolean') item.checked = state.checks[index]; });
+          savedTextAreas.forEach((item, index) => { if (typeof state.texts?.[index] === 'string') item.innerHTML = state.texts[index]; });
+          movableTables.forEach((item, index) => {
+            const saved = state.tables?.[index];
+            if (!saved) return;
+            item.style.transform = saved.transform || '';
+            item.style.width = saved.width || '';
+            item.style.height = saved.height || '';
+            if (saved.offset) item.dataset.offset = saved.offset;
+          });
+        } catch (_) {}
+      }
+      function correctLegacyText() {
+        let changed = false;
+        const corrections = [
+          ['YASİN', 'YÂSİN'], ['SURELERİ OKU', 'SURELERİNİ OKU'],
+          ['bi kaç', 'birkaç'], ['10 ve 9 uncu', '10. ve 9.'],
+          ['8,7, 6 ve 5 inci', '8., 7., 6. ve 5.'],
+          ['20.19.18.', '20., 19. VE 18.'], ['9 VE 10.', '9. VE 10.'],
+          ['5.6.7. VE 8.', '5., 6., 7. VE 8.'], ['1.2.3.4.', '1., 2., 3. VE 4.'],
+          ['AYRINTI TEKRAR', 'AYRINTILI TEKRAR']
+        ];
+        savedTextAreas.forEach((item) => {
+          let value = item.innerHTML;
+          corrections.forEach(([from, to]) => { value = value.replaceAll(from, to); });
+          if (value !== item.innerHTML) { item.innerHTML = value; changed = true; }
+        });
+        return changed;
+      }
+      restoreState();
+      board = new window.HafizlikBoard(root, [...movableTables], savedBoard, saveState);
+      window.hafizlikBoard = board;
+      window.hafizlikGrowCanvas = () => board.grow();
+      designer = new window.HafizlikDesigner(root,board,savedDesign,saveState);
+      window.hafizlikDesigner = designer;
+      workflow=new window.HafizlikWorkflow(root,designer.links,savedDesign?.workflow,savedRuntime||{},saveState);
+      designer.workflow=workflow;window.hafizlikWorkflow=workflow;
+      designer.workflowPanel=new window.HafizlikWorkflowPanel(root,designer,workflow);
+      designer.controls=new window.HafizlikDesignerControls(root,designer);
+      designer.initializeHistory();
+      if (correctLegacyText()) saveState();
+      root.addEventListener('change', saveState);
+      root.addEventListener('input', saveState);
+      document.addEventListener('hafizlik:set-theme', (event) => {
+        root.classList.toggle('night-mode', event.detail);
+        try { localStorage.setItem(themeStorageKey, event.detail ? 'night' : 'light'); } catch (_) {}
+        drawTheme();
+        window.hafizlikNativeSave?.();
+      });
+      window.addEventListener('pagehide', saveState);
+      document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') saveState(); });
+      workflow.refresh();
+      restoreTheme();
+      window.hafizlikSavePlan = saveState;
+    })();
+  </script>
+  <script src="rota-weekly-table.js"></script>
+  <script src="planner-tools.js"></script>
+  <script src="dist/board-export-styles.js"></script>
+  <script src="board-export.js"></script>
+  <script src="dist/theme-toggle.js"></script>
+</section>
+<script defer="" src="dist/app-shell.js"></script>
+<script defer="" src="mobile-follow.js"></script><script defer="" src="rota-sync.js"></script>
+</body></html>

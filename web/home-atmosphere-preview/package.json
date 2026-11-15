@@ -1,0 +1,9 @@
+{
+  "name": "home-atmosphere-preview",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node --check dist/main.js && node --check dist/atmosphere.js && node --check dist/audio.js",
+    "test": "node test.mjs"
+  }
+}

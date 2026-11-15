@@ -1,0 +1,114 @@
+#hafizlik-tik-denemesi { --editor-bg:#fff; --editor-soft:#f2f0ea; --editor-line:#d9d8d0; --editor-ink:#263d50; --editor-muted:#758087; --editor-accent:#314e66; }
+#hafizlik-tik-denemesi.night-mode { --editor-bg:#222a31; --editor-soft:#2c353d; --editor-line:#49535b; --editor-ink:#e5ddce; --editor-muted:#a4afb4; --editor-accent:#d8c6a2; }
+#hafizlik-tik-denemesi .board-zoom-surface { position:relative; flex:none; min-width:1px; min-height:1px; }
+#hafizlik-tik-denemesi .board-zoom-surface > .sheet { position:absolute; left:0; top:0; margin:0; will-change:transform; }
+#hafizlik-tik-denemesi .workspace-navigation { position:fixed; right:18px; bottom:16px; z-index:105; display:flex; align-items:center; gap:2px; padding:5px; border:1px solid var(--editor-line); border-radius:12px; background:var(--editor-bg); color:var(--editor-ink); box-shadow:0 4px 18px #152c421a; font:12px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; }
+#hafizlik-tik-denemesi.editing-mode:not(.editor-panel-collapsed) .workspace-navigation { right:342px; }
+#hafizlik-tik-denemesi .workspace-navigation button { border:0; background:transparent; color:inherit; min-width:30px; height:30px; padding:5px 8px; border-radius:7px; cursor:pointer; font:inherit; }
+#hafizlik-tik-denemesi .workspace-navigation button[aria-pressed=true],#hafizlik-tik-denemesi .designer-control[aria-pressed=true] { background:var(--editor-soft); box-shadow:inset 0 0 0 1px var(--editor-line); }
+#hafizlik-tik-denemesi .workspace-navigation i { width:1px; height:18px; margin:0 3px; background:var(--editor-line); }
+#hafizlik-tik-denemesi .workspace-navigation .view-percent { min-width:51px; font-variant-numeric:tabular-nums; }
+#hafizlik-tik-denemesi .workspace-measure { position:fixed; z-index:140; padding:6px 10px; border-radius:6px; background:var(--editor-ink); color:var(--editor-bg); font:11px -apple-system,sans-serif; pointer-events:none; }
+#hafizlik-tik-denemesi .workspace-viewport.is-hand-tool,#hafizlik-tik-denemesi .workspace-viewport.is-hand-tool * { cursor:grab !important; }
+#hafizlik-tik-denemesi .workspace-viewport.is-hand-moving,#hafizlik-tik-denemesi .workspace-viewport.is-hand-moving * { cursor:grabbing !important; user-select:none; -webkit-user-select:none; }
+#hafizlik-tik-denemesi .designer-marquee { position:absolute; z-index:50; border:calc(1px / var(--board-zoom,1)) solid var(--editor-accent); background:#7697aa22; pointer-events:none; }
+#hafizlik-tik-denemesi.editing-mode [data-board-item].is-selected { outline:calc(2px / var(--board-zoom,1)) solid var(--editor-accent); outline-offset:calc(3px / var(--board-zoom,1)); }
+#hafizlik-tik-denemesi [data-board-item].is-layout-locked .board-drag-handle,#hafizlik-tik-denemesi [data-board-item].is-layout-locked .board-resize-handle { display:none !important; }
+#hafizlik-tik-denemesi [data-board-item].is-layout-locked { cursor:default; }
+#hafizlik-tik-denemesi .board-resize-handle { width:calc(14px / var(--board-zoom,1)); height:calc(14px / var(--board-zoom,1)); }
+#hafizlik-tik-denemesi .designer-history { display:inline-flex; gap:3px; align-items:center; }
+#hafizlik-tik-denemesi .designer-control { appearance:none; display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; padding:6px; color:var(--editor-ink); border:1px solid transparent; border-radius:7px; background:transparent; font:12px -apple-system,sans-serif; cursor:pointer; flex-shrink:0; }
+#hafizlik-tik-denemesi .designer-control svg { display:block; width:17px; height:17px; }
+#hafizlik-tik-denemesi .designer-control:hover:not(:disabled) { filter:none; background:var(--editor-soft); border-color:var(--editor-line); }
+#hafizlik-tik-denemesi .designer-control:disabled { opacity:.32; cursor:default; }
+#hafizlik-tik-denemesi .designer-context { display:flex; align-items:center; gap:5px; min-height:44px; padding:5px 18px; overflow-x:auto; border-top:1px solid var(--editor-line); background:var(--editor-bg); color:var(--editor-ink); font:11px -apple-system,sans-serif; }
+#hafizlik-tik-denemesi .designer-selection-label { max-width:130px; min-width:50px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; margin:0 7px; font-size:11px; color:var(--editor-muted); }
+#hafizlik-tik-denemesi .designer-context select,#hafizlik-tik-denemesi .designer-context input { box-sizing:border-box; height:29px; min-width:0; border:1px solid var(--editor-line); background:var(--editor-soft); color:var(--editor-ink); border-radius:6px; font:11px -apple-system,sans-serif; padding:4px 7px; }
+#hafizlik-tik-denemesi .designer-context select { width:126px; flex-shrink:0; }
+#hafizlik-tik-denemesi .designer-context input[type=number] { width:48px; flex-shrink:0; }
+#hafizlik-tik-denemesi .designer-context input[type=color] { width:28px; padding:3px; flex-shrink:0; }
+#hafizlik-tik-denemesi .designer-context-spacer { flex:1; min-width:8px; }
+#hafizlik-tik-denemesi .designer-context [disabled] { opacity:.35; }
+#hafizlik-tik-denemesi.editor-panel-collapsed .design-panel { display:none !important; }
+#hafizlik-tik-denemesi.editor-panel-collapsed .workspace-viewport { width:100%; }
+#hafizlik-tik-denemesi .design-panel.is-link-tab .design-inspector { display:none !important; }
+#hafizlik-tik-denemesi .designer-layers { position:fixed; z-index:115; top:calc(var(--toolbar-height,100px) + 12px); right:12px; width:306px; max-height:calc(100dvh - var(--toolbar-height,100px) - 30px); overflow:auto; padding:16px; background:var(--editor-bg); color:var(--editor-ink); border:1px solid var(--editor-line); border-radius:14px; box-shadow:0 12px 40px #182b4530; font:12px -apple-system,sans-serif; }
+#hafizlik-tik-denemesi .designer-layer-heading { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+#hafizlik-tik-denemesi .designer-layer-heading strong { font-size:15px; }
+#hafizlik-tik-denemesi .designer-layer-list { display:flex; flex-direction:column; gap:5px; margin-top:14px; }
+#hafizlik-tik-denemesi .designer-layer-row { display:flex; align-items:center; gap:1px; border:1px solid var(--editor-line); border-radius:8px; background:var(--editor-soft); padding:4px; }
+#hafizlik-tik-denemesi .designer-layer-row.is-selected { border-color:var(--editor-accent); }
+#hafizlik-tik-denemesi .designer-layer-name { flex:1; min-width:0; padding:8px 4px; border:0; border-radius:5px; background:transparent; color:var(--editor-ink); text-align:left; font:11px -apple-system,sans-serif; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; cursor:pointer; }
+#hafizlik-tik-denemesi .designer-layer-row .designer-control { width:25px; height:28px; padding:5px; }
+#hafizlik-tik-denemesi .workflow-heading { display:flex; justify-content:space-between; align-items:center; gap:8px; }
+#hafizlik-tik-denemesi .workflow-heading h3 { font-size:14px; margin:0; }
+#hafizlik-tik-denemesi .workflow-heading button { background:var(--design-soft); border-color:var(--design-line); font-size:11px; }
+#hafizlik-tik-denemesi .workflow-rule-list { display:flex; flex-direction:column; gap:9px; margin:14px 0 24px; }
+#hafizlik-tik-denemesi .workflow-rule-card { padding:12px; border:1px solid var(--editor-line); border-radius:10px; background:var(--editor-soft); }
+#hafizlik-tik-denemesi .workflow-rule-card.is-selected { border-color:var(--editor-accent); }
+#hafizlik-tik-denemesi .workflow-rule-card strong { display:block; font-size:12px; font-weight:600; line-height:1.4; }
+#hafizlik-tik-denemesi .workflow-rule-card small { display:block; color:var(--editor-muted); font-size:10px; margin-top:4px; }
+#hafizlik-tik-denemesi .workflow-rule-card p { font-size:10px; line-height:1.65; overflow-wrap:anywhere; }
+#hafizlik-tik-denemesi .workflow-card-actions { display:flex; gap:5px; flex-wrap:wrap; }
+#hafizlik-tik-denemesi .workflow-card-actions button { padding:5px 7px; font-size:10px; border-color:var(--editor-line); background:var(--editor-bg); }
+#hafizlik-tik-denemesi .workflow-card-actions .workflow-remove { margin-left:auto; color:#a05e53; }
+#hafizlik-tik-denemesi .workflow-dialog { width:min(510px,calc(100vw - 36px)); max-height:calc(100dvh - 48px); padding:24px; overflow:auto; background:var(--editor-bg); color:var(--editor-ink); border:1px solid var(--editor-line); border-radius:17px; box-shadow:0 20px 90px #0c1b2d66; font:13px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; }
+#hafizlik-tik-denemesi .workflow-dialog::backdrop { background:#0c182b66; backdrop-filter:blur(3px); }
+#hafizlik-tik-denemesi .workflow-dialog-head { display:flex; align-items:center; justify-content:space-between; gap:14px; }
+#hafizlik-tik-denemesi .workflow-dialog-head h2 { margin:0 0 17px; font-size:20px; }
+#hafizlik-tik-denemesi .workflow-dialog-head button { border:0; background:transparent; color:var(--editor-muted); font-size:25px; cursor:pointer; }
+#hafizlik-tik-denemesi .workflow-field { display:flex; flex-direction:column; gap:6px; margin:12px 0; font-size:11px; }
+#hafizlik-tik-denemesi .workflow-field input,#hafizlik-tik-denemesi .workflow-field select,#hafizlik-tik-denemesi .workflow-picker > input { width:100%; height:38px; border:1px solid var(--editor-line); border-radius:8px; padding:8px 10px; background:var(--editor-soft); color:var(--editor-ink); font:12px -apple-system,sans-serif; cursor:auto; }
+#hafizlik-tik-denemesi .workflow-picker { margin:12px 0; padding:12px; border:1px solid var(--editor-line); border-radius:10px; background:var(--editor-soft); }
+#hafizlik-tik-denemesi .workflow-picker summary { font-size:12px; cursor:pointer; }
+#hafizlik-tik-denemesi .workflow-picker > input { margin:12px 0 7px; background:var(--editor-bg); }
+#hafizlik-tik-denemesi .workflow-picker-list { max-height:210px; overflow:auto; display:flex; flex-direction:column; gap:4px; }
+#hafizlik-tik-denemesi .workflow-picker-list label { display:flex; align-items:center; gap:9px; padding:7px 4px; font-size:11px; cursor:pointer; }
+#hafizlik-tik-denemesi .workflow-picker-list input { width:17px; height:17px; flex:none; }
+#hafizlik-tik-denemesi .workflow-picker-list label[hidden] { display:none; }
+#hafizlik-tik-denemesi .workflow-save { border:0; border-radius:8px; width:100%; padding:12px; background:#2a435b; color:#fff8e8; font:600 12px -apple-system,sans-serif; cursor:pointer; }
+#hafizlik-tik-denemesi .workflow-error { color:#ac5847; font-size:12px; line-height:1.6; }
+#hafizlik-tik-denemesi .checkbox-link-cable.link-action-requiresAll { stroke:var(--cable-uncheck); stroke-width:2.7; }
+#hafizlik-tik-denemesi .checkbox-link-cable[data-rule-id] { pointer-events:stroke; cursor:pointer; }
+#hafizlik-tik-denemesi .checkbox-link-port.is-rule-highlight { outline:3px solid var(--cable-uncheck); outline-offset:4px; }
+#hafizlik-tik-denemesi [hidden].designer-context,#hafizlik-tik-denemesi [hidden].designer-history,#hafizlik-tik-denemesi [hidden].designer-layers,#hafizlik-tik-denemesi [hidden].workspace-measure { display:none !important; }
+@media(max-width:1050px){#hafizlik-tik-denemesi .designer-context { gap:3px; padding-inline:10px; }#hafizlik-tik-denemesi .designer-context select { width:110px; }#hafizlik-tik-denemesi .designer-selection-label { max-width:80px; }#hafizlik-tik-denemesi .toolbar-main { gap:6px; padding-inline:12px; }}
+
+#hafizlik-tik-denemesi.night-mode .design-panel .design-category-card,#hafizlik-tik-denemesi.night-mode .design-panel .design-variant-card { background:var(--editor-soft); color:var(--editor-ink); }
+#hafizlik-tik-denemesi .workspace-navigation svg { display:block; }
+
+/* A camera over world coordinates, not a finite scrolling page. */
+#hafizlik-tik-denemesi .workflow-quick-types { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-top:12px; }
+#hafizlik-tik-denemesi .workflow-quick-types button { display:flex; flex-direction:column; align-items:flex-start; text-align:left; gap:5px; padding:10px; border:1px solid var(--editor-line); border-radius:9px; background:var(--editor-bg); color:var(--editor-ink); cursor:pointer; }
+#hafizlik-tik-denemesi .workflow-type-symbol { font-size:15px; font-weight:600; color:var(--editor-accent); }
+#hafizlik-tik-denemesi .workflow-quick-types strong { font-size:10px; }
+#hafizlik-tik-denemesi .workflow-quick-types small { font-size:9px; line-height:1.5; color:var(--editor-muted); }
+#hafizlik-tik-denemesi .workflow-picked-order { display:flex; flex-direction:column; gap:4px; max-height:200px; overflow:auto; margin-top:10px; }
+#hafizlik-tik-denemesi .workflow-picked-order:empty { display:none; }
+#hafizlik-tik-denemesi .workflow-order-row { display:flex; align-items:center; gap:8px; padding:5px 7px; border:1px solid var(--editor-line); border-radius:6px; background:var(--editor-bg); font-size:11px; }
+#hafizlik-tik-denemesi .workflow-order-row b { color:var(--editor-muted); width:17px; flex:none; }
+#hafizlik-tik-denemesi .workflow-order-row span { flex:1; min-width:0; overflow-wrap:anywhere; }
+#hafizlik-tik-denemesi .workflow-order-row button { flex:none; padding:3px 8px; border:1px solid var(--editor-line); border-radius:4px; background:var(--editor-soft); color:var(--editor-ink); cursor:pointer; }
+#hafizlik-tik-denemesi .workflow-order-row button:disabled { opacity:.3; cursor:default; }
+#hafizlik-tik-denemesi.infinite-board .workspace-viewport { overflow:hidden; overflow:clip; scrollbar-gutter:auto; touch-action:none; background-color:var(--paper); background-image:linear-gradient(color-mix(in srgb,var(--grid) 62%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--grid) 62%,transparent) 1px,transparent 1px); }
+#hafizlik-tik-denemesi.infinite-board .board-zoom-surface { width:100%; height:100%; min-width:0; min-height:0; }
+#hafizlik-tik-denemesi.infinite-board .sheet { width:1px; min-width:0; min-height:1px; height:1px; padding:0; border:0; border-radius:0; background:transparent; box-shadow:none; overflow:visible; }
+#hafizlik-tik-denemesi.infinite-board .sheet::before { display:none; }
+#hafizlik-tik-denemesi .workspace-hint { position:fixed; bottom:25px; left:18px; z-index:40; color:var(--editor-muted); background:var(--editor-bg); padding:5px 8px; border-radius:6px; font:10px -apple-system,sans-serif; pointer-events:none; }
+@media(max-width:850px){#hafizlik-tik-denemesi .workspace-hint { display:none; }}
+
+/* Phone chrome stays outside the free-form board; all editing tools remain available. */
+@media (max-width: 760px) {
+  #hafizlik-tik-denemesi .toolbar-main { width:100%; min-width:0; overflow-x:auto; overscroll-behavior-x:contain; padding:8px; gap:8px; }
+  #hafizlik-tik-denemesi .toolbar-main > * { flex-shrink:0; }
+  #hafizlik-tik-denemesi .toolbar-spacer { display:none; }
+  #hafizlik-tik-denemesi .toolbar-clock { display:none; }
+  #hafizlik-tik-denemesi .designer-context { max-width:100%; overflow-x:auto; padding:5px 8px; }
+  #hafizlik-tik-denemesi .workspace-viewport,
+  #hafizlik-tik-denemesi.editing-mode .workspace-viewport { width:100%; }
+  #hafizlik-tik-denemesi .design-panel { top:auto; bottom:calc(66px + env(safe-area-inset-bottom)); right:8px; width:calc(100% - 16px); max-height:48dvh; }
+  #hafizlik-tik-denemesi .workspace-navigation,
+  #hafizlik-tik-denemesi.editing-mode:not(.editor-panel-collapsed) .workspace-navigation { right:8px; bottom:calc(8px + env(safe-area-inset-bottom)); max-width:calc(100% - 16px); }
+  #hafizlik-tik-denemesi .workspace-hint { display:none; }
+  #hafizlik-tik-denemesi .designer-layers { width:calc(100% - 16px); right:8px; bottom:70px; max-height:48dvh; }
+}

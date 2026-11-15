@@ -1,0 +1,925 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#f6efdf">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Pofi">
+
+
+<title>Pofi</title>
+<!--
+  "Bütün Gün Oturmak Bize Ne Yapıyor?" videosunun oyunu, prototip v5 (2026-11-02).
+  Pofi bir deniz süngeri; masana düşmüş, denize dönmek istiyor. Sen çalışırken bekler, molada seninle yürür.
+  Seans: N oturum (varsayılan 4); her mola rotada bir aralık doldurur (mola dakikası = yol), son nokta deniz.
+  Çalışma geri sayar, dolunca + ile uzar ve Pofi kurur (kukla solar, kök salar; uçta saksı ve taş çizimi).
+  Tek eylem dili: Başla (çalışmaya başla, moladan dön), Kalk (molaya çık).
+  Konuşma: yalnız olay anlarında; olay dışı söz en çok 10 dakikada bir; oturumun ortasında Pofi susar.
+  Düzen: --u = 240'lık birim; yatay pencerede (köşe penceresi 240x184) balon Pofi'nin yanında; telefonda tam ekran.
+  Masa + telefon eşleşmesi ve telefona bildirim: pofi-es Worker'ı (SITE/tools/pofi-es). Deneme: ?deneme (1 dk = 1 sn).
+-->
+<link rel="preload" href="./font/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="./font/fraunces-latin-ext-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<style id="oyunStil">
+@font-face{font-family:"Fraunces Pofi";font-style:normal;font-weight:100 900;font-display:swap;src:url(./font/fraunces-latin-full-normal.woff2) format("woff2-variations");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Fraunces Pofi";font-style:normal;font-weight:100 900;font-display:swap;src:url(./font/fraunces-latin-ext-full-normal.woff2) format("woff2-variations");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--kagit:#f6efdf;--kagit2:#fffaf0;--murekkep:#2a2418;--soluk:#8a7f69;--cizgi:rgba(42,36,24,.14);--su:#2f8fd0;--deniz:#cfe4f2;--kok:#7a5532}
+button{font:inherit;color:inherit}
+[hidden]{display:none!important}
+
+/* ---- oyun penceresi: her ölçü 240'lık birimde; dikey 200 birime sığar ---- */
+.oyun{position:relative;container-type:size;overflow:hidden;color:var(--murekkep);
+  background:linear-gradient(180deg,var(--gok,#f6efdf) 0%,var(--kagit) 74%);transition:background 1.2s ease;
+  font-family:"Fraunces Pofi",Georgia,serif;font-variation-settings:"SOFT" 100;-webkit-font-smoothing:antialiased;user-select:none;-webkit-user-select:none}
+.ic{position:absolute;inset:0;--u:min(calc(100cqw / 240),calc(100cqh / 200));
+  --x:50%;                                   /* Pofi'nin yatay yeri */
+  --taban:calc(var(--u)*58);                 /* ayakların alttan yüksekliği (rota çizgisinin hemen üstü) */
+  --boy:min(calc(var(--u)*112),calc((100cqh - var(--u)*131) * 1.05))}  /* üstte iki satırlık balona yer kalır */
+.sahne{position:absolute;inset:0;pointer-events:none}
+.golge{position:absolute;left:var(--x);bottom:calc(var(--taban) - var(--u)*3);width:calc(var(--boy)*.52);height:calc(var(--u)*7);margin-left:calc(var(--boy)*-.26);
+  background:radial-gradient(closest-side,rgba(42,36,24,.16),transparent);border-radius:50%}
+.pofi,.kukla{position:absolute;left:var(--x);bottom:var(--taban);width:var(--boy);height:var(--boy);margin-left:calc(var(--boy)/-2);transform-origin:50% 100%;pointer-events:auto;cursor:pointer}
+.pofi img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:50% 100%;transition:opacity .4s ease}
+.pofi img.gizli{opacity:0}
+.nefes{animation:nefes 3.2s ease-in-out infinite}
+@keyframes nefes{0%,100%{transform:scale(1,1)}50%{transform:scale(1.014,.986)}}
+.zipla{animation:zipla .5s cubic-bezier(.3,1.6,.5,1)}
+@keyframes zipla{0%{transform:scale(1.08,.9)}40%{transform:translateY(-7%) scale(.95,1.06)}100%{transform:none}}
+.titre{animation:titre .9s linear}
+@keyframes titre{0%,100%{transform:none}10%,30%,50%,70%{transform:translateX(-2.5%) rotate(-2deg)}20%,40%,60%,80%{transform:translateX(2.5%) rotate(2deg)}90%{transform:translateY(-12%) scale(1.04)}}
+.takla{animation:takla 1.1s cubic-bezier(.4,0,.3,1)}
+@keyframes takla{0%{transform:none}20%{transform:scale(1.1,.85)}55%{transform:translateY(-34%) rotate(200deg)}85%{transform:translateY(0) rotate(360deg) scale(1.05,.92)}100%{transform:rotate(360deg)}}
+.damla{position:absolute;width:calc(var(--u)*5);height:calc(var(--u)*7);pointer-events:none;opacity:0;animation:damla 1.3s ease-in forwards;
+  background:var(--su);border-radius:50% 50% 50% 50%/60% 60% 40% 40%;clip-path:polygon(50% 0,100% 62%,88% 92%,50% 100%,12% 92%,0 62%)}
+@keyframes damla{0%{opacity:0;transform:translateY(0)}15%{opacity:.9}100%{opacity:0;transform:translateY(calc(var(--u)*60))}}
+
+/* kesik kukla: parçalar 480'lik tasarım alanında, eklem noktası transform-origin */
+.kukla img{position:absolute;display:block;pointer-events:none}
+.k-ust{position:absolute;inset:0;transform-origin:50% 82%;transition:transform .5s ease}
+.k-govde{left:13.125%;top:4.167%;width:73.958%}
+.k-govde.kapali{left:12.5%;top:3.75%;width:75.208%;opacity:0}
+.kirp .k-govde.acik{opacity:0} .kirp .k-govde.kapali{opacity:1}
+.k-kol.sol{left:1.458%;top:37.5%;width:28.333%;transform-origin:65% 6%}
+.k-kol.sag{left:70.208%;top:37.5%;width:28.125%;transform-origin:35% 6%}
+.k-bacak.sol{left:17.5%;top:65%;width:30.625%;transform-origin:55% 4%;transition:transform .5s ease}
+.k-bacak.sag{left:51.875%;top:65%;width:30.625%;transform-origin:45% 4%;transition:transform .5s ease}
+.kukla{transition:filter 2s linear}
+/* yürüme */
+.k-yuru .k-ust{animation:kUst .7s linear infinite}
+@keyframes kUst{0%,50%,100%{transform:translateY(0) rotate(-2.5deg)}25%,75%{transform:translateY(-4%) rotate(0)}50%{transform:translateY(0) rotate(2.5deg)}}
+.k-yuru .k-bacak.sol{animation:kBacak .7s ease-in-out infinite}
+.k-yuru .k-bacak.sag{animation:kBacak .7s ease-in-out infinite;animation-delay:-.35s}
+@keyframes kBacak{0%,50%,100%{transform:none}25%{transform:translateY(-11%) rotate(-7deg)}}
+.k-yuru .k-kol.sol{animation:kKolS .7s ease-in-out infinite}
+.k-yuru .k-kol.sag{animation:kKolG .7s ease-in-out infinite}
+@keyframes kKolS{0%,100%{transform:rotate(16deg)}50%{transform:rotate(-10deg)}}
+@keyframes kKolG{0%,100%{transform:rotate(10deg)}50%{transform:rotate(-16deg)}}
+/* ayakta bekleme: nefes, el sallama */
+.k-dur .k-ust{animation:kNefes 3.2s ease-in-out infinite}
+@keyframes kNefes{0%,100%{transform:scale(1,1)}50%{transform:scale(1.015,.985)}}
+.k-dur .k-kol.sol{animation:kSalin 3.2s ease-in-out infinite}
+.k-dur .k-kol.sag{animation:kSalla 6s ease-in-out infinite}
+@keyframes kSalin{0%,100%{transform:rotate(3deg)}50%{transform:rotate(-3deg)}}
+@keyframes kSalla{0%,62%,100%{transform:rotate(0)}70%,86%{transform:rotate(-128deg)}74%,82%{transform:rotate(-108deg)}78%{transform:rotate(-132deg)}}
+/* masada esneme: kollar yukarı, yavaş */
+.k-esne .k-ust{animation:kNefes 2.4s ease-in-out infinite}
+.k-esne .k-kol.sol{animation:kEsneS 2.4s ease-in-out infinite}
+.k-esne .k-kol.sag{animation:kEsneG 2.4s ease-in-out infinite}
+@keyframes kEsneS{0%,100%{transform:rotate(0)}40%,60%{transform:rotate(140deg)}}
+@keyframes kEsneG{0%,100%{transform:rotate(0)}40%,60%{transform:rotate(-140deg)}}
+/* denizde sevinç: kollar havada, zıplar */
+.k-sevin .k-ust{animation:kSevin .9s ease-in-out infinite}
+.k-sevin .k-kol.sol{transform:rotate(150deg)} .k-sevin .k-kol.sag{transform:rotate(-150deg)}
+@keyframes kSevin{0%,100%{transform:none}50%{transform:translateY(-6%) scale(.98,1.03)}}
+/* oturuyor: sandalye yok; gövde iner, ayaklar iki yana açılır */
+.k-otur .k-ust{transform:translateY(13%)}
+.k-otur .k-bacak.sol{transform:translateY(37%) rotate(62deg)}
+.k-otur .k-bacak.sag{transform:translateY(37%) rotate(-62deg)}
+.k-otur .k-kol.sol{transform:translateY(5%) rotate(-14deg)} .k-otur .k-kol.sag{transform:translateY(5%) rotate(14deg)}
+.k-otur .k-ust{animation:kOturNefes 3.6s ease-in-out infinite}
+@keyframes kOturNefes{0%,100%{transform:translateY(13%) scale(1,1)}50%{transform:translateY(13%) scale(1.012,.988)}}
+.k-otur.sabir .k-ust{animation:kSabir .5s ease-in-out infinite}
+@keyframes kSabir{0%,100%{transform:translateY(13%)}50%{transform:translateY(11%) scale(.99,1.02)}}
+.k-otur.sabir .k-kol.sag{animation:kSalla 2.4s ease-in-out infinite}
+.k-otur.kuru .k-ust{animation:kKuru 5s ease-in-out infinite}
+@keyframes kKuru{0%,100%{transform:translateY(15%) scale(1.03,.95) rotate(-3deg)}50%{transform:translateY(15%) scale(1.035,.94) rotate(-4deg)}}
+.k-otur.kuru .k-kol.sol{transform:translateY(8%) rotate(4deg)} .k-otur.kuru .k-kol.sag{transform:translateY(8%) rotate(-4deg)}
+.kuru .k-govde.kapali{animation:uyku 7s ease-in-out infinite} .kuru .k-govde.acik{animation:uykuA 7s ease-in-out infinite}
+@keyframes uyku{0%,40%{opacity:0}48%,90%{opacity:1}100%{opacity:0}}
+@keyframes uykuA{0%,40%{opacity:1}48%,90%{opacity:0}100%{opacity:1}}
+/* kökler: süre dolunca ayaklardan zemine yayılır */
+.kok{position:absolute;left:var(--x);bottom:calc(var(--taban) - var(--boy)*.1);width:calc(var(--boy)*1.2);height:calc(var(--boy)*.16);margin-left:calc(var(--boy)*-.6);
+  overflow:visible;pointer-events:none;transition:opacity .5s ease}
+.kok path{fill:none;stroke:var(--kok);stroke-width:calc(var(--u)*1.5);vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;opacity:0;transition:stroke-dashoffset 1.5s linear}
+.kok.kopuk{opacity:0;transition:opacity .6s ease .2s}
+
+/* üst çubuk: saat, sessiz, seans, köşe penceresi, ayarlar */
+.ustbar{position:absolute;left:calc(var(--u)*10);right:calc(var(--u)*5);top:calc(var(--u)*5);height:calc(var(--u)*24);display:flex;align-items:center;gap:calc(var(--u)*2);z-index:6;color:var(--soluk)}
+.saat{font-size:calc(var(--u)*12);font-weight:500;font-variant-numeric:tabular-nums}
+.seansYazi{flex:1;text-align:center;font-size:calc(var(--u)*11);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.simge{width:calc(var(--u)*24);height:calc(var(--u)*24);flex:none;display:grid;place-items:center;appearance:none;border:0;background:transparent;color:rgba(42,36,24,.5);cursor:pointer;border-radius:50%;transition:transform .08s,background .15s}
+.simge:hover{color:var(--murekkep);background:rgba(42,36,24,.06)}
+.simge:active{transform:scale(.9)}
+.simge svg{width:calc(var(--u)*14);height:calc(var(--u)*14)}
+#sessizD .kapali{display:none} #sessizD.acik .kapali{display:block}
+#sessizD.acik{color:#a5532c}
+
+/* konuşma balonu: Pofi'nin başının üstünde, kuyruğu ona dönük */
+.balon{position:absolute;left:var(--x);bottom:calc(var(--taban) + var(--boy)*.94 + var(--u)*7);width:max-content;max-width:min(calc(var(--u)*200),94%);
+  padding:calc(var(--u)*4.5) calc(var(--u)*8);font-size:calc(var(--u)*11.5);line-height:1.22;font-weight:500;text-align:center;text-wrap:balance;
+  background:var(--kagit2);border:calc(var(--u)*1) solid rgba(42,36,24,.55);border-radius:calc(var(--u)*8);
+  opacity:0;transform:translate(-50%,calc(var(--u)*4));transition:opacity .25s,transform .25s;pointer-events:none;z-index:7}
+.balon span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.balon::after{content:"";position:absolute;left:50%;bottom:calc(var(--u)*-4.2);width:calc(var(--u)*7);height:calc(var(--u)*7);margin-left:calc(var(--u)*-3.5);
+  background:var(--kagit2);border:solid rgba(42,36,24,.55);border-width:0 calc(var(--u)*1) calc(var(--u)*1) 0;transform:rotate(45deg)}
+.balon.acik{opacity:1;transform:translate(-50%,0)}
+.balon.ipucu,.balon.ipucu::after{border-color:var(--su)}
+
+/* yatay pencere (köşe penceresi 240x184): Pofi biraz solda, balon yanında */
+@container (aspect-ratio > 6/5){
+  .ic{--x:36%;--boy:min(calc(var(--u)*124),calc(100cqh - var(--u)*94))}
+  .balon{left:calc(var(--x) + var(--boy)*.38);bottom:calc(var(--taban) + var(--boy)*.46);max-width:calc(100% - var(--x) - var(--boy)*.38 - var(--u)*8);
+    text-align:left;transform:translate(calc(var(--u)*-4),0)}
+  .balon.acik{transform:none}
+  .balon span{-webkit-line-clamp:3}
+  .balon::after{left:calc(var(--u)*-4.2);bottom:calc(var(--u)*8);margin-left:0;border-width:0 0 calc(var(--u)*1) calc(var(--u)*1)}
+}
+
+/* rota: seans boyunca eşit aralıklı oturum noktaları, son nokta deniz */
+.rota{position:absolute;left:calc(var(--u)*16);right:calc(var(--u)*16);bottom:calc(var(--u)*44);height:calc(var(--u)*8);z-index:2}
+.rota .cizgi{position:absolute;left:0;right:0;top:50%;height:calc(var(--u)*1.2);margin-top:calc(var(--u)*-.6);background:rgba(42,36,24,.18)}
+.rota .dolu{position:absolute;left:0;top:50%;height:calc(var(--u)*1.6);margin-top:calc(var(--u)*-.8);background:var(--murekkep);width:0;transition:width .6s ease}
+.rota i{position:absolute;top:50%;width:calc(var(--u)*5);height:calc(var(--u)*5);margin:calc(var(--u)*-2.5) 0 0 calc(var(--u)*-2.5);border-radius:50%;background:var(--kagit);border:calc(var(--u)*1.2) solid rgba(42,36,24,.4)}
+.rota i.var{background:var(--murekkep);border-color:var(--murekkep)}
+.rota i.son{width:calc(var(--u)*8);height:calc(var(--u)*8);margin:calc(var(--u)*-4) 0 0 calc(var(--u)*-4);border-color:var(--su);background:var(--deniz)}
+.rota i.son.var{background:var(--su)}
+.rota b{position:absolute;top:50%;width:calc(var(--u)*9);height:calc(var(--u)*9);margin:calc(var(--u)*-4.5) 0 0 calc(var(--u)*-4.5);border-radius:50%;
+  background:#d9a640;border:calc(var(--u)*1.4) solid var(--murekkep);left:0;transition:left .6s ease}
+
+/* alt satır: sayaç + ana düğme (+ süre dolunca ertele) */
+.alt{position:absolute;left:calc(var(--u)*14);right:calc(var(--u)*12);bottom:calc(var(--u)*9);height:calc(var(--u)*30);display:flex;align-items:center;justify-content:space-between;gap:calc(var(--u)*6);z-index:3}
+.zaman{font-size:calc(var(--u)*27);font-weight:650;font-variation-settings:"SOFT" 100,"opsz" 144;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1}
+.zaman.asim{color:#a5532c}
+.altSag{display:flex;align-items:center;gap:calc(var(--u)*6)}
+.dugme{appearance:none;font-size:calc(var(--u)*13);font-weight:650;height:calc(var(--u)*30);min-width:calc(var(--u)*64);padding:0 calc(var(--u)*14);border-radius:calc(var(--u)*6);
+  border:calc(var(--u)*1.4) solid var(--murekkep);background:var(--murekkep);color:var(--kagit);cursor:pointer;transition:transform .08s,box-shadow .08s;white-space:nowrap;
+  box-shadow:0 calc(var(--u)*2) 0 rgba(42,36,24,.25)}
+.dugme:active{transform:translateY(calc(var(--u)*1.5));box-shadow:0 calc(var(--u)*.5) 0 rgba(42,36,24,.25)}
+.dugme.kalk{background:var(--su);border-color:var(--su);color:#fff}
+.dugme.ikincil{background:transparent;color:var(--murekkep);box-shadow:none}
+.ertele{white-space:nowrap;appearance:none;border:0;background:none;font-size:calc(var(--u)*11);color:var(--soluk);text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:calc(var(--u)*4)}
+
+/* ayarlar: pencereyi kaplayan gerçek bir menü */
+.panel{position:absolute;inset:0;background:var(--kagit2);z-index:9;display:none;flex-direction:column}
+.panel.acik{display:flex}
+.panelBas{display:flex;align-items:center;justify-content:space-between;padding:calc(var(--u)*6) calc(var(--u)*6) calc(var(--u)*4) calc(var(--u)*12);border-bottom:calc(var(--u)*1) solid var(--cizgi)}
+.panelBas b{font-size:calc(var(--u)*15);font-weight:650}
+.panelIc{flex:1;overflow:auto;padding:0 calc(var(--u)*12) calc(var(--u)*12);overscroll-behavior:contain}
+.panelIc h4{font-size:calc(var(--u)*9.5);font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--soluk);margin:calc(var(--u)*11) 0 calc(var(--u)*3)}
+.sat{display:flex;align-items:center;justify-content:space-between;gap:calc(var(--u)*8);width:100%;min-height:calc(var(--u)*26);padding:calc(var(--u)*3) 0;
+  font-size:calc(var(--u)*12);text-align:left;appearance:none;border:0;background:none;border-bottom:calc(var(--u)*1) solid var(--cizgi);cursor:default}
+.sat small{display:block;font-size:calc(var(--u)*9.5);color:var(--soluk);margin-top:calc(var(--u)*1)}
+button.sat{cursor:pointer}
+/* adımlayıcı: sabit genişlik, sayı değişince düğmeler yerinden oynamaz */
+.adim{display:inline-grid;grid-template-columns:auto calc(var(--u)*38) auto;align-items:center;gap:calc(var(--u)*4);flex:none}
+.adim b{text-align:center;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.adim button{width:calc(var(--u)*20);height:calc(var(--u)*20);border-radius:50%;border:calc(var(--u)*1) solid rgba(42,36,24,.35);background:var(--kagit);cursor:pointer;font-size:calc(var(--u)*13);line-height:1;display:grid;place-items:center;transition:transform .08s}
+.adim button:hover{border-color:var(--murekkep)}
+.adim button:active{transform:scale(.9)}
+.adim button:disabled{opacity:.3;cursor:default}
+.anahtar i{flex:none;width:calc(var(--u)*28);height:calc(var(--u)*16);border-radius:99px;background:rgba(42,36,24,.2);position:relative;transition:background .2s}
+.anahtar i::after{content:"";position:absolute;top:calc(var(--u)*2);left:calc(var(--u)*2);width:calc(var(--u)*12);height:calc(var(--u)*12);border-radius:50%;background:#fff;transition:transform .2s}
+.anahtar.acik i{background:var(--su)} .anahtar.acik i::after{transform:translateX(calc(var(--u)*12))}
+.git i{font-style:normal;color:var(--soluk);font-size:calc(var(--u)*14)}
+.git.az span{color:var(--soluk)}
+.secim{display:flex;gap:calc(var(--u)*3);padding:calc(var(--u)*4) 0 calc(var(--u)*6);border-bottom:calc(var(--u)*1) solid var(--cizgi)}
+.secim button{flex:1;appearance:none;border:calc(var(--u)*1) solid rgba(42,36,24,.3);background:var(--kagit);border-radius:calc(var(--u)*5);font-size:calc(var(--u)*10.5);padding:calc(var(--u)*4) 0;cursor:pointer}
+.secim button.acik{background:var(--murekkep);border-color:var(--murekkep);color:var(--kagit)}
+.ozet{font-size:calc(var(--u)*12);line-height:1.4;padding:calc(var(--u)*3) 0}
+
+/* kartlar: karşılama, telefon eşleşmesi, soru, seans sonu */
+.kart{position:absolute;inset:calc(var(--u)*8);background:var(--kagit2);border:calc(var(--u)*1) solid rgba(42,36,24,.55);border-radius:calc(var(--u)*9);z-index:10;
+  display:none;flex-direction:column;align-items:center;justify-content:safe center;gap:calc(var(--u)*4);text-align:center;padding:calc(var(--u)*7) calc(var(--u)*11);overflow:auto}
+.kart.acik{display:flex}
+.kart .qr{width:calc(var(--u)*140);height:calc(var(--u)*140);flex:none}
+.kart .qr svg{width:100%;height:100%;display:block}
+.kart p{font-size:calc(var(--u)*11);line-height:1.32;text-wrap:pretty;max-width:calc(var(--u)*204)}
+.kart h3{font-size:calc(var(--u)*16);font-weight:650;font-style:italic;text-wrap:balance}
+.kart .kapat{position:absolute;right:calc(var(--u)*4);top:calc(var(--u)*4)}
+.kart .adim{grid-template-columns:auto calc(var(--u)*30) auto;margin-top:calc(var(--u)*1)}
+.kart .adim b{font-size:calc(var(--u)*17)}
+.kart .not{font-size:calc(var(--u)*10);color:var(--soluk)}
+.kart .dugme{margin-top:calc(var(--u)*2);flex:none}
+.kart img{height:calc(var(--u)*24);flex:none}
+.kart .hikaye{position:absolute;left:calc(var(--u)*7);top:calc(var(--u)*6);font-size:calc(var(--u)*9.5);color:var(--soluk);text-decoration:underline;text-underline-offset:2px}
+body.cep .kart .hikaye{font-size:14px;left:18px;top:16px}
+a.sat{color:inherit;text-decoration:none}
+.kart ol{font-size:calc(var(--u)*11.5);line-height:1.4;text-align:left;padding-left:calc(var(--u)*16)}
+.kart .ikili{display:flex;gap:calc(var(--u)*6);justify-content:center}
+.kart .rakam{display:grid;grid-template-columns:repeat(3,auto);gap:calc(var(--u)*3) calc(var(--u)*14);font-size:calc(var(--u)*10.5)}
+.kart .rakam b{display:block;font-size:calc(var(--u)*17);font-weight:650;font-variant-numeric:tabular-nums}
+
+/* erişilebilirlik: klavye odak halkası, azaltılmış hareket */
+.oyun :focus-visible{outline:calc(var(--u)*2) solid var(--su);outline-offset:calc(var(--u)*1.5)}
+@media (prefers-reduced-motion: reduce){
+  .kukla *,.kukla,.pofi,.nefes,.zipla,.titre,.takla,.k-ust{animation:none!important}
+  .damla{display:none}
+}
+
+/* ---- sayfa: pencerenin büyümüş hâli ---- */
+html,body{height:100%}
+body{background:#ebe2cd;display:grid;place-items:center;font-family:"Fraunces Pofi",Georgia,serif;color:#2a2418}
+.yer{display:grid;justify-items:center;padding:16px}
+.yer > .oyun{width:min(92vw,80vh,560px);aspect-ratio:1;border-radius:18px;box-shadow:0 1px 0 rgba(42,36,24,.08),0 18px 40px rgba(42,36,24,.14)}
+.bosYer{width:min(92vw,80vh,560px);aspect-ratio:1;border-radius:18px;border:1.5px dashed rgba(42,36,24,.25);display:none;place-items:center;text-align:center;color:#5c5240;font-size:17px}
+.bosYer button{appearance:none;font-size:15px;border:0;background:rgba(42,36,24,.06);cursor:pointer;padding:8px 14px;border-radius:8px;margin-top:10px}
+.koseda .bosYer{display:grid}
+body.pip,body.cep{background:var(--kagit);display:block}
+body.cep .yer{padding:0}
+body.pip > .oyun,body.cep .yer > .oyun{position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;border-radius:0;box-shadow:none;aspect-ratio:auto}
+
+/* ---- telefon: bütün ekran; saat ve menü köşelerde, sahne ortada, sayaç ve düğme altta ---- */
+body.cep .ic{--u:calc(min(100cqw, 60cqh) / 240);--x:50%;--taban:calc(env(safe-area-inset-bottom) + 134px);
+  --boy:min(calc(var(--u)*190),calc(100cqh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 330px))}
+body.cep .ustbar{left:max(14px,env(safe-area-inset-left));right:max(8px,env(safe-area-inset-right));top:calc(env(safe-area-inset-top) + 6px);height:48px;gap:2px}
+body.cep .saat{font-size:16px}
+body.cep .seansYazi{font-size:14px}
+body.cep .simge{width:44px;height:44px}
+body.cep .simge svg{width:20px;height:20px}
+body.cep .balon{bottom:calc(var(--taban) + var(--boy)*.94 + 12px);max-width:calc(100% - 40px);font-size:17px;padding:9px 14px;border-radius:14px;border-width:1px}
+body.cep .balon::after{width:12px;height:12px;margin-left:-6px;bottom:-7px;border-width:0 1px 1px 0}
+body.cep .golge{height:12px;bottom:calc(var(--taban) - 5px)}
+body.cep .rota{bottom:calc(env(safe-area-inset-bottom) + 108px);left:28px;right:28px;height:12px}
+body.cep .alt{left:24px;right:20px;bottom:calc(env(safe-area-inset-bottom) + 30px);height:56px}
+body.cep .zaman{font-size:48px}
+body.cep .dugme{font-size:18px;height:52px;min-width:120px;padding:0 24px;border-radius:12px;border-width:2px;box-shadow:0 3px 0 rgba(42,36,24,.25)}
+body.cep .ertele{font-size:15px}
+body.cep .panel{padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+body.cep .panelBas{padding:10px 8px 8px 20px} body.cep .panelBas b{font-size:20px}
+body.cep .panelIc{padding:0 20px 24px}
+body.cep .panelIc h4{font-size:12px;margin:20px 0 6px}
+body.cep .sat{font-size:16px;min-height:52px;padding:6px 0;gap:12px}
+body.cep .sat small{font-size:13px}
+body.cep .adim{grid-template-columns:auto 64px auto;gap:6px} body.cep .adim button{width:36px;height:36px;font-size:20px;border-width:1px}
+body.cep .anahtar i{width:46px;height:28px} body.cep .anahtar i::after{top:3px;left:3px;width:22px;height:22px} body.cep .anahtar.acik i::after{transform:translateX(18px)}
+body.cep .secim button{font-size:14px;padding:10px 0;border-radius:8px}
+body.cep .ozet{font-size:16px}
+body.cep .kart{inset:calc(env(safe-area-inset-top) + 20px) 16px calc(env(safe-area-inset-bottom) + 20px);border-radius:16px;padding:24px;gap:12px}
+body.cep .kart h3{font-size:26px} body.cep .kart p,body.cep .kart ol{font-size:17px;max-width:340px} body.cep .kart img{height:90px}
+body.cep .kart .adim{grid-template-columns:auto 56px auto} body.cep .kart .adim b{font-size:28px} body.cep .kart .not{font-size:14px}
+body.cep .kart .rakam{font-size:15px;gap:8px 28px} body.cep .kart .rakam b{font-size:28px}
+body.cep .kart .dugme{width:100%}
+body.cep .kart .ikili{width:100%} body.cep .kart .ikili .dugme{width:auto;flex:1}
+body.cep .oyun :focus-visible{outline-width:3px;outline-offset:3px}
+</style>
+<style>[data-k="telefon"],[data-k="kes"],[data-k="bildirim"],[data-k="otoDevam"]{display:none!important}</style></head>
+<body>
+<main class="yer" id="yer">
+  <div class="bosYer" id="bosYer"><div>Pofi köşede.<br><button id="geriAl">Buraya geri al</button></div></div>
+  <section class="oyun" id="oyun" aria-label="Pofi">
+    <div class="ic" id="ic">
+      <div class="sahne" id="sahne">
+        <div class="golge"></div>
+        <svg class="kok" id="kok" viewBox="0 0 120 24" preserveAspectRatio="none" aria-hidden="true">
+          <path pathLength="1" d="M44 3c-2 5-8 8-16 9s-14 4-19 9"/><path pathLength="1" d="M42 4c0 6-3 11-9 16"/><path pathLength="1" d="M46 4c3 5 4 10 2 17"/>
+          <path pathLength="1" d="M76 3c2 5 8 8 16 9s14 4 19 9"/><path pathLength="1" d="M78 4c0 6 3 11 9 16"/><path pathLength="1" d="M74 4c-3 5-4 10-2 17"/>
+          <path pathLength="1" d="M33 12c-5 1-9 0-12-3"/><path pathLength="1" d="M87 12c5 1 9 0 12-3"/>
+        </svg>
+        <div class="pofi nefes" id="pofi" hidden><img id="imgA" alt=""><img id="imgB" alt="" class="gizli"></div>
+        <div class="kukla k-dur" id="kukla" role="img" aria-label="Pofi"><img class="k-bacak sol" alt="" src="./kukla/bacak_sol.webp"><img class="k-bacak sag" alt="" src="./kukla/bacak_sag.webp"><div class="k-ust"><img class="k-kol sol" alt="" src="./kukla/kol_sol.webp"><img class="k-kol sag" alt="" src="./kukla/kol_sag.webp"><img class="k-govde acik" alt="" src="./kukla/govde.webp"><img class="k-govde kapali" alt="" src="./kukla/govde_kapali.webp"></div></div>
+      </div>
+      <div class="ustbar">
+        <span class="saat" id="saat"></span>
+        <button class="simge" id="sessizD" aria-label="Sessiz" title="Sessize al (60 dk)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2.6a3.4 3.4 0 0 0-3.4 3.4v2.5L3.3 10.7h9.4L11.4 8.5V6A3.4 3.4 0 0 0 8 2.6zM6.6 12.6a1.5 1.5 0 0 0 2.8 0"/><path class="kapali" d="M2.5 2.5l11 11"/></svg></button>
+        <span class="seansYazi" id="seansYazi"></span>
+        <button class="simge" id="pipD" aria-label="Köşe penceresinde aç" title="Köşe penceresinde aç" hidden><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1.5" y="2.5" width="13" height="10" rx="1.5"/><rect x="8" y="7.5" width="5" height="3.6" rx=".6" fill="currentColor" stroke="none"/></svg></button>
+        <button class="simge" id="ayarD" aria-label="Ayarlar" title="Ayarlar"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2.5 4.5h11M2.5 8h11M2.5 11.5h11"/></svg></button>
+      </div>
+      <div class="balon" id="balon" role="status" aria-live="polite"><span id="balonYazi"></span></div>
+      <div class="rota" id="rota"><div class="cizgi"></div><div class="dolu" id="dolu"></div><b id="isaret"></b></div>
+      <div class="alt"><span class="zaman" id="zaman">25:00</span><span class="altSag"><button class="ertele" id="erteleD" hidden>5 dk ertele</button><button class="dugme" id="dugme">Başla</button></span></div>
+      <div class="panel" id="panel" role="dialog" aria-label="Ayarlar"><div class="panelBas"><b>Ayarlar</b><button class="simge" id="panelKapat" aria-label="Kapat"><svg viewBox="0 0 16 16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div><div class="panelIc" id="panelIc"></div></div>
+      <div class="kart" id="esKart" role="dialog"><button class="simge kapat" data-kapat="esKart" aria-label="Kapat"><svg viewBox="0 0 16 16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg></button><div class="qr" id="qr"></div><p>Telefonun kamerasıyla okut. Mola bitince telefonun haber verir.</p></div>
+      <div class="kart" id="tanit" role="dialog"><img alt="" src="./yurume.webp"><h3>Pofi denize dönüyor</h3><p>Pofi bir deniz süngeri, masana düşmüş. Sen çalışırken bekler, molada seninle yürür. Seans bitince Pofi denize dönmüş olacak.</p><p><b>Bugün kaç oturum?</b></p><div class="adim" id="tanitAdim"></div><span class="not" id="tanitNot"></span><button class="dugme" id="tanitTamam">Başla</button><a class="hikaye" href="https://barisozcan.com/yazi/oturmak-yeni-sigara-mi" target="_blank" rel="noopener" title="Videosu ve yazısı">Hikâyesi</a></div>
+      <div class="kart" id="koseKart" role="dialog"><button class="simge kapat" data-kapat="koseKart" aria-label="Kapat"><svg viewBox="0 0 16 16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg></button><img alt="" src="./yurume.webp"><h3 id="koseBaslik">Pofi köşede beklesin</h3><p id="koseYazi">Tek tıkla Pofi'yi ekranın köşesindeki küçük bir pencereye alın. Başka sekmede çalışırken de sayaç gözünüzün önünde kalır.</p><button class="dugme" id="koseAc">Köşe penceresine al</button></div>
+      <div class="kart" id="soruKart" role="dialog"><h3 id="soruBaslik"></h3><p id="soruYazi"></p><div class="ikili"><button class="dugme ikincil" id="soruHayir">Gerek yok</button><button class="dugme" id="soruEvet">Haber ver</button></div></div>
+      <div class="kart" id="evKart" role="dialog"><button class="simge kapat" data-kapat="evKart" aria-label="Kapat"><svg viewBox="0 0 16 16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg></button><h3>Önce ana ekrana ekle</h3><p>iPhone bildirimi yalnız ana ekrandaki uygulamaya gönderir.</p><ol><li>Alttaki Paylaş simgesine dokun.</li><li>Ana Ekrana Ekle'yi seç.</li><li>Pofi'yi ana ekrandan aç, bildirimi orada aç.</li></ol><button class="dugme" data-kapat="evKart">Tamam</button></div>
+      <div class="kart" id="ozetKart" role="dialog"><button class="simge kapat" data-kapat="ozetKart" aria-label="Kapat"><svg viewBox="0 0 16 16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg></button><img alt="" src="./yurume.webp"><h3>Pofi denize vardı</h3><div class="rakam" id="ozetRakam"></div><p class="not" id="ozetSeri"></p><div class="ikili"><button class="dugme ikincil" id="ozetPaylas">Paylaş</button><button class="dugme" data-kapat="ozetKart">Tamam</button></div></div>
+    </div>
+  </section>
+</main>
+<script src="./qr.js"></script>
+<script>
+(() => {
+const DK = 60000;
+const A = './';      // çizim pozları (saksı, taş, koparma)
+const ES = 'pofi-es.ozcanbaris.workers.dev';                      // eşleşme sunucusu
+const VARSAY = {hedef: 4, calis: 25, mola: 5, uzun: 15, uzunAralik: 4, otoDevam: false};
+const SINIR = {hedef: [1, 12, 1], calis: [5, 90, 5], mola: [1, 20, 1], uzun: [5, 30, 5]};
+const ASAMA = [ // süre dolduktan sonraki dakika -> görünüm (kukla hâli ya da uçta çizim)
+  {u: -1e9, ad: 'otur'}, {u: 0, ad: 'sabir'}, {u: 5, ad: 'kuru'}, {u: 35, ad: 'saksi'}, {u: 95, ad: 'tas'}];
+const UYARI = [-0.5, 0, 5, 10, 15, 20, 25, 30, 45, 60, 90, 120]; // süre sonuna göre dakika; -0.5 = 30 sn kala ön işaret
+const SESLER = [['kalimba', 'Kalimba'], ['ahsap', 'Ahşap'], ['kabarcik', 'Kabarcık'], ['kapali', 'Kapalı']];
+const BOSTA_DK = 3;                                               // bu kadar boşta kalınca mola sayılır
+const ORTAM_DK = 10;                                              // olay dışı söz en çok bu kadar dakikada bir
+
+// ---- konuşma motoru: olaya göre havuz, aynı söz arka arkaya gelmez; {mola} {kalan} {calis} doldurulur ----
+const SOZ = {
+  basla:    ['Sen çalış, ben izlerim.', 'Tek iş. {calis} dakika.', 'Telefonu ters çevir. Başlıyoruz.', 'Ben buradayım. Sen işine bak.', 'Bir iş seç, sadece onu yap.', 'Hadi bakalım. Bu oturum bizim.'],
+  sabah:    ['Günaydın. İlk oturum en kolayı.', 'Günaydın. Önce en zor işi seç.'],
+  aksam:    ['Akşam oldu. Kısa ve net tutalım.'],
+  gece:     ['Gece yarısı geçti. Uyku da bir mola türü.'],
+  cuma:     ['Cuma öğleden sonra. Hafta sonu kokusu geliyor.'],
+  pazartesi:['Pazartesi. Yavaş başla, ısın.'],
+  onIsaret: ['Yarım dakika. Cümleni bitir.', 'Az kaldı. Kaydetmek ister misin?', '30 saniye. Toparlan.'],
+  doldu:    ['Süre doldu. Kalkalım mı?', 'Hadi, ayağa. {mola} dakika yürüyoruz.', 'Bacaklar uyudu. Uyandıralım.', 'Mola zamanı. Yol bekliyor.', 'Kalk bakalım. Ben de geliyorum.'],
+  uzatma:   ['Hâlâ oturuyoruz. Bir dakika bile yeter.', 'Kalk, su doldur, gel. O kadar.', 'Beynine kan lazım. Kalk.', 'Sandalye beni seviyor. Kurtar beni.', 'Kökler başladı. Kalkıyoruz.'],
+  saksi:    ['Kök saldım. Saksı oldum.'],
+  tas:      ['Beni müzeye koydular.'],
+  kalkis:   ['Kökler koptu. Yola!', 'İşte bu. En zor kısım kalkmaktı.', 'Kalktın. Gerisi kolay.', 'Hadi. Deniz o tarafta.'],
+  uzunMola: ['Uzun mola: {mola} dakika. Güzel bir yürüyüş olsun.'],
+  yuru:     ['Koridorun sonuna kadar yürü, gel.', 'Bir bardak su doldur.', 'Merdiven varsa bir kat in, çık.', 'Pencereye git, 20 saniye uzağa bak.', 'Omuzlarını 10 kez geriye çevir.', 'Parmak ucunda 15 kez yüksel.', 'Kollarını tavana uzat, 5 nefes.', 'Telefona bakma. Sadece yürü.', 'Yürürken kollarını salla.'],
+  esne:     ['Boynunu yavaşça sağa, sonra sola eğ.', 'Omuzlarını kulaklarına kaldır, bırak. 5 kez.', 'Ayak bileklerini 10 tur çevir.', 'Kalk, otur. 10 kez.', 'Parmaklarını aç kapa, bileklerini çevir.', 'Gözlerini kapat, 3 derin nefes.', 'Kollarını yukarı uzat, yana eğil.'],
+  bitti:    ['Mola bitti. Hazır olunca Başla.', 'Yol iyi geldi. Hazır olunca Başla.'],
+  bittiOto: ['Mola bitti. Dönünce ben anlarım.'],
+  donus:    ['Tazelendik. Devam.', 'Hoş geldin. Kaldığımız yerden.', '{kalan} oturum kaldı.', 'Deniz biraz daha yakın.'],
+  sonOturum:['Son oturum. Deniz görünüyor.'],
+  bilgi:    ['Her 30 dakikada 5 dakika yürümek kan şekerini düşürüyor.', 'Kısa ve sık mola, tek uzun moladan iyi.', 'Molalardan sonra ruh hali düzeliyor. Fark ettin mi?', '30 dakikada bir 2 dakika yürümek bile beyne giden kanı koruyor.'],
+  erken:    ['Erken kalktın. Hiç sorun değil.'],
+  deniz:    ['Deniz! Seans bitti.', 'Vardık! Tuzlu su, sonunda.'],
+  seansYeni:['Masana yeni bir sünger düştü. Hazır olunca Başla.'],
+  ertele:   ['5 dakika. Söz mü?'],
+  dokun:    ['Hıh?', 'Buradayım.', 'Pof!', 'Gözüm üstünde.'],
+  gidik:    ['Hahaha! Tamam, tamam!', 'Gıdıklanıyorum! Dur!', 'Başım döndü.', 'Bir daha yaparsan denize kendim yürürüm.'],
+  // kilometre taşları: her biri bir kez
+  ilkDeniz: ['İlk deniz! Bu yolu birlikte yürüdük.'],
+  seri7:    ['Yedi gündür her gün kalkıyorsun. Gurur duyuyorum.'],
+  oturum50: ['50. oturum. Ayakların sana teşekkür ediyor.'],
+  oturum100:['100. oturum. Kalkmak artık senin huyun.'],
+  video:    ['Bütün gün oturmak bize ne yapıyor? Artık biliyorsun.'],
+};
+const sonSoz = {};
+function sec(tur, deger = {}) {
+  const h = SOZ[tur]; if (!h) return '';
+  let i = Math.floor(Math.random() * h.length); if (h.length > 1 && i === sonSoz[tur]) i = (i + 1) % h.length; sonSoz[tur] = i;
+  return h[i].replace(/\{(\w+)\}/g, (_, k) => deger[k] ?? '');
+}
+
+const cep = matchMedia('(pointer: coarse)').matches && !matchMedia('(any-pointer: fine)').matches;
+const ios = /iPhone|iPad|iPod/.test(navigator.userAgent);
+const uygulama = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const azHareket = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const pozYolu = ad => `${A}${ad}.webp`;
+['saksi', 'tas', 'koparma'].forEach(a => { const i = new Image(); i.src = pozYolu(a); });
+
+const $ = id => document.getElementById(id);
+const el = {oyun: $('oyun'), ic: $('ic'), sahne: $('sahne'), pofi: $('pofi'), kukla: $('kukla'), kok: $('kok'), A: $('imgA'), B: $('imgB'),
+  balon: $('balon'), balonYazi: $('balonYazi'), saat: $('saat'), sessizD: $('sessizD'), seansYazi: $('seansYazi'), pipD: $('pipD'), ayarD: $('ayarD'),
+  zaman: $('zaman'), dugme: $('dugme'), erteleD: $('erteleD'), dolu: $('dolu'), isaret: $('isaret'), rota: $('rota'),
+  panel: $('panel'), panelIc: $('panelIc'), panelKapat: $('panelKapat'), esKart: $('esKart'), qr: $('qr'),
+  tanit: $('tanit'), tanitAdim: $('tanitAdim'), tanitNot: $('tanitNot'), tanitTamam: $('tanitTamam'),
+  soruKart: $('soruKart'), soruBaslik: $('soruBaslik'), soruYazi: $('soruYazi'), soruEvet: $('soruEvet'), soruHayir: $('soruHayir'),
+  evKart: $('evKart'), ozetKart: $('ozetKart'), ozetRakam: $('ozetRakam'), ozetSeri: $('ozetSeri'), ozetPaylas: $('ozetPaylas'), yer: $('yer'), geriAl: $('geriAl')};
+const kokYollar = [...el.kok.querySelectorAll('path')];
+if (cep) document.body.classList.add('cep');
+
+// ---- durum: d cihazlar arasında paylaşılır, y yalnız bu cihazda ----
+const ANAHTAR = 'pofi-local-v1', YEREL = 'pofi-local-device-v1';
+
+const bugun = () => new Date().toLocaleDateString('sv');
+const yeniGun = () => ({tarih: bugun(), oturum: 0, odak: 0, yuruyus: 0, mola: 0});
+const yeniSeans = () => ({ilerleme: 0, oturum: 0, odak: 0, yuruyus: 0});
+let d = Object.assign({v: 5, mod: 'bos', basla: 0, molaBasla: 0, molaSure: 5, ek: 0, erteledi: false, oto: false, esneme: false,
+  ayar: {...VARSAY}, seans: yeniSeans(), toplanti: 0, deneme: false, gun: yeniGun(), seri: {son: '', gun: 0}, toplam: 0, sonSeans: null, surum: 0},
+  JSON.parse(localStorage.getItem(ANAHTAR) || 'null') || {});
+d.v = 5; d.ayar = Object.assign({...VARSAY}, d.ayar); d.seans = Object.assign(yeniSeans(), d.seans);
+let y = Object.assign({ses: 'kalimba', oda: '', bosta: false, bildirim: false, blok: 0, son: -1, molaBitti: 0, ipucu: '', deniz: 0, tanitildi: false,
+  ortamSon: 0, izinSoruldu: false, tas: {}, yumurta: {}, ozetGosterilen: 0},
+  JSON.parse(localStorage.getItem(YEREL) || 'null') || {});
+y.oda = ''; y.bildirim = false; y.tanitildi = true;
+const yerelKaydet = () => localStorage.setItem(YEREL, JSON.stringify(y));
+function kaydet() { d.surum = Date.now(); localStorage.setItem(ANAHTAR, JSON.stringify(d)); es.gonder(); }
+const gunTazele = () => { if (d.gun.tarih !== bugun()) d.gun = yeniGun(); };
+gunTazele();
+const arg = new URLSearchParams(location.search);
+if (arg.has('deneme') && !d.deneme) { d.deneme = true; localStorage.setItem(ANAHTAR, JSON.stringify(d)); }
+if (arg.has('pencere')) { document.body.className = 'pip'; document.body.append(el.oyun); el.yer.style.display = 'none'; }
+const hiz = () => d.deneme ? 60 : 1;
+const dakika = ms => ms * hiz() / DK;
+const sure = dk => dk * DK / hiz();
+const calisMs = () => sure(d.ayar.calis + (d.ek || 0));
+const molaYurunen = () => d.mod === 'mola' ? Math.min(d.molaSure, dakika(Date.now() - d.molaBasla)) : 0;
+const ilerleme = () => Math.min(d.ayar.hedef, d.seans.ilerleme + Math.min(1, molaYurunen() / d.ayar.mola));
+const toplantida = () => d.toplanti > Date.now();
+const kodUret = () => Array.from(crypto.getRandomValues(new Uint8Array(12)), b => 'abcdefghijkmnpqrstuvwxyz23456789'[b % 32]).join('');
+const kalanOturum = () => Math.max(0, d.ayar.hedef - Math.round(d.seans.ilerleme));
+const kapa = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+
+// ---- ses: tek aile (seçilen ses); kalkış aynı sesin hızlı iki notası ----
+let ac = null; const tampon = {};
+async function sesAc() { return; /* Native Rota plays alert sounds. */
+  if (!ac) ac = new (window.AudioContext || window.webkitAudioContext)();
+  if (ac.state === 'suspended') try { await ac.resume(); } catch (e) {}
+  for (const a of ['kalimba', 'ahsap', 'kabarcik']) if (!tampon[a]) {
+    try { tampon[a] = await ac.decodeAudioData(await (await fetch(`./${a}.mp3`)).arrayBuffer()); } catch (e) {}
+  }
+}
+function cal(ad, {gecikme = 0, ses = 1, oran = 1} = {}) {
+  if (ad === 'kapali' || y.ses === 'kapali' || toplantida() || !ac || !tampon[ad]) return;
+  const k = ac.createBufferSource(); k.buffer = tampon[ad]; k.playbackRate.value = oran;
+  const g = ac.createGain(); g.gain.value = ses; k.connect(g).connect(ac.destination); k.start(ac.currentTime + gecikme);
+}
+const isaret = (ses = .7, kez = 1) => { for (let i = 0; i < kez; i++) cal(y.ses, {ses, gecikme: i * .45}); };
+const kalkisSesi = () => { cal(y.ses, {ses: .35, oran: 1.5}); cal(y.ses, {ses: .3, oran: 2, gecikme: .12}); };
+const sesliMi = () => !cep || document.visibilityState === 'visible';   // telefon, ekrana bakılmıyorsa susar (bildirim gelir)
+const titret = () => { if (cep && navigator.vibrate) try { navigator.vibrate([70, 50, 70]); } catch (e) {} };
+
+// ---- görünüm: her şey kukla; yalnız uçta (saksı, taş) ve saksıdan kopuşta çizim ----
+let gorunen = '', aktif = el.A, gecici = 0, kuklaMod = '', balonZ = 0;
+function kukla(mod, ek = '') {
+  const s = mod ? mod + '|' + ek : ''; if (s === kuklaMod) return; kuklaMod = s;
+  el.kukla.hidden = !mod; el.pofi.hidden = !!mod; if (mod) gorunen = '';
+  const suren = ['zipla', 'titre', 'takla'].filter(c => el.kukla.classList.contains(c));   // süren kısa hareket kesilmesin
+  el.kukla.className = ['kukla', mod && 'k-' + mod, ek, ...suren].filter(Boolean).join(' ');
+}
+function poz(ad) {
+  kukla('');
+  if (ad === gorunen) return; gorunen = ad;
+  const url = pozYolu(ad), yeni = aktif === el.A ? el.B : el.A;
+  const goster = () => { yeni.classList.remove('gizli'); aktif.classList.add('gizli'); aktif = yeni; };
+  // aynı adres yeniden verilirse load olayı gelmez: hemen göster
+  if (yeni.getAttribute('src') === url && yeni.complete && yeni.naturalWidth) { goster(); return; }
+  yeni.onload = goster; yeni.src = url;
+}
+function kuruluk(k) { el.kukla.style.filter = k > 0 ? `saturate(${1 - .62 * k}) sepia(${.22 * k}) brightness(${1 + .05 * k}) contrast(${1 - .08 * k})` : ''; }
+function kokCiz(k) {
+  el.kok.classList.remove('kopuk');
+  kokYollar.forEach((p, i) => { const bas = (i % 3) * .18 + (i > 5 ? .3 : 0); const v = kapa((k - bas) / (1 - bas)); p.style.strokeDashoffset = 1 - v; p.style.opacity = v > .01 ? 1 : 0; });
+}
+function kokKopar() { if (kokYollar.some(p => parseFloat(p.style.strokeDashoffset || 1) < 1)) { el.kok.classList.add('kopuk'); setTimeout(() => kokYollar.forEach(p => { p.style.transition = 'none'; p.style.strokeDashoffset = 1; p.style.opacity = 0; void p.offsetWidth; p.style.transition = ''; }), 900); } }
+function yenile() { kuklaMod = '-'; gorunen = ''; ciz(); }
+(function kirp() { if (kuklaMod) { el.kukla.classList.add('kirp'); setTimeout(() => el.kukla.classList.remove('kirp'), 140); } setTimeout(kirp, 2400 + Math.random() * 3200); })();
+function hareket(s) {
+  if (azHareket) return;
+  const k = kuklaMod ? el.kukla : el.pofi;
+  if (k.classList.contains(s) && s === 'nefes') return;
+  k.classList.remove('nefes', 'zipla', 'titre', 'takla'); void k.offsetWidth; k.classList.add(s);
+  const ms = {titre: 900, takla: 1150}[s] || 520;
+  if (s !== 'nefes') setTimeout(() => { k.classList.remove(s); if (!kuklaMod) k.classList.add('nefes'); }, ms);
+}
+function soyle(m, ms = 4200, ipucu = false) {
+  if (!m) return;
+  el.balonYazi.textContent = m; el.balon.classList.toggle('ipucu', ipucu); el.balon.classList.add('acik');
+  clearTimeout(balonZ); balonZ = setTimeout(() => el.balon.classList.remove('acik'), ms);
+}
+// olay dışı söz (dokunma, bilgi): en çok ORTAM_DK'da bir; oturumun ortasında hiç
+function ortamSoyle(m, ms) {
+  const s = Date.now();
+  if (d.mod === 'oturuyor' || s - (y.ortamSon || 0) < sure(ORTAM_DK)) return false;
+  y.ortamSon = s; yerelKaydet(); soyle(m, ms); return true;
+}
+// kilometre taşı: bir kez söylenir
+function tas(ad) { if (y.tas[ad]) return ''; y.tas[ad] = Date.now(); yerelKaydet(); return sec(ad); }
+// günün sürprizi: her biri günde bir kez
+function yumurta() {
+  const t = new Date(), s = t.getHours(), g = t.getDay(), gun = bugun();
+  const ad = s < 5 ? 'gece' : g === 5 && s >= 14 ? 'cuma' : g === 1 && s < 11 ? 'pazartesi' : '';
+  if (!ad || y.yumurta[ad] === gun) return '';
+  y.yumurta[ad] = gun; yerelKaydet(); return sec(ad);
+}
+function damlaSac(n = 6) {
+  if (azHareket) return;
+  const r = (kuklaMod ? el.kukla : el.pofi).getBoundingClientRect(), s = el.sahne.getBoundingClientRect();
+  for (let i = 0; i < n; i++) {
+    const x = el.sahne.ownerDocument.createElement('div'); x.className = 'damla';
+    x.style.left = (r.left - s.left + r.width * (0.3 + Math.random() * 0.4)) + 'px';
+    x.style.top = (r.top - s.top + r.height * (0.25 + Math.random() * 0.3)) + 'px';
+    x.style.animationDelay = (i * 0.09) + 's'; el.sahne.append(x); setTimeout(() => x.remove(), 1900);
+  }
+}
+const saatYaz = (ms, yukari) => { const s = Math.max(0, (yukari ? Math.floor : Math.ceil)(ms * hiz() / 1000)), sa = Math.floor(s / 3600), dk = Math.floor(s / 60) % 60, sn = s % 60;
+  return sa ? `${sa}:${String(dk).padStart(2,'0')}:${String(sn).padStart(2,'0')}` : `${dk}:${String(sn).padStart(2,'0')}`; };
+const saatDk = t => new Date(t).toLocaleTimeString('tr-TR', {hour: '2-digit', minute: '2-digit'});
+const sureYazi = dk => { dk = Math.round(dk); const sa = Math.floor(dk / 60), k = dk % 60; return sa ? `${sa} saat${k ? ` ${k} dk` : ''}` : `${k} dk`; };
+const asama = u => { let h = ASAMA[0]; for (const e of ASAMA) if (u >= e.u) h = e; return h; };
+function bildir(baslik, govde) {
+  if (document.visibilityState === 'visible' || pip || toplantida()) return;
+  if ('Notification' in window && Notification.permission === 'granted') { try { new Notification(baslik, {body: govde, icon: './ikon-192.png'}); } catch (e) {} }
+}
+function dugme(yazi, sinif) { if (el.dugme.textContent !== yazi) el.dugme.textContent = yazi; el.dugme.className = 'dugme ' + sinif; }
+const kartAcik = () => !!el.ic.querySelector('.kart.acik');
+
+// ---- rota: hedef kadar eşit aralık, son nokta deniz ----
+let noktalar = [], rotaHedef = 0;
+function rotaKur() {
+  noktalar.forEach(n => n.remove()); noktalar = [];
+  const h = d.ayar.hedef; rotaHedef = h;
+  for (let i = 0; i <= h; i++) {
+    const n = el.rota.ownerDocument.createElement('i'); n.style.left = (i / h * 100) + '%';
+    if (i === h) { n.className = 'son'; n.title = 'Deniz'; } else n.title = `${i + 1}. oturum`;
+    el.rota.insertBefore(n, el.isaret); noktalar.push(n);
+  }
+}
+
+// ---- ana çizim ----
+function ciz() {
+  const simdi = Date.now(), a = d.ayar, h = a.hedef;
+  if (rotaHedef !== h) rotaKur();
+  const ilr = ilerleme(), denizde = ilr >= h - 1e-6;
+  el.saat.textContent = saatDk(simdi);
+  el.sessizD.classList.toggle('acik', toplantida());
+  el.sessizD.title = toplantida() ? `Sessiz, ${saatDk(d.toplanti)}'e kadar. Açmak için dokun.` : 'Sessize al (60 dk)';
+  const p = (ilr / h * 100) + '%'; el.dolu.style.width = p; el.isaret.style.left = p;
+  noktalar.forEach((n, i) => n.classList.toggle('var', ilr >= i - 1e-6 && i > 0));
+  el.oyun.style.setProperty('--gok', denizde ? '#d4e8f4' : ilr / h > .5 ? '#eef0e2' : '#f6efdf');
+  el.erteleD.hidden = true; el.zaman.classList.remove('asim');
+
+  if (d.mod === 'bos') {
+    if (!gecici) { kukla('dur'); kuruluk(0); kokCiz(0); }
+    el.zaman.textContent = `${a.calis}:00`; dugme('Başla', '');
+    el.seansYazi.textContent = d.seans.ilerleme > 0 ? `${kalanOturum()} oturum kaldı` : `${h} oturum, ${a.calis}/${a.mola}`;
+  } else if (d.mod === 'oturuyor') {
+    const kalan = calisMs() - (simdi - d.basla), u = -dakika(kalan), as = asama(u).ad;
+    if (!gecici) {
+      if (as === 'saksi' || as === 'tas') poz(as);
+      else { kukla('otur', as === 'otur' ? '' : as === 'sabir' ? 'sabir' : 'kuru'); kuruluk(kapa(u / 35)); kokCiz(kapa(u / 30)); }
+    }
+    if (kalan > 0) el.zaman.textContent = saatYaz(kalan, false);
+    else { el.zaman.textContent = '+' + saatYaz(-kalan, true); el.zaman.classList.add('asim'); el.erteleD.hidden = d.erteledi; }
+    dugme('Kalk', 'kalk');
+    el.seansYazi.textContent = `Oturum ${Math.min(h, d.seans.oturum + 1)}/${h}`;
+    uyariKontrol(u);
+  } else if (d.mod === 'mola') {
+    const kalan = sure(d.molaSure) - (simdi - d.molaBasla), bitti = kalan <= 0, oran = 1 - kalan / sure(d.molaSure);
+    if (!gecici) { kuruluk(0); kukla(denizde ? 'sevin' : d.esneme ? 'esne' : bitti ? 'dur' : 'yuru'); }
+    el.zaman.textContent = saatYaz(Math.max(0, kalan), false); dugme('Başla', bitti ? '' : 'ikincil');
+    el.seansYazi.textContent = denizde ? 'Deniz' : bitti ? 'Mola bitti' : d.molaSure > a.mola ? 'Uzun mola' : d.esneme ? 'Esneme molası' : 'Mola: yürü';
+    // mola boyunca üç kez hareket tarifi
+    [0.15, 0.45, 0.75].forEach((f, i) => { const k = d.molaBasla + ':' + i; if (!bitti && !denizde && oran >= f && y.ipucu < k) { y.ipucu = k; yerelKaydet(); soyle(sec(d.esneme ? 'esne' : 'yuru'), 7000, true); } });
+    if (denizde && y.deniz !== d.molaBasla) {
+      y.deniz = d.molaBasla; yerelKaydet(); cal(y.ses, {ses: .6, oran: 1.25}); damlaSac(14);
+      soyle(tas('ilkDeniz') || sec('deniz'), 6000); bildir('Pofi denize vardı', 'Seans bitti.');
+    }
+    if (bitti && y.molaBitti !== d.molaBasla) {
+      y.molaBitti = d.molaBasla; yerelKaydet();
+      if (sesliMi()) { isaret(.7, 2); titret(); }
+      bildir('Mola bitti', `Pofi bu moladan ${Math.round(d.molaSure)} dakika yol aldı.`);
+      if (denizde) { setTimeout(() => { if (d.mod === 'mola') seansBitir(); }, 2500); }
+      else {
+        soyle(sec(d.oto ? 'bittiOto' : 'bitti'));
+        if (a.otoDevam) setTimeout(() => { if (d.mod === 'mola') { donus(); ciz(); } }, 1500);
+        else setTimeout(izinSor, 1800);
+      }
+    }
+  }
+  document.title = d.mod === 'bos' ? 'Pofi' : `${el.zaman.textContent} · Pofi`;
+}
+function uyariKontrol(u) {
+  if (y.blok !== d.basla) { y.blok = d.basla; y.son = -1; while (y.son + 1 < UYARI.length && u >= UYARI[y.son + 1] + 0.2) y.son++; yerelKaydet(); }
+  const sira = y.son + 1;
+  if (sira >= UYARI.length || u < UYARI[sira]) return;
+  y.son = sira; yerelKaydet();
+  const a = UYARI[sira], m = {mola: d.ayar.mola};
+  if (sesliMi()) isaret(a < 0 ? .3 : a === 0 ? .8 : .6, a === 0 ? 2 : 1);
+  if (a < 0) { soyle(sec('onIsaret')); return; }
+  if (a === 0) titret();
+  hareket('zipla');
+  soyle(a === 0 ? sec('doldu', m) : a === 35 ? sec('saksi') : a === 95 ? sec('tas') : sec('uzatma'));
+  bildir(a === 0 ? 'Kalkma vakti' : 'Pofi hâlâ oturuyor', a === 0 ? `${d.ayar.mola} dakika yürü, Pofi denize ilerlesin.` : `${d.ayar.calis + (d.ek || 0) + a} dakikadır oturuyorsun.`);
+}
+
+// ---- eylemler ----
+function seriGuncelle() {
+  const t = bugun(); if (d.seri.son === t) return;
+  const dun = new Date(Date.now() - 864e5).toLocaleDateString('sv');
+  d.seri.gun = d.seri.son === dun ? d.seri.gun + 1 : 1; d.seri.son = t;
+}
+function basla(soz) {
+  gunTazele(); Object.assign(d, {mod: 'oturuyor', basla: Date.now(), ek: 0, erteledi: false, oto: false, esneme: false}); kaydet();
+  hareket('zipla'); soyle(soz);
+}
+function molaBaslat(zaman = Date.now(), oto = false) {
+  gunTazele();
+  const bas = Math.max(zaman, d.basla), otur = dakika(bas - d.basla), kokteydi = gorunen === 'saksi' || gorunen === 'tas';
+  d.gun.odak += otur; d.seans.odak += otur;
+  const sayildi = otur >= d.ayar.calis * 0.6;
+  if (sayildi) { d.seans.oturum++; d.gun.oturum++; d.toplam = (d.toplam || 0) + 1; seriGuncelle(); }
+  const uzun = sayildi && d.seans.oturum % d.ayar.uzunAralik === 0;
+  Object.assign(d, {mod: 'mola', molaBasla: bas, molaSure: uzun ? d.ayar.uzun : d.ayar.mola, oto, esneme: false}); kaydet();
+  if (!oto) { kalkisSesi(); damlaSac(6); }
+  const tasSoz = sayildi ? (d.toplam === 3 && tas('video')) || (d.toplam === 50 && tas('oturum50')) || (d.toplam === 100 && tas('oturum100')) || (d.seri.gun >= 7 && tas('seri7')) : '';
+  soyle(tasSoz || (uzun ? sec('uzunMola', {mola: d.ayar.uzun}) : sayildi ? sec('kalkis') : sec('erken')), tasSoz ? 6000 : 4200);
+  kalkisSahnesi(kokteydi);
+}
+function kalkisSahnesi(kokteydi) {
+  clearTimeout(gecici);
+  if (kokteydi) poz('koparma'); else { kukla('dur'); kuruluk(0); }
+  kokKopar(); hareket('titre');
+  gecici = setTimeout(() => { gecici = 0; ciz(); }, 1500);
+}
+function donus() {
+  const yurunen = molaYurunen();
+  d.seans.ilerleme = Math.min(d.ayar.hedef, d.seans.ilerleme + Math.min(1, yurunen / d.ayar.mola));
+  if (d.seans.ilerleme >= d.ayar.hedef - 1e-6) { seansBitir(); return; }
+  d.gun.yuruyus += yurunen; d.gun.mola++; d.seans.yuruyus += yurunen;
+  const k = kalanOturum();
+  basla(k === 1 ? sec('sonOturum') : Math.random() < .25 ? sec('bilgi') : sec('donus', {kalan: k}));
+}
+function seansBitir() {
+  const yur = molaYurunen(), s = d.seans;
+  d.gun.yuruyus += yur; d.gun.mola++;
+  d.sonSeans = {bitis: Date.now(), oturum: s.oturum, odak: Math.round(s.odak), yuruyus: Math.round(s.yuruyus + yur), seri: d.seri.gun};
+  d.seans = yeniSeans(); d.mod = 'bos'; kaydet();
+  ozetGoster(); ciz();
+}
+function anaDugme() {
+  sesAc();
+  if (d.mod === 'bos') {
+    const s = new Date().getHours();
+    basla(yumurta() || (d.gun.oturum === 0 && s < 12 ? sec('sabah') : s >= 19 ? sec('aksam') : sec('basla', {calis: d.ayar.calis})));
+  } else if (d.mod === 'mola') donus();
+  else if (d.mod === 'oturuyor') molaBaslat(Date.now(), false);
+  ciz(); uyanik();
+}
+el.dugme.addEventListener('click', e => { e.stopPropagation(); anaDugme(); });
+el.erteleD.addEventListener('click', e => { e.stopPropagation(); d.ek = (d.ek || 0) + 5; d.erteledi = true; y.son = -1; yerelKaydet(); kaydet(); soyle(sec('ertele')); ciz(); });
+el.sessizD.addEventListener('click', e => {
+  e.stopPropagation(); d.toplanti = toplantida() ? 0 : Date.now() + 60 * DK; kaydet();
+  soyle(toplantida() ? `Sessizdeyim. ${saatDk(d.toplanti)}'e kadar ses yok.` : 'Sesim geri geldi.'); ciz();
+});
+// Pofi'ye dokunmak: hafif tepki; 5 kez üst üste gıdıklanır, takla atar
+let dokunuslar = [];
+function dokun(e) {
+  e.stopPropagation(); sesAc(); if (gecici) return;
+  const s = Date.now(); dokunuslar = dokunuslar.filter(t => s - t < 2200); dokunuslar.push(s);
+  if (dokunuslar.length >= 5) { dokunuslar = []; hareket('takla'); damlaSac(8); cal(y.ses, {ses: .4, oran: 1.8}); soyle(sec('gidik'), 2600); return; }
+  hareket('zipla'); damlaSac(3);
+  if (dokunuslar.length === 1) ortamSoyle(sec('dokun'), 1800);
+}
+el.kukla.addEventListener('click', dokun); el.pofi.addEventListener('click', dokun);
+function tusa(e) {
+  if (e.code === 'Space' && !e.repeat && !el.panel.classList.contains('acik') && !kartAcik() && !/^(BUTTON|INPUT)$/.test(e.target.tagName)) { e.preventDefault(); anaDugme(); }
+  if (e.key === 'Escape') { el.panel.classList.remove('acik'); ['esKart', 'evKart', 'ozetKart'].forEach(k => $(k).classList.remove('acik')); }
+}
+document.addEventListener('keydown', tusa);
+
+// ---- ayarlar menüsü ----
+function adimHtml(k, deger, birim = '') {
+  const [min, max] = SINIR[k];
+  return `<span class="adim"><button data-k="${k}" data-y="-1" aria-label="Azalt"${deger <= min ? ' disabled' : ''}>−</button><b aria-live="polite">${deger}${birim}</b><button data-k="${k}" data-y="1" aria-label="Artır"${deger >= max ? ' disabled' : ''}>+</button></span>`;
+}
+function seansSuresi() { const a = d.ayar; let t = a.hedef * a.calis; for (let i = 1; i <= a.hedef; i++) t += i % a.uzunAralik === 0 ? a.uzun : a.mola; return t; }
+function panelCiz() {
+  const a = d.ayar, g = d.gun, s = [];
+  const bolum = t => s.push(`<h4>${t}</h4>`);
+  const satAdim = (k, ad, deger, birim, not) => s.push(`<div class="sat"><span>${ad}${not ? `<small>${not}</small>` : ''}</span>${adimHtml(k, deger, birim)}</div>`);
+  const anahtar = (k, ad, acik, not) => s.push(`<button class="sat anahtar${acik ? ' acik' : ''}" data-k="${k}" role="switch" aria-checked="${acik}"><span>${ad}${not ? `<small>${not}</small>` : ''}</span><i></i></button>`);
+  const git = (k, ad, sinif = '') => s.push(`<button class="sat git ${sinif}" data-k="${k}"><span>${ad}</span><i>›</i></button>`);
+  bolum('Seans');
+  satAdim('hedef', 'Oturum sayısı', a.hedef, '', `Hepsi bitince Pofi denizde, yaklaşık ${sureYazi(seansSuresi())}`);
+  satAdim('calis', 'Çalışma', a.calis, ' dk');
+  satAdim('mola', 'Mola', a.mola, ' dk');
+  satAdim('uzun', 'Uzun mola', a.uzun, ' dk', `Her ${a.uzunAralik} oturumda bir`);
+  anahtar('otoDevam', 'Mola bitince kendiliğinden başla', a.otoDevam);
+  bolum('Ses');
+  s.push(`<div class="secim">${SESLER.map(([v, t]) => `<button data-k="ses" data-v="${v}"${v === y.ses ? ' class="acik"' : ''}>${t}</button>`).join('')}</div>`);
+  bolum('Hareket');
+  if (!cep && 'IdleDetector' in window) anahtar('bosta', 'Kalktığımı kendin anla', y.bosta, 'Bilgisayardan 3 dk uzaklaşınca mola başlar');
+  if (d.mod === 'mola') anahtar('esneme', 'Bu molada masadayım', d.esneme, 'Yürüyemiyorsan esneme hareketleri');
+  else s.push(`<div class="sat"><span>Molada Pofi hareket tarif eder<small>Yürüyemediğin molada "masadayım" seç</small></span></div>`);
+  bolum('Telefon');
+  if (cep) anahtar('bildirim', 'Mola bitince bildirim', y.bildirim, ios && !uygulama ? 'Önce Paylaş, Ana Ekrana Ekle' : '');
+  else git('telefon', y.oda ? 'Telefonu bağla (QR)' : 'Telefona bağla');
+  if (y.oda) git('kes', 'Eşleşmeyi kaldır', 'az');
+  bolum('Bugün');
+  s.push(`<p class="ozet">${g.oturum} oturum, ${Math.round(g.odak)} dk odak, ${Math.round(g.yuruyus)} dk yürüyüş${d.seri.gun > 1 ? `<br>${d.seri.gun} gündür her gün` : ''}</p>`);
+  bolum('Diğer');
+  anahtar('deneme', 'Hızlı deneme', d.deneme, '1 dakika 1 saniye sürer');
+  git('tanit', 'Pofi kim?');
+  s.push('<a class="sat git" href="https://barisozcan.com/yazi/oturmak-yeni-sigara-mi" target="_blank" rel="noopener"><span>Videosu ve yazısı</span><i>›</i></a>');
+  git('sifirla', 'Seansı sıfırla', 'az');
+  el.panelIc.innerHTML = s.join('');
+}
+el.ayarD.addEventListener('click', e => { e.stopPropagation(); panelCiz(); el.panel.classList.add('acik'); });
+el.panelKapat.addEventListener('click', e => { e.stopPropagation(); el.panel.classList.remove('acik'); });
+el.ic.addEventListener('click', e => { const k = e.target.closest('[data-kapat]'); if (k) { e.stopPropagation(); $(k.dataset.kapat).classList.remove('acik'); if (k.dataset.kapat === 'ozetKart') soyle(sec('seansYeni')); } });
+async function ayarDegis(b) {
+  const k = b.dataset.k, a = d.ayar;
+  if (b.dataset.y) { const [min, max, adim] = SINIR[k]; a[k] = Math.min(max, Math.max(min, a[k] + adim * +b.dataset.y)); if (k === 'hedef') d.seans.ilerleme = Math.min(d.seans.ilerleme, a.hedef); kaydet(); }
+  else if (k === 'otoDevam') { a.otoDevam = !a.otoDevam; kaydet(); }
+  else if (k === 'ses') { y.ses = b.dataset.v; yerelKaydet(); await sesAc(); isaret(.7); }
+  else if (k === 'bosta') {
+    if (y.bosta) { y.bosta = false; bostaDurdur(); }
+    else { const r = await bostaKur(true); if (r === 'granted') y.bosta = true; else alert(r === 'denied' ? 'Tarayıcı izin vermedi. Adres çubuğundaki site ayarlarından "boşta algılama" izni açılabilir.' : 'Bu tarayıcı boşta algılamayı desteklemiyor.'); }
+    yerelKaydet();
+  }
+  else if (k === 'esneme') { d.esneme = !d.esneme; kaydet(); if (d.esneme) soyle(sec('esne'), 7000, true); }
+  else if (k === 'telefon') { el.panel.classList.remove('acik'); eslesmeGoster(); return; }
+  else if (k === 'bildirim') { if (y.bildirim) { y.bildirim = false; yerelKaydet(); } else { el.panel.classList.remove('acik'); await bildirimAc(); return; } }
+  else if (k === 'kes') { y.oda = ''; y.bildirim = false; y.tanitildi = true; yerelKaydet(); es.kapat(); }
+  else if (k === 'deneme') { d.deneme = !d.deneme; kaydet(); saat(); }
+  else if (k === 'tanit') { el.panel.classList.remove('acik'); tanitGoster(); return; }
+  else if (k === 'sifirla') { d.seans = yeniSeans(); d.mod = 'bos'; kaydet(); el.panel.classList.remove('acik'); }
+  if (el.panel.classList.contains('acik')) { panelCiz(); const yeni = el.panelIc.querySelector(`[data-k="${k}"][data-y="${b.dataset.y}"]`); if (yeni && !yeni.disabled) yeni.focus(); }
+  if (el.tanit.classList.contains('acik')) tanitAdimCiz();
+  ciz(); uyanik();
+}
+el.panelIc.addEventListener('click', e => { const b = e.target.closest('[data-k]'); if (b) { e.stopPropagation(); ayarDegis(b); } });
+el.tanitAdim.addEventListener('click', e => { const b = e.target.closest('[data-k]'); if (b) { e.stopPropagation(); ayarDegis(b).then(() => { const n = el.tanitAdim.querySelector(`[data-y="${b.dataset.y}"]`); if (n && !n.disabled) n.focus(); }); } });
+function tanitAdimCiz() { el.tanitAdim.innerHTML = adimHtml('hedef', d.ayar.hedef).replace(/^<span class="adim">|<\/span>$/g, ''); el.tanitNot.textContent = `${d.ayar.hedef} oturum, yaklaşık ${sureYazi(seansSuresi())}`; }
+function tanitGoster() { tanitAdimCiz(); el.tanitTamam.textContent = d.mod === 'bos' ? 'Başla' : 'Tamam'; el.tanit.classList.add('acik'); }
+el.tanitTamam.addEventListener('click', e => { e.stopPropagation(); el.tanit.classList.remove('acik'); y.tanitildi = true; yerelKaydet(); if (d.mod === 'bos') anaDugme(); });
+
+// ---- bildirim izni: ilk Başla'da değil, ilk mola bitince bağlamla ----
+function izinSor() {
+  if (y.izinSoruldu || kartAcik() || d.mod !== 'mola' || toplantida()) return;
+  if (cep) { if (y.bildirim || !('serviceWorker' in navigator && 'PushManager' in window) && !ios) return; }
+  else if (!('Notification' in window) || Notification.permission !== 'default') return;
+  y.izinSoruldu = true; yerelKaydet();
+  el.soruBaslik.textContent = 'Mola bitti';
+  el.soruYazi.textContent = cep ? 'Bir dahaki molada telefonun haber versin mi? Ekran kapalıyken de duyarsın.' : 'Bir dahaki molada sana haber vereyim mi? Bu sekme arkadayken de duyarsın.';
+  el.soruKart.classList.add('acik');
+}
+el.soruHayir.addEventListener('click', e => { e.stopPropagation(); el.soruKart.classList.remove('acik'); soyle('Peki. Ayarlardan her zaman açabilirsin.'); });
+el.soruEvet.addEventListener('click', async e => {
+  e.stopPropagation(); el.soruKart.classList.remove('acik');
+  if (cep) { await bildirimAc(); return; }
+  const r = await Notification.requestPermission(); soyle(r === 'granted' ? 'Tamam. Molada haber veririm.' : 'İzin verilmedi. Sesle haber veririm.');
+});
+
+// ---- seans sonu: özet kartı ve paylaşılabilir görsel ----
+let paylasDosya = null;
+function ozetGoster() {
+  const o = d.sonSeans; if (!o) return;
+  y.ozetGosterilen = o.bitis; yerelKaydet();
+  el.ozetRakam.innerHTML = `<span><b>${o.oturum}</b>oturum</span><span><b>${sureYazi(o.odak)}</b>odak</span><span><b>${sureYazi(o.yuruyus)}</b>yürüyüş</span>`;
+  el.ozetSeri.textContent = o.seri > 1 ? `${o.seri} gündür her gün kalkıyorsun.` : 'Yarın yine masada.';
+  ['tanit', 'soruKart', 'esKart', 'evKart'].forEach(k => $(k).classList.remove('acik'));
+  el.ozetKart.classList.add('acik');
+  paylasDosya = null; paylasimGorseli(o).then(f => paylasDosya = f).catch(() => {});
+}
+async function paylasimGorseli(o) {
+  const W = 1080, H = 1350, c = document.createElement('canvas'); c.width = W; c.height = H;
+  const x = c.getContext('2d');
+  const g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#d4e8f4'); g.addColorStop(.62, '#f6efdf'); x.fillStyle = g; x.fillRect(0, 0, W, H);
+  // dalga
+  x.fillStyle = '#cfe4f2'; x.beginPath(); x.moveTo(0, 470); for (let i = 0; i <= W; i += 30) x.lineTo(i, 470 + Math.sin(i / 60) * 10); x.lineTo(W, 0); x.lineTo(0, 0); x.fill();
+  const img = await new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = no; i.src = './yurume.webp'; });
+  const ih = 520, iw = img.width / img.height * ih; x.drawImage(img, (W - iw) / 2, 230, iw, ih);
+  await document.fonts.load('italic 650 80px "Fraunces Pofi"').catch(() => {});
+  x.fillStyle = '#2a2418'; x.textAlign = 'center';
+  x.font = '650 84px "Fraunces Pofi", Georgia, serif'; x.fillText('Pofi bugün', W / 2, 140); x.fillText('denize vardı', W / 2, 230);
+  const kutu = [[o.oturum, 'oturum'], [sureYazi(o.odak), 'odak'], [sureYazi(o.yuruyus), 'yürüyüş']];
+  if (o.seri > 1) { x.font = '500 38px "Fraunces Pofi", Georgia, serif'; x.fillText(`${o.seri} gündür her gün kalkıyorum.`, W / 2, 1150); }
+  kutu.forEach(([b, t], i) => { const cx = W / 6 * (1 + i * 2), cy = 960;
+    x.font = '650 72px "Fraunces Pofi", Georgia, serif'; x.fillText(String(b), cx, cy); x.font = '500 34px "Fraunces Pofi", Georgia, serif'; x.fillStyle = '#8a7f69'; x.fillText(t, cx, cy + 48); x.fillStyle = '#2a2418'; });
+  x.font = '500 34px "Fraunces Pofi", Georgia, serif'; x.fillStyle = '#8a7f69'; x.fillText('barisozcan.com/pofi', W / 2, H - 60);
+  const blob = await new Promise(ok => c.toBlob(ok, 'image/png'));
+  return new File([blob], 'pofi-deniz.png', {type: 'image/png'});
+}
+el.ozetPaylas.addEventListener('click', async e => {
+  e.stopPropagation();
+  const f = paylasDosya || await paylasimGorseli(d.sonSeans);
+  if (navigator.canShare && navigator.canShare({files: [f]})) { try { await navigator.share({files: [f], text: 'Pofi bugün denize vardı. barisozcan.com/pofi'}); } catch (x) {} return; }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(f); a.download = f.name; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+});
+
+// ---- kendiliğinden mola: boşta algılama (izinli) ya da köşe penceresi gizlenince geriye dönük ----
+let dedektor = null, dedektorDur = null;
+async function bostaKur(sor) {
+  if (cep || !('IdleDetector' in window)) return 'yok';
+  try {
+    let izin = (await navigator.permissions.query({name: 'idle-detection'})).state;
+    if (izin !== 'granted' && sor) izin = await IdleDetector.requestPermission();
+    if (izin !== 'granted') return izin;
+    bostaDurdur(); dedektorDur = new AbortController();
+    dedektor = new IdleDetector(); dedektor.addEventListener('change', bostaDegisti);
+    await dedektor.start({threshold: Math.max(60000, sure(BOSTA_DK)), signal: dedektorDur.signal});
+    return 'granted';
+  } catch (e) { return 'hata'; }
+}
+function bostaDurdur() { if (dedektorDur) dedektorDur.abort(); dedektor = null; dedektorDur = null; }
+function bostaDegisti() {
+  if (!dedektor) return;
+  const kilit = dedektor.screenState === 'locked', bos = dedektor.userState === 'idle' || kilit;
+  if (bos && d.mod === 'oturuyor') molaBaslat(Date.now() - (dedektor.userState === 'idle' ? Math.max(60000, sure(BOSTA_DK)) : 0), true);
+  else if (!bos && d.mod === 'mola' && d.oto) donus();
+  ciz();
+}
+let gizliAn = 0;
+function pipGorunurluk() {
+  if (dedektor || !pip) return;
+  if (pip.document.visibilityState === 'hidden') { gizliAn = Date.now(); return; }
+  const g = gizliAn; gizliAn = 0;
+  if (g && d.mod === 'oturuyor' && Date.now() - g >= sure(BOSTA_DK)) { molaBaslat(g, true); donus(); ciz(); }
+}
+
+// ---- masa + telefon eşleşmesi ----
+const es = {bagla(){},gonder(){},kapat(){}};
+function al(gelen) {
+  if (!gelen || (gelen.v || 0) < 4 || (gelen.surum || 0) <= (d.surum || 0)) return;
+  const eski = d.mod; d = Object.assign({}, d, gelen); d.v = 5; d.ayar = Object.assign({...VARSAY}, d.ayar); d.seans = Object.assign(yeniSeans(), d.seans);
+  localStorage.setItem(ANAHTAR, JSON.stringify(d));
+  if (eski !== d.mod) { if (d.mod === 'mola') kalkisSahnesi(gorunen === 'saksi' || gorunen === 'tas'); else hareket('zipla'); }
+  if (d.sonSeans && d.sonSeans.bitis !== y.ozetGosterilen && Date.now() - d.sonSeans.bitis < 10 * DK) ozetGoster();
+  ciz(); uyanik();
+}
+function eslesmeGoster() {
+  if (!y.oda) { y.oda = kodUret(); yerelKaydet(); es.bagla(); }
+  const q = qrcode(0, 'M'); q.addData(`${location.origin}./#e=${y.oda}`); q.make();
+  el.qr.innerHTML = q.createSvgTag({cellSize: 4, margin: 0, scalable: true});
+  el.esKart.classList.add('acik');
+}
+const b64dec = s => Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/') + '='.repeat((4 - s.length % 4) % 4)), c => c.charCodeAt(0));
+async function bildirimAc() {
+  if (ios && !uygulama) { el.evKart.classList.add('acik'); return; }
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) { soyle('Bu tarayıcı bildirim göndermiyor.', 6000); return; }
+  try {
+    if (!y.oda) { y.oda = kodUret(); yerelKaydet(); es.bagla(); }
+    if ((await Notification.requestPermission()) !== 'granted') { soyle('Bildirim izni verilmedi.'); return; }
+    const reg = await navigator.serviceWorker.register('./sw.js', {scope: './'}); await navigator.serviceWorker.ready;
+    const {anahtar} = await (await fetch(`https://${ES}/oda/${y.oda}/anahtar`)).json();
+    const eski = await reg.pushManager.getSubscription(); if (eski) await eski.unsubscribe();
+    const abone = await reg.pushManager.subscribe({userVisibleOnly: true, applicationServerKey: b64dec(anahtar)});
+    const r = await (await fetch(`https://${ES}/oda/${y.oda}/abone`, {method: 'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify({abone: abone.toJSON()})})).json();
+    y.bildirim = true; yerelKaydet(); soyle(r.tamam ? 'Tamam. Deneme bildirimi gönderdim.' : 'Bildirim kaydedildi.');
+  } catch (e) { soyle('Bildirim açılamadı.'); }
+}
+const hashKod = (location.hash.match(/e=([a-z0-9]{10,16})/) || [])[1];
+if (hashKod) { y.oda = hashKod; y.tanitildi = true; yerelKaydet(); history.replaceState(null, '', location.pathname + location.search); setTimeout(() => soyle(cep ? 'Masayla bağlandık.' : 'Bağlandık.'), 600); }
+
+// ---- köşe penceresi (Document Picture-in-Picture) ----
+let pip = null;
+// yazı sayfasının etkileşim penceresinde (iframe) köşe penceresi açılamıyor: Chrome yalnız üst pencereden izin veriyor
+if ('documentPictureInPicture' in window && !cep && !arg.has('pencere') && window.top === window) {
+  el.pipD.hidden = false;
+  el.pipD.addEventListener('click', async e => {
+    e.stopPropagation(); if (pip) { pip.focus(); return; }
+    pip = await documentPictureInPicture.requestWindow({width: 240, height: 296});
+    const b = pip.document.createElement('base'); b.href = location.href; pip.document.head.append(b);
+    const s = pip.document.createElement('style'); s.textContent = $('oyunStil').textContent; pip.document.head.append(s);
+    pip.document.title = 'Pofi'; pip.document.body.className = 'pip'; pip.document.body.append(el.oyun);
+    el.yer.classList.add('koseda'); el.pipD.hidden = true;
+    pip.document.addEventListener('visibilitychange', pipGorunurluk);
+    pip.document.addEventListener('keydown', tusa);
+    pip.addEventListener('pagehide', () => { el.yer.append(el.oyun); el.yer.classList.remove('koseda'); el.pipD.hidden = false; pip = null; gizliAn = 0; rotaHedef = 0; yenile(); saat(); });
+    rotaHedef = 0; yenile(); saat();
+  });
+  el.geriAl.addEventListener('click', () => pip && pip.close());
+}
+
+// ---- telefonda ekran açık kalsın (masa saati) ----
+let kilit = null;
+async function uyanik() {
+  if (!cep || !('wakeLock' in navigator)) return;
+  if (document.visibilityState === 'visible' && d.mod !== 'bos') { if (!kilit) try { kilit = await navigator.wakeLock.request('screen'); kilit.addEventListener('release', () => kilit = null); } catch (e) {} }
+  else if (kilit) { kilit.release(); kilit = null; }
+}
+
+// ---- saat: görünürken (ya da köşedeyken) saniyede bir; gizliyken sıradaki olaya tek zamanlayıcı ----
+let tik = 0, uyku = 0;
+function sonrakiMs() {
+  const simdi = Date.now();
+  if (d.mod === 'oturuyor') { const sira = (y.blok === d.basla ? y.son : -1) + 1; return sira < UYARI.length ? Math.max(0, d.basla + calisMs() + sure(UYARI[sira]) - simdi) : null; }
+  if (d.mod === 'mola' && y.molaBitti !== d.molaBasla) return Math.max(0, d.molaBasla + sure(d.molaSure) - simdi);
+  return null;
+}
+function saat() {
+  clearInterval(tik); clearTimeout(uyku);
+  const gizli = document.visibilityState !== 'visible' && !pip;
+  if (!gizli) { ciz(); tik = setInterval(ciz, d.deneme ? 250 : 1000); }
+  else { const ms = sonrakiMs(); if (ms != null) uyku = setTimeout(() => { ciz(); saat(); }, ms + 50); }
+}
+document.addEventListener('visibilitychange', () => { saat(); uyanik(); if (document.visibilityState === 'visible' && y.oda && !es.ws) es.bagla(); });
+window.rotaPofiApply = incoming => {
+ d = Object.assign({}, d, incoming); d.ayar = Object.assign({}, VARSAY, d.ayar); d.seans = Object.assign(yeniSeans(), d.seans);
+ localStorage.setItem(ANAHTAR, JSON.stringify(d)); ciz(); saat(); uyanik();
+};
+es.bagla();
+if (y.bosta) bostaKur(false).then(r => { if (r !== 'granted') { y.bosta = false; yerelKaydet(); } });
+if (!y.tanitildi && !arg.has('pencere')) tanitGoster();
+// ?kose=1 (yazı sayfasındaki "Köşe penceresinde aç" bağı, 2026-11-05): köşe penceresi yalnız kullanıcı tıklamasıyla ve
+// üst pencereden açılır; tek düğmeli kart mevcut köşe düğmesini (pipD) tetikler. Desteklemeyen tarayıcıda ana ekran yolu.
+if (arg.has('kose') && !arg.has('pencere') && window.top === window) {
+  const kk = $('koseKart'), ac = $('koseAc');
+  const koseGoster = () => {
+    if (!el.pipD.hidden) ac.onclick = e => { e.stopPropagation(); kk.classList.remove('acik'); el.pipD.click(); };
+    else {
+      $('koseBaslik').textContent = cep || ios ? "Pofi'yi ana ekrana ekleyin" : 'Bu tarayıcıda köşe penceresi yok';
+      $('koseYazi').textContent = ios ? "Alttaki Paylaş simgesine dokunup Ana Ekrana Ekle'yi seçin. Pofi uygulama gibi açılır, mola bitince haber verir."
+        : cep ? "Tarayıcı menüsünden Ana ekrana ekle'yi seçin. Pofi uygulama gibi açılır."
+        : "Köşe penceresi Chrome, Edge ve Brave'de açılıyor. Bu sekmeyi açık bırakırsanız Pofi süre dolunca haber verir.";
+      ac.textContent = 'Tamam'; ac.onclick = e => { e.stopPropagation(); kk.classList.remove('acik'); };
+    }
+    kk.classList.add('acik');
+  };
+  if (el.tanit.classList.contains('acik')) el.tanitTamam.addEventListener('click', () => setTimeout(koseGoster, 250), {once: true});
+  else koseGoster();
+}
+saat(); uyanik();
+})();
+</script>
+ </body></html>

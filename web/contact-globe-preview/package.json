@@ -1,0 +1,6 @@
+{
+  "name":"contact-globe-preview","private":true,"type":"module",
+  "scripts":{"build":"node build.mjs","typecheck":"tsc --noEmit"},
+  "dependencies":{"react":"^19.0.0","react-dom":"^19.0.0","d3":"^7.9.0","motion":"^12.0.0","lucide-react":"^0.468.0","topojson-client":"^3.1.0","@radix-ui/react-separator":"^1.1.0","@radix-ui/react-slot":"^1.1.0","class-variance-authority":"^0.7.1","clsx":"^2.1.1","tailwind-merge":"^3.0.0","world-atlas":"^2.0.2"},
+  "devDependencies":{"esbuild":"^0.25.0","typescript":"^5.7.0","tailwindcss":"^4.0.0","@tailwindcss/cli":"^4.0.0","@types/react":"^19.0.0","@types/react-dom":"^19.0.0","@types/d3":"^7.4.3","@types/topojson-client":"^3.1.5","@types/topojson-specification":"^1.0.5"}
+}

@@ -1,0 +1,19 @@
+#hafizlik-tik-denemesi { --cable-check:#344f68; --cable-uncheck:#957a4f; --cable-mirror:#627c80; --port-paper:#fffdf8; }
+#hafizlik-tik-denemesi.night-mode { --cable-check:#d8c6a2; --cable-uncheck:#b59875; --cable-mirror:#9cb3bd; --port-paper:#24313b; }
+#hafizlik-tik-denemesi .checkbox-link-layer { position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:25; }
+#hafizlik-tik-denemesi .checkbox-link-layer[hidden] { display:none; }
+#hafizlik-tik-denemesi .checkbox-link-cables { position:absolute; top:0; left:0; overflow:visible; pointer-events:none; }
+#hafizlik-tik-denemesi .checkbox-link-cable { fill:none; stroke:var(--cable-check); stroke-width:2.2; stroke-linecap:round; vector-effect:non-scaling-stroke; filter:drop-shadow(0 1px 1px #0002); opacity:.86; }
+#hafizlik-tik-denemesi .checkbox-link-cable.link-action-uncheck { stroke:var(--cable-uncheck); stroke-dasharray:7 5; }
+#hafizlik-tik-denemesi .checkbox-link-cable.link-action-mirror { stroke:var(--cable-mirror); stroke-dasharray:2 5; }
+#hafizlik-tik-denemesi .checkbox-link-cable.is-preview { stroke-dasharray:5 5; stroke-width:2.8; opacity:.9; }
+#hafizlik-tik-denemesi .checkbox-link-end { fill:var(--cable-check); stroke:var(--port-paper); stroke-width:1; }
+#hafizlik-tik-denemesi .checkbox-link-end.link-action-uncheck { fill:var(--cable-uncheck); }
+#hafizlik-tik-denemesi .checkbox-link-end.link-action-mirror { fill:var(--cable-mirror); }
+#hafizlik-tik-denemesi .checkbox-link-ports { position:absolute; inset:0; pointer-events:none; }
+#hafizlik-tik-denemesi .checkbox-link-port { appearance:none; position:absolute; top:0; left:0; width:18px; height:18px; margin:-9px 0 0 -9px; padding:0; border:2px solid var(--cable-check); border-radius:50%; background:var(--port-paper); color:var(--cable-check); box-shadow:0 0 0 3px color-mix(in srgb,var(--port-paper) 85%,transparent),0 2px 4px #0002; cursor:crosshair; pointer-events:auto; touch-action:none; }
+#hafizlik-tik-denemesi .checkbox-link-port::after { content:''; position:absolute; inset:4px; border-radius:50%; background:currentColor; opacity:.35; }
+#hafizlik-tik-denemesi .checkbox-link-port.is-linked::after { opacity:1; }
+#hafizlik-tik-denemesi .checkbox-link-port:hover, #hafizlik-tik-denemesi .checkbox-link-port.is-selected { filter:none; background:var(--cable-check); color:var(--port-paper); box-shadow:0 0 0 4px color-mix(in srgb,var(--cable-check) 24%,transparent),0 2px 5px #0003; }
+#hafizlik-tik-denemesi .checkbox-link-port:focus-visible { outline:2px solid var(--cable-check); outline-offset:5px; }
+#hafizlik-tik-denemesi.checkbox-link-mode .sheet input[type=checkbox][data-check-id] { outline:1px dashed color-mix(in srgb,var(--cable-check) 45%,transparent); outline-offset:3px; }

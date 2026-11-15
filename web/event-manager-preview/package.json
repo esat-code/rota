@@ -1,0 +1,1 @@
+{"name":"event-manager-preview","private":true,"type":"module","scripts":{"build":"node build.mjs","test":"node test.mjs && node all-day-engine-test.mjs && node special-days-test.mjs && node palette-test.mjs && node ui-test.mjs && node special-days-ui-test.mjs","test:all-day-browser":"node all-day-browser-test.mjs"}}

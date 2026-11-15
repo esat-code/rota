@@ -1,0 +1,34 @@
+.special-day-labels{display:flex;flex-direction:column;gap:4px;margin:0 0 8px;min-width:0}
+.special-day{display:block;color:var(--muted);font-size:11px;line-height:1.45;overflow-wrap:anywhere;padding:2px 0 2px 7px;border-left:2px solid var(--line)}
+.special-day--public{color:var(--text);border-left-color:var(--muted)}
+.half-day{color:var(--muted)}
+.special-days-notice{font-size:12px;line-height:1.5;color:var(--muted);margin:-8px 0 16px}
+.special-days-band{display:grid;grid-template-columns:76px repeat(7,minmax(0,1fr));background:var(--surface);border-bottom:1px solid var(--line)}
+.single .special-days-band{grid-template-columns:76px 1fr}
+.special-days-band>div{padding:10px 6px;min-width:0;border-left:1px solid var(--line)}
+.special-days-band>.special-days-band-label{border-left:0;padding:12px 8px;font-size:11px;color:var(--muted)}
+.special-days-band .special-day-labels{margin:0}
+.special-days-band .special-day{font-size:11px}
+.list-group>.special-day-labels{margin-bottom:16px}
+.list-group>.special-day-labels:last-child{margin-bottom:0}
+.list-group .special-day{font-size:13px;padding:3px 0 3px 9px}
+.color-field{min-width:0}
+.color-field legend{margin-bottom:8px}
+
+.special-important{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;padding:3px;margin-left:5px;border:0;background:transparent;color:var(--muted);cursor:pointer}.special-important[aria-pressed=true]{color:#b49353}.calendar-home{display:inline-flex;align-items:center;gap:8px;border-radius:24px!important}.filter-row{position:relative;z-index:5}
+
+.custom-choice{display:flex;gap:8px;margin-top:9px;min-width:0}.custom-choice input{min-width:0;flex:1;width:100%}.custom-choice button{display:inline-flex;align-items:center;gap:5px;flex-shrink:0}.custom-choice-hint{font-size:11px;color:var(--muted);margin:9px 0 0;line-height:1.6}.custom-choice button:disabled{opacity:.4;cursor:default}
+.event-chip.event-chip--uncolored{border:1px solid var(--line);border-left-width:1px;background:var(--surface);color:var(--text)}
+.event-chip.event-chip--uncolored:hover{background:var(--hover)}
+.event-chip--uncolored .dot,.event-card--uncolored>.dot{display:none}
+.tag-options button.tag{display:inline-flex;align-items:center;gap:5px}
+.clear-event-tags{display:block;margin-top:8px;padding:6px 0;font-size:12px}
+.special-day{display:block;min-width:0}
+.special-day-title{display:inline}
+.special-important,.special-hide{vertical-align:middle;margin-left:3px}
+.special-hide{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;min-width:20px;min-height:20px;padding:3px;border:0;border-radius:4px;background:transparent;color:var(--muted);opacity:.7}
+.special-hide:hover,.special-hide:focus-visible{opacity:1;background:var(--hover);color:var(--text)}
+.hidden-special-days{margin-top:16px;border:1px solid var(--line);border-radius:9px;padding:11px 14px;color:var(--muted);font-size:12px}
+.hidden-special-days summary{cursor:pointer}.hidden-special-days ul{padding:0;margin:12px 0 0;list-style:none}
+.hidden-special-days li{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:7px 0;border-top:1px solid var(--line)}
+.hidden-special-days button{font-size:11px;padding:6px 9px;flex-shrink:0}

@@ -1,0 +1,16 @@
+#hafizlik-tik-denemesi .dock-timer .timer-menu-trigger { min-width:27px; min-height:27px; font-size:20px; line-height:1; background:transparent; border:1px solid transparent; border-radius:7px; }
+#hafizlik-tik-denemesi .dock-timer .timer-menu-trigger:hover,
+#hafizlik-tik-denemesi .dock-timer .timer-menu-trigger[aria-expanded="true"] { background:var(--gray); border-color:var(--line); filter:none; }
+#hafizlik-tik-denemesi .timer-context-menu { position:fixed; z-index:1300; width:166px; max-width:calc(100vw - 16px); padding:5px; border:1px solid var(--line); border-radius:12px; background:var(--panel-bg); color:var(--ink); box-shadow:0 8px 28px #142b4625,0 2px 5px #142b460c; font:12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+#hafizlik-tik-denemesi .timer-context-menu[hidden] { display:none; }
+#hafizlik-tik-denemesi .timer-menu-item { display:flex; align-items:center; gap:10px; width:100%; min-height:35px; border:0; border-radius:7px; padding:8px 10px; color:var(--ink); background:transparent; text-align:left; font:inherit; cursor:pointer; }
+#hafizlik-tik-denemesi .timer-menu-item svg { flex-shrink:0; width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+#hafizlik-tik-denemesi .timer-menu-item:hover,
+#hafizlik-tik-denemesi .timer-menu-item:focus { outline:none; background:var(--gray); filter:none; }
+#hafizlik-tik-denemesi .timer-menu-delete { color:#804e3f; }
+#hafizlik-tik-denemesi .timer-menu-delete:hover,
+#hafizlik-tik-denemesi .timer-menu-delete:focus { color:#6e3b30; background:#eee0d5; }
+#hafizlik-tik-denemesi.night-mode .timer-context-menu { box-shadow:0 8px 28px #0006,0 2px 5px #0003; }
+#hafizlik-tik-denemesi.night-mode .timer-menu-delete { color:#d5b39c; }
+#hafizlik-tik-denemesi.night-mode .timer-menu-delete:hover,
+#hafizlik-tik-denemesi.night-mode .timer-menu-delete:focus { color:#ead1ba; background:#43372f; }
