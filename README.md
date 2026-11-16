@@ -4,6 +4,10 @@
 
 Kişisel çalışma alanı, YKS planlama, takvim, spor, Rusça sözlük ve alım planlama kaynakları.
 
+## Windows, Android, iPhone, iPad ve Mac
+
+Ortak uygulama projeleri ve cihaz bazında kurulum için [PLATFORMS.md](PLATFORMS.md) dosyasına bakın. Platformların test ve özellik sınırları aynı tabloda belirtilmiştir.
+
 ## Başlat
 
 Node.js 22+, npm ve Python 3 gerekir.

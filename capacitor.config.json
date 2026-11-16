@@ -1,0 +1,12 @@
+{
+  "appId": "org.rota.community",
+  "appName": "Rota",
+  "webDir": "app-dist",
+  "backgroundColor": "#08090b",
+  "android": {
+    "path": "platforms/mobile/android"
+  },
+  "ios": {
+    "path": "platforms/mobile/ios"
+  }
+}

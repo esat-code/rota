@@ -44,7 +44,7 @@ function showSport(){
   window.hafizlikSaveAll?.();plan.inert=true;plan.setAttribute('aria-hidden','true');frame.inert=true;frame.setAttribute('aria-hidden','true');
   for(const section of[calendar,yks]){section.hidden=true;section.inert=true;section.setAttribute('aria-hidden','true');}
   document.body.classList.remove('rota-show-home','rota-show-calendar','rota-show-yks');document.body.classList.add('rota-show-sport');
-  if(!sport.srcdoc)sport.srcdoc=sportHTML.replace('<head>','<head><base href="./sport/">');
+  if(!sport.srcdoc)sport.srcdoc=sportHTML.replace('<head>','<head><base href="' + new URL('./sport/', location.href).href + '">');
   sport.hidden=false;sport.inert=false;sport.removeAttribute('aria-hidden');frame.contentWindow?.postMessage({type:'rota:view',view:'sport'},'*');sport.focus();
 }
 window.rotaShowSport=showSport;
@@ -57,7 +57,7 @@ function showYks(day){
   calendar.hidden=true;calendar.inert=true;calendar.setAttribute('aria-hidden','true');
   document.body.classList.remove('rota-show-home','rota-show-calendar');document.body.classList.add('rota-show-yks');
   pendingYksDay=Number.isInteger(Number(day))&&Number(day)>0?Number(day):null;
-  if(!yks.srcdoc)yks.srcdoc=yksHTML.replace('<head>','<head><base href="./yks/">');
+  if(!yks.srcdoc)yks.srcdoc=yksHTML.replace('<head>','<head><base href="' + new URL('./yks/', location.href).href + '">');
   yks.hidden=false;yks.inert=false;yks.removeAttribute('aria-hidden');
   frame.contentWindow?.postMessage({type:'rota:view',view:'yks'},'*');
   if(pendingYksDay)yks.contentWindow?.postMessage({type:'rota:yks-day',day:pendingYksDay},'*');yks.focus();
@@ -66,11 +66,11 @@ yks.addEventListener('load',()=>{if(pendingYksDay)yks.contentWindow?.postMessage
 window.rotaShowYks=showYks;
 const calendar=document.getElementById('rota-calendar');
 window.rotaCalendarChanged=()=>window.hafizlikNativeSave?.();
-function showCalendar(date){hideSport();window.hafizlikSaveAll?.();yks.hidden=true;yks.inert=true;yks.setAttribute('aria-hidden','true');plan.inert=true;plan.setAttribute('aria-hidden','true');frame.inert=true;frame.setAttribute('aria-hidden','true');document.body.classList.remove('rota-show-home','rota-show-yks');document.body.classList.add('rota-show-calendar');if(!calendar.srcdoc)calendar.srcdoc=calendarHTML.replace('<head>','<head><base href="./calendar/">');calendar.hidden=false;calendar.inert=false;calendar.removeAttribute('aria-hidden');frame.contentWindow?.postMessage({type:'rota:view',view:'calendar'},'*');if(typeof date==='string'){calendar.dataset.focusDate=date;calendar.contentWindow?.postMessage({type:'rota:calendar-focus',date},'*');}calendar.focus();}
+function showCalendar(date){hideSport();window.hafizlikSaveAll?.();yks.hidden=true;yks.inert=true;yks.setAttribute('aria-hidden','true');plan.inert=true;plan.setAttribute('aria-hidden','true');frame.inert=true;frame.setAttribute('aria-hidden','true');document.body.classList.remove('rota-show-home','rota-show-yks');document.body.classList.add('rota-show-calendar');if(!calendar.srcdoc)calendar.srcdoc=calendarHTML.replace('<head>','<head><base href="' + new URL('./calendar/', location.href).href + '">');calendar.hidden=false;calendar.inert=false;calendar.removeAttribute('aria-hidden');frame.contentWindow?.postMessage({type:'rota:view',view:'calendar'},'*');if(typeof date==='string'){calendar.dataset.focusDate=date;calendar.contentWindow?.postMessage({type:'rota:calendar-focus',date},'*');}calendar.focus();}
 calendar.addEventListener('load',()=>{if(calendar.dataset.focusDate)calendar.contentWindow?.postMessage({type:'rota:calendar-focus',date:calendar.dataset.focusDate},'*');});
 window.rotaShowCalendar=showCalendar;
 const plan = document.getElementById('hafizlik-tik-denemesi');
-const bundledHTML = homeHTML.replace('<head>', '<head><base href="./home/">')
+const bundledHTML = homeHTML.replace('<head>', '<head><base href="' + new URL('./home/', location.href).href + '">')
   .replace('<script type="module" src="./main.js"></script>', '<script defer src="./app.js"></script>');
 frame.srcdoc = bundledHTML;
 function showHome() {

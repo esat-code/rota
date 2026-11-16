@@ -11,6 +11,10 @@ Son gözden geçirme: 16 Kasım 2026. Bu dosya açık depoyu tanımlar; kişisel
 - Mac kaynakları ve iPhone Xcode projesi; kendi ortamınıza göre yapılandırılmaları gerekir.
 - Kişisel kayıtlar yerine boş veya genel başlangıç verileri.
 
+## Ortak platform projeleri
+
+Windows/Mac/Linux için Electron, Android telefon/tablet ve iPhone/iPad için Capacitor projeleri eklendi. Kodların bulunması, bütün cihazlarda testlerin tamamlandığı anlamına gelmez. Komutlar ve eksikler: [PLATFORMS.md](PLATFORMS.md). Eski Swift kabuklarıyla özellik eşitliği ve otomatik eşitleme henüz yoktur.
+
 ## Bilinen eksikler ve sınırlar
 
 - Açık sürümün cihazlar arası eşitlemesi henüz kullanıma hazır değildir.

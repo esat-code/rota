@@ -5,34 +5,76 @@
   "type": "module",
   "scripts": {
     "build": "cd web/hafizlik-takip && node scripts/build.mjs",
-    "start": "python3 -m http.server 8080 --directory web/hafizlik-takip"
+    "start": "python3 -m http.server 8080 --directory web/hafizlik-takip",
+    "app:prepare": "npm run build && node scripts/prepare-app.mjs",
+    "desktop": "npm run app:prepare && electron .",
+    "package:windows": "npm run app:prepare && electron-builder --win --x64 --arm64",
+    "package:mac": "npm run app:prepare && electron-builder --mac --universal",
+    "package:linux": "npm run app:prepare && electron-builder --linux",
+    "mobile:sync": "npm run app:prepare && cap sync",
+    "android": "npm run mobile:sync && cap open android",
+    "ios": "npm run mobile:sync && cap open ios",
+    "desktop:check": "electron platforms/desktop/smoke.cjs"
   },
   "dependencies": {
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "d3": "^7.9.0",
-    "motion": "^12.0.0",
-    "lucide-react": "^0.468.0",
-    "topojson-client": "^3.1.0",
+    "@capacitor/android": "^8.6.2",
+    "@capacitor/core": "^8.6.2",
+    "@capacitor/ios": "^8.6.2",
     "@radix-ui/react-separator": "^1.1.0",
     "@radix-ui/react-slot": "^1.1.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "tailwind-merge": "^3.0.0",
-    "world-atlas": "^2.0.2",
+    "d3": "^7.9.0",
     "katex": "0.19.0",
-    "three": "^0.180.0"
+    "lucide-react": "^0.468.0",
+    "motion": "^12.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^3.0.0",
+    "three": "^0.180.0",
+    "topojson-client": "^3.1.0",
+    "world-atlas": "^2.0.2"
   },
   "devDependencies": {
-    "esbuild": "^0.25.0",
-    "typescript": "^5.7.0",
-    "tailwindcss": "^4.0.0",
+    "@capacitor/cli": "^8.6.2",
     "@tailwindcss/cli": "^4.0.0",
+    "@types/d3": "^7.4.3",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "@types/d3": "^7.4.3",
     "@types/topojson-client": "^3.1.5",
     "@types/topojson-specification": "^1.0.5",
-    "jsdom": "^30.1.2"
+    "electron": "^45.3.3",
+    "electron-builder": "^26.18.0",
+    "esbuild": "^0.25.0",
+    "jsdom": "^30.1.2",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.7.0"
+  },
+  "description": "Rota community app \u2014 work in progress",
+  "main": "platforms/desktop/main.cjs",
+  "build": {
+    "appId": "org.rota.community",
+    "productName": "Rota",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "app-dist/**/*",
+      "platforms/desktop/main.cjs",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.productivity",
+      "icon": "web/hafizlik-takip/branding/rota-monochrome.icns",
+      "target": "dmg"
+    },
+    "win": {
+      "icon": "web/hafizlik-takip/branding/rota-app-icon.png",
+      "target": "nsis"
+    },
+    "linux": {
+      "icon": "web/hafizlik-takip/branding/rota-app-icon.png",
+      "target": "AppImage"
+    }
   }
 }

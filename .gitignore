@@ -11,3 +11,13 @@ web/hafizlik-takip/sport/
 web/hafizlik-takip/yks/app.js
 web/rota-spor-preview/dist/
 web/hafizlik-takip/sport/
+
+app-dist/
+release/
+platforms/mobile/android/.gradle/
+platforms/mobile/android/local.properties
+platforms/mobile/android/**/build/
+platforms/mobile/android/app/src/main/assets/public/
+platforms/mobile/ios/App/App/public/
+platforms/mobile/ios/Pods/
+platforms/mobile/ios/**/xcuserdata/
