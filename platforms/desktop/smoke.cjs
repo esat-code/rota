@@ -1,5 +1,5 @@
 const {app,BrowserWindow,session}=require('electron');
-app.whenReady().then(()=>session.defaultSession.webRequest.onErrorOccurred(details=>console.error('RESOURCE',details.url,details.error))); 
+app.whenReady().then(()=>session.defaultSession.webRequest.onErrorOccurred(details=>console.error('RESOURCE',details.url,details.error)));
 const {mkdtempSync,rmSync}=require('node:fs');
 const {tmpdir}=require('node:os');
 const {join}=require('node:path');
