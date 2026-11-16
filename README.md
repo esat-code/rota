@@ -38,3 +38,7 @@ Kişisel kayıtlar, ürün kataloğu, özel ders notları, kişisel hazır kamp 
 ## Güncelleme
 
 `git pull` ardından `npm install` ve `npm run build`. Yerel kayıtlar kaynak koddan ayrıdır. Yerel uygulama kabuğu değişikliklerinde Xcode ile yeniden derleyin.
+
+## Güncel Mac simgesi
+
+Mac paketinin plist dosyası `native/desktop/Info.plist`, simgesi `web/hafizlik-takip/branding/rota-monochrome.icns` dosyasıdır. Simgeyi uygulamanın `Contents/Resources` klasörüne koyun. Paket sürümü 10, simge siyah–gümüş tasarımdır.

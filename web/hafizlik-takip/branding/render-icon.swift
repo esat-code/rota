@@ -84,6 +84,5 @@ for (type, filename) in [
 var icns = "icns".data(using: .ascii)!
 icns.append(bigEndian(UInt32(chunks.count + 8)))
 icns.append(chunks)
-try icns.write(to: URL(fileURLWithPath: output).appendingPathComponent("app.icns"))
-try icns.write(to: URL(fileURLWithPath: output).appendingPathComponent("rota.icns"))
+try icns.write(to: URL(fileURLWithPath: output).appendingPathComponent("rota-monochrome.icns"))
 print("Rendered Rota icon and iconset in \(output)")
