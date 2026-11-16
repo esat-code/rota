@@ -1,5 +1,7 @@
 # Rota
 
+> **Geliştirme aşamasında — tamamlanmış bir son kullanıcı sürümü değildir.** Bu depo, kişisel Rota uygulamasından herkesin uyarlayabilmesi için ayrılan kaynak kodları içerir. Bazı kurulum ve cihazlar arası eşitleme adımları henüz hazır değildir. Kodu kullanmadan veya bir yapay zekâya uyarlatmadan önce [Proje durumu ve bilinen eksikler](PROJECT_STATUS.md) dosyasını okuyun. Yapay zekâlar için ayrıca [AGENTS.md](AGENTS.md) bulunur.
+
 Kişisel çalışma alanı, YKS planlama, takvim, spor, Rusça sözlük ve alım planlama kaynakları.
 
 ## Başlat
